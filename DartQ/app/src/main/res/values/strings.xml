@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">DartQ</string>
+    <string name="is_there_hope">Is there hope?</string>
+    <string name="true_button">true</string>
+    <string name="false_button">false</string>
+    <string name="brexit">Brexit is good for you?</string>
+    <string name="ivy">Columbia is the best?</string>
+    <string name="campbell">Campbell can predict the future?</string>
+    <string name="soccer">Arsenal suck?</string>
+    <string name="previous_button">prev</string>
+    <string name="next_button">next</string>
+    <string name="cheat">Cheat</string>
+    <string name="do_you_really_want_to_cheat">Do you really want to cheat?</string>
+    <string name="show_answer">show answer</string>
+    <string name="answer_true">True</string>
+    <string name="answer_false">False</string>
+</resources>
