@@ -12,14 +12,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         Toolbar myToolbar = findViewById(R.id.main_toolbar);
         setSupportActionBar(myToolbar);
-
-
-
-
-
     }
 
     @Override
@@ -35,11 +29,9 @@ public class MainActivity extends AppCompatActivity {
         {
             case R.id.action_settings:
                 return true;
-//                break;
 
             case R.id.action_edit_profile:
                 return true;
-//                break;
 
             default:
                 return super.onOptionsItemSelected(item);

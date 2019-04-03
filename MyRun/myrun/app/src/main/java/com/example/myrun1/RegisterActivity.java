@@ -2,19 +2,17 @@ package com.example.myrun1;
 
 import android.Manifest;
 import android.content.ActivityNotFoundException;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.provider.MediaStore;
-import android.support.v4.app.NavUtils;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
@@ -31,16 +29,20 @@ import android.widget.Toast;
 import com.soundcloud.android.crop.Crop;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Objects;
 
 import androidx.exifinterface.media.ExifInterface;
 
+import static java.lang.System.currentTimeMillis;
+
 public class RegisterActivity extends AppCompatActivity {
 
-    private static final String TAG = "RegisterActivity.lfcycl";
+    private static final String TAG = "RegisterActivity.lfcyc";
     private static final String IS_TAKEN_CAMERA_KEY = "is_taken_camera";
+    private static final String IS_FIRST = "is_FIRST";
+    private static final String URI_INSTANCE_STATE_KEY = "saved_uri";
 
     private AutoCompleteTextView mNameView;
     private RadioGroup mGender;
@@ -49,23 +51,19 @@ public class RegisterActivity extends AppCompatActivity {
     private AutoCompleteTextView mPhone;
     private AutoCompleteTextView mMajor;
     private AutoCompleteTextView mClass;
-    //    private LoginActivity.UserLoginTask mAuthTask = null;
-//    private Button change_button;
-//    private Button mregister_button;
-    public static final int REQUEST_CODE_TAKE_FROM_CAMERA = 0;
-    private static final String URI_INSTANCE_STATE_KEY = "saved_uri";
-    private static final int INITIAL_REQUEST= 0;
-    private static final int CHECK_CAMERA_REQUEST = 1;
 
     private Uri mImageCaptureUri;
     private ImageView mImageView;
     private boolean isTakenFromCamera;
     private Bitmap rotatedBitmap;
 
+    public static final int REQUEST_CODE_TAKE_FROM_CAMERA = 2;
+    private static final int INITIAL_REQUEST= 0;
+    private static final int CHECK_CAMERA_REQUEST = 1;
+    //private static final int CHECK_STORAGE_REQUEST = 2;
     SharedPreferences sharedPreferences;
     SharedPreferences.Editor editor;
-    private Bitmap mbitmap = null;
-    //profile_Shared preferenceManager;
+    private boolean isFirst = true;
 
 
     @Override
@@ -75,9 +73,7 @@ public class RegisterActivity extends AppCompatActivity {
 
         Toolbar myToolbar = findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-        checkPermissions();
+        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);   // set up the tool bar
 
         mImageView = findViewById(R.id.imageView);
         mNameView = findViewById(R.id.register_name);
@@ -88,48 +84,38 @@ public class RegisterActivity extends AppCompatActivity {
         mClass = findViewById(R.id.register_class);
         mGender = findViewById(R.id.register_gender);
 
-        if (savedInstanceState != null) {
-            mImageCaptureUri = savedInstanceState.getParcelable(URI_INSTANCE_STATE_KEY);
 
-            try {
-                Bitmap bm = MediaStore.Images.Media.getBitmap(this.getContentResolver(), mImageCaptureUri);
-                mbitmap = bm;
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+        StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
+        StrictMode.setVmPolicy(builder.build());
+
+
+        if (savedInstanceState != null) {
+            mImageCaptureUri = savedInstanceState.getParcelable(URI_INSTANCE_STATE_KEY);      // get the picture
+            isFirst = savedInstanceState.getBoolean(IS_FIRST);
+            isTakenFromCamera = savedInstanceState.getBoolean(IS_TAKEN_CAMERA_KEY);
+        }
+
+        if(isFirst)            // ask for permissions for the first time
+        {
+            checkPermissions();
+            isFirst = false;
         }
 
         loadSnap();
-
-
-
-//        mregister_button.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-//            @Override
-//            public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
-//                if (id == EditorInfo.IME_ACTION_DONE || id == EditorInfo.IME_NULL) {
-//                    attemptRegister();
-//                    return true;
-//                }
-//                return false;
-//            }
-//        });
-
-
     }
 
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.register_menu, menu);
+        getMenuInflater().inflate(R.menu.register_menu, menu);     // Inflate the menu
         return true;
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(MenuItem item) {    // operations on the toolbar
         switch (item.getItemId()) {
             case android.R.id.home:
-                NavUtils.navigateUpFromSameTask(this);
+                finish();
                 return true;
 
             case R.id.action_register:
@@ -211,8 +197,7 @@ public class RegisterActivity extends AppCompatActivity {
             focusView.requestFocus();
         }
         else {
-            sharedPreferences = getSharedPreferences("profile", Context.MODE_PRIVATE);
-            // photo???
+            sharedPreferences = getSharedPreferences("profile", Context.MODE_PRIVATE);       //store the profile in the sharedpreference
             editor = sharedPreferences.edit();
             editor.clear();
             editor.putString("key_name", name);
@@ -223,12 +208,9 @@ public class RegisterActivity extends AppCompatActivity {
             editor.putInt("key_class", Dclass);
             editor.putInt("key_gender", gender);
             editor.apply();
-
             saveSnap();
             Toast.makeText(this,"Successfully Registered", Toast.LENGTH_LONG).show();
             finish();
-//            NavUtils.navigateUpFromSameTask(this);
-
         }
     }
 
@@ -251,14 +233,11 @@ public class RegisterActivity extends AppCompatActivity {
 
     // select the item in the dialog menu
     public void onPhotoPickerItemSelected(int Item){
-
-//        Intent intent;
         switch (Item)
         {
             case MyRunsDialogFragment.ID_PHOTO_PICKER_FROM_CAMERA:
-                // check and request permissions again
 
-                if(checkSelfPermission(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED )
+                if(checkSelfPermission(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED )      // check and request permissions again
                 {
                     startCamera();
                 }
@@ -266,40 +245,10 @@ public class RegisterActivity extends AppCompatActivity {
                 {
                     checkCameraPermission();
                 }
-//                {
-//                    intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-//                    ContentValues values = new ContentValues(1);
-//                    values.put(MediaStore.Images.Media.MIME_TYPE, "image/jpg");
-//                    mImageCaptureUri = getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
-//
-//                    intent.putExtra(MediaStore.EXTRA_OUTPUT, mImageCaptureUri);
-//                    intent.putExtra("return-data", true);
-//
-//                    try {
-//                        // Start a camera capturing activity
-//                        // REQUEST_CODE_TAKE_FROM_CAMERA is an integer tag you
-//                        // defined to identify the activity in onActivityResult()
-//                        // when it returns
-//                        startActivityForResult(intent, REQUEST_CODE_TAKE_FROM_CAMERA);
-//
-//                    } catch (ActivityNotFoundException e) {
-//                        Log.d(TAG, String.valueOf(e));
-//                        e.printStackTrace();
-//                    }
-//                    isTakenFromCamera = true;
-//                }
                 break;
 
             case MyRunsDialogFragment.ID_GALLERY_PICKER_FROM_CAMERA:
                 Log.d(TAG, "gallery");
-
-                checkStoragePermissions();
-                if(checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)
-                {
-                    //do sth;
-
-                }
-
                 break;
 
             default:
@@ -307,20 +256,18 @@ public class RegisterActivity extends AppCompatActivity {
         }
     }
 
-    private void checkCameraPermission() {
+    private void checkCameraPermission() {        // check permissions for camera
         if (checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED)
         {
             requestPermissions(new String[]{Manifest.permission.CAMERA}, CHECK_CAMERA_REQUEST);
         }
-
-        Log.d(TAG, "FK>");
     }
 
-    private void checkStoragePermissions() {       // check permissions for storage and camera
-        if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 0);
-        }
-    }
+//    private void checkStoragePermissions() {       // check permissions for storage
+//        if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+//            requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, CHECK_STORAGE_REQUEST);
+//        }
+//    }
 
     private void checkPermissions() {       // check permissions for storage and camera
         if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED
@@ -331,26 +278,21 @@ public class RegisterActivity extends AppCompatActivity {
 
     private void startCamera()
     {
-        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE).addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-        Log.d(TAG, "grant it");
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+//        ContentValues values = new ContentValues(1);
+//        values.put(MediaStore.Images.Media.MIME_TYPE, "image/jpg");
+//        mImageCaptureUri = getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
 
-//                grantUriPermission("com.example.myrun1."), mImageCaptureUri,Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-        ContentValues values = new ContentValues(1);
-        values.put(MediaStore.Images.Media.MIME_TYPE, "image/jpg");
-        mImageCaptureUri = getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+        File file = new File(getExternalCacheDir(), "photo.jpg");
+        mImageCaptureUri = Uri.fromFile(file);         // define a tmp uri
 
         intent.putExtra(MediaStore.EXTRA_OUTPUT, mImageCaptureUri);
         intent.putExtra("return-data", true);
+        Log.d(TAG, "Uri is"+mImageCaptureUri);
 
         try {
-            // Start a camera capturing activity
-            // REQUEST_CODE_TAKE_FROM_CAMERA is an integer tag you
-            // defined to identify the activity in onActivityResult()
-            // when it returns
-            startActivityForResult(intent, REQUEST_CODE_TAKE_FROM_CAMERA);
-
+            startActivityForResult(intent, REQUEST_CODE_TAKE_FROM_CAMERA);      // Start a camera capturing activity
         } catch (ActivityNotFoundException e) {
-            Log.d(TAG, String.valueOf(e));
             e.printStackTrace();
         }
         isTakenFromCamera = true;
@@ -358,9 +300,8 @@ public class RegisterActivity extends AppCompatActivity {
 
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
 
-        Log.d(TAG, "code "+String.valueOf(requestCode));
         if(requestCode == INITIAL_REQUEST)
         {
             Log.d(TAG, "First time request");
@@ -368,34 +309,33 @@ public class RegisterActivity extends AppCompatActivity {
 
         else if(requestCode == CHECK_CAMERA_REQUEST)
         {
-            Log.d(TAG, "second time request");
+            Log.d(TAG, "Second time request");
             if(grantResults[0] == PackageManager.PERMISSION_GRANTED)   // camera granted
             {
                 startCamera();
             }
         }
 
-        if(permissions.length>1)
-        {
-            if (grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
-                Log.d(TAG, "ALL permit");
-            }
-            else if (grantResults[0] == PackageManager.PERMISSION_DENIED || grantResults[1] == PackageManager.PERMISSION_DENIED)
-            {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-                {
-                    if (shouldShowRequestPermissionRationale(Manifest.permission.CAMERA)||shouldShowRequestPermissionRationale(Manifest.permission.WRITE_EXTERNAL_STORAGE))
-                    {
-                        Log.d(TAG, "partail permit");
-                    }
-                    else{
-                        //Never ask again and handle your app without permission.
-                        Log.d(TAG, "DK");
-                    }
-                }
-            }
-        }
-
+//        if(permissions.length>1)
+//        {
+//            if (grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
+//                Log.d(TAG, "ALL permit");
+//            }
+//            else if (grantResults[0] == PackageManager.PERMISSION_DENIED || grantResults[1] == PackageManager.PERMISSION_DENIED)
+//            {
+//                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+//                {
+//                    if (shouldShowRequestPermissionRationale(Manifest.permission.CAMERA)||shouldShowRequestPermissionRationale(Manifest.permission.WRITE_EXTERNAL_STORAGE))
+//                    {
+//                        Log.d(TAG, "partail permit");
+//                    }
+//                    else{
+//                        //Never ask again and handle your app without permission.
+//                        Log.d(TAG, "DK");
+//                    }
+//                }
+//            }
+//        }
     }
 
     @Override
@@ -405,6 +345,8 @@ public class RegisterActivity extends AppCompatActivity {
 
         Log.d(TAG, "OnSaveInstance called!");
         outState.putParcelable(URI_INSTANCE_STATE_KEY, mImageCaptureUri);
+        outState.putBoolean(IS_FIRST, isFirst);
+        outState.putBoolean(IS_TAKEN_CAMERA_KEY, isTakenFromCamera);
     }
 
 
@@ -412,46 +354,49 @@ public class RegisterActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode != RESULT_OK)
+        {
+            Log.d(TAG, "GG");
             return;
+        }
 
         switch (requestCode) {
-            case REQUEST_CODE_TAKE_FROM_CAMERA:
-                // Send image taken from camera for cropping
-                beginCrop(mImageCaptureUri);
+            case REQUEST_CODE_TAKE_FROM_CAMERA:    // after taking the pic, begin crop
+                beginCrop(mImageCaptureUri);       // Send image taken from camera for cropping
                 break;
 
-            case Crop.REQUEST_CROP: //We changed the RequestCode to the one being used by the library.
-                // Update image view after image crop
-                handleCrop(resultCode, data);
-
-                // Delete temporary image taken by camera after crop.
-                if (isTakenFromCamera) {
-                    File f = new File(mImageCaptureUri.getPath());
-                    if (f.exists())
-                        f.delete();
-
-                    //saveSnap();
-                    Log.d(TAG, "chose OK");
-
-                }
+            case Crop.REQUEST_CROP:     //
+                handleCrop(resultCode, data);      // Update image view after image crop
+//                if (isTakenFromCamera) {
+//                    File f = new File(mImageCaptureUri.getPath());
+//                    if (f.exists())
+//                        f.delete();
+//                    Log.d(TAG, "chose OK");
+//                }
                 break;
-
         }
     }
 
     private void beginCrop(Uri source) {
-        Uri destination = Uri.fromFile(new File(getCacheDir(), "cropped"));
-        Crop.of(source, destination).asSquare().start(this);
+
+        try{
+            String tmp = getExternalCacheDir() +"/"+ String.valueOf(currentTimeMillis()) + "photo.jpg";
+            Uri destination = Uri.fromFile(new File(tmp));   //getCacheDir(), "cropped"
+            mImageCaptureUri = destination;
+            Crop.of(source, destination).asSquare().start(this);
+        }catch (Exception e)
+        {
+            Log.d(TAG, "Error here");
+        }
     }
 
     private void handleCrop(int resultCode, Intent result) {
+
         if (resultCode == RESULT_OK) {
             Uri uri = Crop.getOutput(result);
             try {
                 Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), uri);
                 mImageView.setImageBitmap(imageOreintationValidator(bitmap, uri.getPath()));
-                mbitmap = bitmap;
-
+                mImageCaptureUri = uri;
             }catch (Exception e){
                 Log.d("Error", "error");
             }
@@ -463,49 +408,41 @@ public class RegisterActivity extends AppCompatActivity {
 
 
     private void saveSnap() {
-
         // Save profile image into internal storage.
-        mImageView.buildDrawingCache();
-        Bitmap bmap = mImageView.getDrawingCache();
-        try {
-            FileOutputStream fos = openFileOutput(getString(R.string.profile_photo_file_name), MODE_PRIVATE);
-            bmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
-            String path = this.getFilesDir().getAbsolutePath();
-            Log.d(TAG, "path of profile_photo.png is" + path);
-            fos.flush();
-            fos.close();
-        } catch (IOException ioe) {
-            ioe.printStackTrace();
+        if(checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)
+        {
+            mImageView.buildDrawingCache();
+            Bitmap bmap = mImageView.getDrawingCache();
+            try {
+                FileOutputStream fos = openFileOutput(getString(R.string.profile_photo_file_name), MODE_PRIVATE);
+                bmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
+//                String path = this.getFilesDir().getAbsolutePath();
+//                Log.d(TAG, "path of profile_photo.png is" + path);
+                fos.flush();
+                fos.close();
+            } catch (IOException ioe) {
+                ioe.printStackTrace();
+            }
         }
     }
 
 
     private void loadSnap() {
         // Load profile photo from internal storage
-
-        if(mbitmap == null)
+        if(!isTakenFromCamera)
             mImageView.setImageResource(R.drawable.ic_launcher);
 
         else
         {
             try {
-                FileInputStream fis = openFileInput(getString(R.string.profile_photo_file_name));
-                Bitmap bmap = BitmapFactory.decodeStream(fis);
-                bmap = mbitmap;
-                mImageView.setImageBitmap(bmap);
-                fis.close();
-                String path = this.getFilesDir().getAbsolutePath();
-                Log.d(TAG, "Load.  path of profile_photo.png is" + path);
-
-            } catch (IOException e) {
-                Log.d(TAG, "loadSnap error!"+ e);
+                Bitmap bm = MediaStore.Images.Media.getBitmap(this.getContentResolver(), mImageCaptureUri);
+                mImageView.setImageBitmap(bm);
+            }
+            catch (IOException e) {
+                Log.d(TAG, "loadSnap error!" + e);
                 mImageView.setImageResource(R.drawable.ic_launcher);
             }
         }
-
-
-
-
     }
 
     // code to handle image orientation issue -- sometimes the orientation is not right on the imageview
@@ -521,23 +458,19 @@ public class RegisterActivity extends AppCompatActivity {
 
                 case ExifInterface.ORIENTATION_ROTATE_90:
                     rotatedBitmap = rotateImage(bitmap, 90);
-
                     break;
 
                 case ExifInterface.ORIENTATION_ROTATE_180:
                     rotatedBitmap = rotateImage(bitmap, 180);
-
                     break;
 
                 case ExifInterface.ORIENTATION_ROTATE_270:
                     rotatedBitmap = rotateImage(bitmap, 270);
-
                     break;
 
                 case ExifInterface.ORIENTATION_NORMAL:
                 default:
                     rotatedBitmap = bitmap;
-
                     break;
             }
 
@@ -546,6 +479,7 @@ public class RegisterActivity extends AppCompatActivity {
         }
         return rotatedBitmap;
     }
+
 
     private Bitmap rotateImage(Bitmap source, float angle) {
         Matrix matrix = new Matrix();

@@ -51,9 +51,6 @@ public class MyRunsDialogFragment extends DialogFragment {
             default:
                 return null;
         }
-
-
     }
-
 
 }
