@@ -6,15 +6,18 @@
 
 package com.example.myrun2;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
@@ -23,6 +26,7 @@ public class MainActivity extends AppCompatActivity {
     private Spinner mspinner_input;
     private Spinner mspinner_act;
     private BottomNavigationView mbottom_tab;
+    private FloatingActionButton mfab;
 
 
     @Override
@@ -36,6 +40,8 @@ public class MainActivity extends AppCompatActivity {
         mspinner_input = findViewById(R.id.input_type);
         mspinner_act= findViewById(R.id.activity_type);
         mbottom_tab = findViewById(R.id.bottom_navigation);
+        mfab = findViewById(R.id.fab);
+
 
         mbottom_tab.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
@@ -50,6 +56,15 @@ public class MainActivity extends AppCompatActivity {
                 R.array.act_type, android.R.layout.simple_spinner_item);
         adapter2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);      // Specify the layout to use when the list of choices appears
         mspinner_act.setAdapter(adapter2);     // Apply the adapter to the spinner
+
+
+        mfab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, Manal_Entry.class);
+                startActivity(intent);
+            }
+        });
 
 
     }

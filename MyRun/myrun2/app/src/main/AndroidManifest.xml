@@ -42,5 +42,13 @@
         </activity>
         <activity android:name="com.soundcloud.android.crop.CropImageActivity" />
 
+        <activity android:name=".Manal_Entry"
+            android:label="Manual Entry Activity"
+            android:parentActivityName=".MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainActivity"/>
+        </activity>
+
     </application>
 </manifest>
