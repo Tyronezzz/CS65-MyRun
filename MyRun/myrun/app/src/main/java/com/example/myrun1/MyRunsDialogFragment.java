@@ -1,3 +1,9 @@
+/*
+ * @author  Tao Hou
+ * @version 1.0
+ * @since   2019-04-03
+ */
+
 package com.example.myrun1;
 
 import android.app.Activity;
@@ -33,7 +39,7 @@ public class MyRunsDialogFragment extends DialogFragment {
 
         switch (dialog_id)
         {
-            case DIALOG_ID_PHOTO_PICKER:
+            case DIALOG_ID_PHOTO_PICKER:        // take picture from camera
                 AlertDialog.Builder builder = new AlertDialog.Builder(parent);
                 builder.setTitle("Profile Picture Picker");
                 DialogInterface.OnClickListener dlistener = new DialogInterface.OnClickListener(){

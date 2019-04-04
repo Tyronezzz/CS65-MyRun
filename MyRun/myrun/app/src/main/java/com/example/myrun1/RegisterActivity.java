@@ -1,3 +1,10 @@
+/*
+ * @author  Tao Hou
+ * @version 1.0
+ * @since   2019-04-03
+ * @reference https://www.cs.dartmouth.edu/~campbell/cs65/lecture14/lecture14.html
+ */
+
 package com.example.myrun1;
 
 import android.Manifest;
@@ -127,7 +134,7 @@ public class RegisterActivity extends AppCompatActivity {
         }
     }
 
-
+    // attempt to register
     private void attemptRegister() {
         // Reset errors.
         mNameView.setError(null);
@@ -192,6 +199,7 @@ public class RegisterActivity extends AppCompatActivity {
         String tmp = mClass.getText().toString();
         if(!tmp.isEmpty())
             Dclass= Integer.valueOf(tmp);
+
 
         if (cancel) {
             focusView.requestFocus();
@@ -284,11 +292,11 @@ public class RegisterActivity extends AppCompatActivity {
 //        mImageCaptureUri = getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
 
         File file = new File(getExternalCacheDir(), "photo.jpg");
-        mImageCaptureUri = Uri.fromFile(file);         // define a tmp uri
+        mImageCaptureUri = Uri.fromFile(file);         // define a tmp uri, save the picture in this uri
 
         intent.putExtra(MediaStore.EXTRA_OUTPUT, mImageCaptureUri);
         intent.putExtra("return-data", true);
-        Log.d(TAG, "Uri is"+mImageCaptureUri);
+        Log.d(TAG, "Uri is "+mImageCaptureUri);
 
         try {
             startActivityForResult(intent, REQUEST_CODE_TAKE_FROM_CAMERA);      // Start a camera capturing activity
@@ -408,8 +416,8 @@ public class RegisterActivity extends AppCompatActivity {
 
 
     private void saveSnap() {
-        // Save profile image into internal storage.
-        if(checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)
+
+        if(checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)    // check permission to determine whether save in phone
         {
             mImageView.buildDrawingCache();
             Bitmap bmap = mImageView.getDrawingCache();
@@ -481,7 +489,7 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
 
-    private Bitmap rotateImage(Bitmap source, float angle) {
+    private Bitmap rotateImage(Bitmap source, float angle) {     // rotate the img
         Matrix matrix = new Matrix();
         matrix.postRotate(angle);
         return Bitmap.createBitmap(source, 0, 0, source.getWidth(), source.getHeight(),

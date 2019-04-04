@@ -1,3 +1,9 @@
+/*
+ * @author  Tao Hou
+ * @version 1.0
+ * @since   2019-04-03
+ */
+
 package com.example.myrun1;
 
 import android.animation.Animator;
@@ -19,7 +25,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-// login screen
 public class LoginActivity extends AppCompatActivity {
 
     private UserLoginTask mAuthTask = null;
@@ -28,8 +33,6 @@ public class LoginActivity extends AppCompatActivity {
     private EditText mPasswordView;
     private View mProgressView;
     private View mLoginFormView;
-//    private String cur_email;
-//    private String cur_pwd;
 
     Button mregister_button;
     Button mEmailSignInButton;
@@ -40,6 +43,7 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+        setTitle(getResources().getText(R.string.action_sign_in));
         mEmailSignInButton = findViewById(R.id.email_sign_in_button);
         mEmailView = findViewById(R.id.email);
         mPasswordView = findViewById(R.id.password);
@@ -49,18 +53,6 @@ public class LoginActivity extends AppCompatActivity {
 
         Toolbar mytoolbar = findViewById(R.id.login_toolbar);     // set up the toolbar
         setSupportActionBar(mytoolbar);
-
-//        if(savedInstanceState != null)
-//        {
-//            mEmailView.setText();
-//
-//        }
-//        mEmailView.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-//            @Override
-//            public void onFocusChange(View v, boolean hasFocus) {
-//                Log.d(TAG, "here is "+ String.valueOf(hasFocus));
-//            }
-//        });
 
         mEmailSignInButton.setOnClickListener(new OnClickListener() {         // log in
             @Override
@@ -127,9 +119,7 @@ public class LoginActivity extends AppCompatActivity {
         if (cancel) {
             focusView.requestFocus();
         }
-        else {
-            // Show a progress spinner, and kick off a background task to
-            // perform the user login attempt.
+        else {         // the input field is valid and try to log in. Show the progress bar
             mshowProgress(true);
             mAuthTask = new UserLoginTask(email, password);
             mAuthTask.execute((Void) null);
@@ -143,7 +133,6 @@ public class LoginActivity extends AppCompatActivity {
     private boolean isPasswordValid(String password) {
         return password.length() >= 6;
     }
-
 
     private void mshowProgress(final boolean show) {   // call this function when show the progress bar
         int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
@@ -166,8 +155,6 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
     }
-
-
 
     //An asynchronous login task used to authenticate the user.
     @SuppressLint("StaticFieldLeak")
@@ -217,7 +204,7 @@ public class LoginActivity extends AppCompatActivity {
                 }
 
             } else {
-                Log.d(TAG, "FAILED");
+                Log.d(TAG, "FAILED");          // failed, try again
                 Toast.makeText(getApplicationContext(), "Email or password is incorrect!", Toast.LENGTH_LONG).show();
                 mEmailView.requestFocus();
                 //mEmailView.setError("");
