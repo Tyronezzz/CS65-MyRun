@@ -35,4 +35,21 @@
         <item>Take from camera</item>
         <item>Select from gallery</item>
     </string-array>
+
+    <string-array name="input_type">
+        <item>Manual</item>
+        <item>GPS</item>
+        <item>Automatic</item>
+    </string-array>
+
+    <string-array name="act_type">
+        <item>Running</item>
+        <item>Walking</item>
+        <item>Automatic</item>
+    </string-array>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+
 </resources>

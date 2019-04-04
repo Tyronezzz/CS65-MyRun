@@ -4,7 +4,7 @@
  * @since   2019-04-03
  */
 
-package com.example.myrun1;
+package com.example.myrun2;
 
 import android.app.Activity;
 import android.app.AlertDialog;

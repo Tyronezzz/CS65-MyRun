@@ -5,7 +5,7 @@
  * @reference https://www.cs.dartmouth.edu/~campbell/cs65/lecture14/lecture14.html
  */
 
-package com.example.myrun1;
+package com.example.myrun2;
 
 import android.Manifest;
 import android.content.ActivityNotFoundException;

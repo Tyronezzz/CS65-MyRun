@@ -15,15 +15,15 @@
         android:theme="@style/Theme.AppCompat.Light.NoActionBar"
         tools:ignore="AllowBackup,GoogleAppIndexingWarning">
         <activity
-            android:name=".MainActivity"
+            android:name="com.example.myrun1.MainActivity"
             android:label="@string/MainActivity"
-            android:parentActivityName=".RegisterActivity">
+            android:parentActivityName="com.example.myrun1.RegisterActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".LoginActivity"/>
+                android:value="com.example.myrun1.LoginActivity"/>
         </activity>
         <activity
-            android:name=".LoginActivity"
+            android:name="com.example.myrun1.LoginActivity"
             >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -32,12 +32,12 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".RegisterActivity"
+            android:name="com.example.myrun1.RegisterActivity"
             android:label="@string/Register_head"
-            android:parentActivityName=".LoginActivity">
+            android:parentActivityName="com.example.myrun1.LoginActivity">
             <meta-data
                android:name="android.support.PARENT_ACTIVITY"
-               android:value=".LoginActivity"/>
+               android:value="com.example.myrun1.LoginActivity"/>
 
         </activity>
         <activity android:name="com.soundcloud.android.crop.CropImageActivity" />

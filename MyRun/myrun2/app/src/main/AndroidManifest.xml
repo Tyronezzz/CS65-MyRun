@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.example.myrun1">
+    package="com.example.myrun2">
 
     <uses-feature android:name="android.hardware.camera" android:required="true"/>
     <uses-permission android:name="android.permission.CAMERA" />
@@ -17,7 +17,7 @@
         <activity
             android:name=".MainActivity"
             android:label="@string/MainActivity"
-            android:parentActivityName=".RegisterActivity">
+            android:parentActivityName="com.example.myrun2.RegisterActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".LoginActivity"/>
@@ -32,7 +32,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".RegisterActivity"
+            android:name="com.example.myrun2.RegisterActivity"
             android:label="@string/Register_head"
             android:parentActivityName=".LoginActivity">
             <meta-data
