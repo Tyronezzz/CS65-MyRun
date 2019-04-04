@@ -10,7 +10,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -26,6 +26,8 @@ public class MainActivity extends AppCompatActivity {
     private BottomNavigationView mbottom_tab;
     private int idx = 0;
     private ArrayList<Fragment> fragments;
+    private ViewPager viewPager;
+    private ActionTabsViewPagerAdapter myViewPageAdapter;
 
 
     @Override
@@ -40,10 +42,25 @@ public class MainActivity extends AppCompatActivity {
         fragments.add(new main_start());
         fragments.add(new main_history());
 
+        viewPager = findViewById(R.id.viewpager);
+        // create a fragment list in order.
+        // use FragmentPagerAdapter to bind the TabLayout (tabs with different titles)
+        // and ViewPager (different pages of fragment) together.
+        myViewPageAdapter =new ActionTabsViewPagerAdapter(this.getSupportFragmentManager(),
+                fragments);
+        // add the PagerAdapter to the viewPager
+        viewPager.setAdapter(myViewPageAdapter);
+
+
+
+
+
+
+
+
+
         mbottom_tab = findViewById(R.id.bottom_navigation);
         mbottom_tab.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
-
-
 
         if(savedInstanceState != null)
         {
@@ -51,7 +68,7 @@ public class MainActivity extends AppCompatActivity {
         }
         Log.d(TAG, "Creaet IDX "+String.valueOf(idx));
 
-        loadFragment(fragments.get(idx));
+//        loadFragment(fragments.get(idx));
 
     }
 
@@ -75,24 +92,24 @@ public class MainActivity extends AppCompatActivity {
                 case R.id.navigation_start:
                     fragment = new main_start();
                     idx=0;
-                    loadFragment(fragment);
+                    //loadFragment(fragment);
                     return true;
                 case R.id.navigation_history:
                     fragment = new main_history();
                     idx=1;
-                    loadFragment(fragment);
+                    //loadFragment(fragment);
                     return true;
             }
             return false;
         }
     };
 
-    private void loadFragment(Fragment fragment) {
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.frame_container, fragment);
-        transaction.addToBackStack(null);
-        transaction.commit();
-    }
+//    private void loadFragment(Fragment fragment) {
+//        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+//        transaction.replace(R.id.frame_container, fragment);
+//        transaction.addToBackStack(null);
+//        transaction.commit();
+//    }
 
 
 
