@@ -1,11 +1,18 @@
 package com.example.myrun2;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
+
 
 /**
  * A simple {@link Fragment} subclass.
@@ -26,6 +33,10 @@ public class main_start extends Fragment {
     private String mParam2;
 
     private OnFragmentInteractionListener mListener;
+    private Spinner mspinner_input;
+    private Spinner mspinner_act;
+    private FloatingActionButton mfab;
+
 
     public main_start() {
         // Required empty public constructor
@@ -56,12 +67,50 @@ public class main_start extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        mspinner_input = getView().findViewById(R.id.input_type);
+        mspinner_act= getView().findViewById(R.id.activity_type);
+
+        mfab = getView().findViewById(R.id.fab);
+
+
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getContext(),
+                R.array.input_type, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);      // Specify the layout to use when the list of choices appears
+        mspinner_input.setAdapter(adapter);     // Apply the adapter to the spinner
+
+
+        ArrayAdapter<CharSequence> adapter2 = ArrayAdapter.createFromResource(getContext(),
+                R.array.act_type, android.R.layout.simple_spinner_item);
+        adapter2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);      // Specify the layout to use when the list of choices appears
+        mspinner_act.setAdapter(adapter2);     // Apply the adapter to the spinner
+
+
+        mfab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getContext(), Manal_Entry.class);
+                startActivity(intent);
+            }
+        });
+
+
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+
+
+
+
         return inflater.inflate(R.layout.fragment_main_start, container, false);
     }
 
@@ -82,12 +131,13 @@ public class main_start extends Fragment {
 //                    + " must implement OnFragmentInteractionListener");
 //        }
 //    }
-//
-//    @Override
-//    public void onDetach() {
-//        super.onDetach();
-//        mListener = null;
-//    }
+
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mListener = null;
+    }
 
     /**
      * This interface must be implemented by activities that contain this

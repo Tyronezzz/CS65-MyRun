@@ -6,27 +6,26 @@
 
 package com.example.myrun2;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.ArrayAdapter;
-import android.widget.Spinner;
+
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
-    private Spinner mspinner_input;
-    private Spinner mspinner_act;
+    private static final String TAG = "MainAct.lifecycle";
+
     private BottomNavigationView mbottom_tab;
-    private FloatingActionButton mfab;
+    private int idx = 0;
+    private ArrayList<Fragment> fragments;
 
 
     @Override
@@ -37,38 +36,34 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(myToolbar);
 
 
-        mspinner_input = findViewById(R.id.input_type);
-        mspinner_act= findViewById(R.id.activity_type);
+        fragments = new ArrayList<Fragment>();
+        fragments.add(new main_start());
+        fragments.add(new main_history());
+
         mbottom_tab = findViewById(R.id.bottom_navigation);
-        mfab = findViewById(R.id.fab);
-
-
         mbottom_tab.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
 
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
-                R.array.input_type, android.R.layout.simple_spinner_item);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);      // Specify the layout to use when the list of choices appears
-        mspinner_input.setAdapter(adapter);     // Apply the adapter to the spinner
 
+        if(savedInstanceState != null)
+        {
+            idx = savedInstanceState.getInt("FRAG_INDEX", 0);
+        }
+        Log.d(TAG, "Creaet IDX "+String.valueOf(idx));
 
-        ArrayAdapter<CharSequence> adapter2 = ArrayAdapter.createFromResource(this,
-                R.array.act_type, android.R.layout.simple_spinner_item);
-        adapter2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);      // Specify the layout to use when the list of choices appears
-        mspinner_act.setAdapter(adapter2);     // Apply the adapter to the spinner
-
-
-        mfab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, Manal_Entry.class);
-                startActivity(intent);
-            }
-        });
-
+        loadFragment(fragments.get(idx));
 
     }
 
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        Log.d(TAG, "IDX "+String.valueOf(idx));
+        outState.putInt("FRAG_INDEX", idx);
+
+    }
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -79,10 +74,12 @@ public class MainActivity extends AppCompatActivity {
             switch (item.getItemId()) {
                 case R.id.navigation_start:
                     fragment = new main_start();
+                    idx=0;
                     loadFragment(fragment);
                     return true;
                 case R.id.navigation_history:
                     fragment = new main_history();
+                    idx=1;
                     loadFragment(fragment);
                     return true;
             }
@@ -92,14 +89,10 @@ public class MainActivity extends AppCompatActivity {
 
     private void loadFragment(Fragment fragment) {
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.navigation_start, fragment);
+        transaction.replace(R.id.frame_container, fragment);
         transaction.addToBackStack(null);
         transaction.commit();
     }
-
-
-
-
 
 
 
@@ -116,7 +109,6 @@ public class MainActivity extends AppCompatActivity {
         switch (item.getItemId())
         {
             case R.id.action_settings:
-
 
                 return true;
 
