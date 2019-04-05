@@ -9,7 +9,6 @@
         android:id="@+id/edit_text"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:padding="5dp" />
-
-
+        android:inputType="numberDecimal"
+        android:layout_marginLeft="8dp" />
 </LinearLayout>
