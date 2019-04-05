@@ -28,7 +28,7 @@ public class MainActivity extends AppCompatActivity {
     private ArrayList<Fragment> fragments;
     private ViewPager viewPager;
     private ActionTabsViewPagerAdapter myViewPageAdapter;
-
+    private MenuItem prevMenuItem;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,11 +54,6 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-
-
-
-
-
         mbottom_tab = findViewById(R.id.bottom_navigation);
         mbottom_tab.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
@@ -69,6 +64,31 @@ public class MainActivity extends AppCompatActivity {
         Log.d(TAG, "Creaet IDX "+String.valueOf(idx));
 
 //        loadFragment(fragments.get(idx));
+
+
+
+        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                if (prevMenuItem != null)
+                    prevMenuItem.setChecked(false);
+                else
+                    mbottom_tab.getMenu().getItem(0).setChecked(false);
+
+                mbottom_tab.getMenu().getItem(position).setChecked(true);
+                prevMenuItem = mbottom_tab.getMenu().getItem(position);
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
 
     }
 
@@ -92,11 +112,13 @@ public class MainActivity extends AppCompatActivity {
                 case R.id.navigation_start:
                     fragment = new main_start();
                     idx=0;
+                    viewPager.setCurrentItem(0);
                     //loadFragment(fragment);
                     return true;
                 case R.id.navigation_history:
                     fragment = new main_history();
                     idx=1;
+                    viewPager.setCurrentItem(1);
                     //loadFragment(fragment);
                     return true;
             }
