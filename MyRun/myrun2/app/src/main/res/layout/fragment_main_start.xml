@@ -84,8 +84,11 @@
                 android:layout_height="215dp"
                 android:layout_gravity="end|bottom"
                 android:layout_marginTop="220dp"
-                android:src="@drawable/crop__ic_done"
-                app:backgroundTint="@color/colorAccent" />
+                android:layout_marginRight="10dp"
+                android:layout_marginBottom="20dp"
+                android:src="@android:drawable/ic_media_play"
+                app:backgroundTint="@color/colorAccent"
+                app:rippleColor="@color/colorWhite" />
         </LinearLayout>
 
     </LinearLayout>

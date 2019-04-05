@@ -19,11 +19,10 @@ tools:context="com.example.myrun2.Manal_Entry">
         android:theme="@style/lightTheme"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Dark" />
 
-
-
-
-
-
+    <ListView
+        android:id="@+id/manual_listview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 
 
 </LinearLayout>
