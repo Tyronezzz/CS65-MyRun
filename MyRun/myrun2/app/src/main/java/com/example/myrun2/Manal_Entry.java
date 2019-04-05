@@ -1,11 +1,13 @@
 package com.example.myrun2;
 
 import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.InputType;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,6 +15,7 @@ import android.widget.AdapterView;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TimePicker;
 
 import java.util.Calendar;
 import java.util.Objects;
@@ -36,89 +39,117 @@ public class Manal_Entry extends AppCompatActivity {
         setSupportActionBar(myToolbar);
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);   // set up the tool bar
 
-
-
-        ListAdapter la = new ListAdapter(this, mOptions, mResults);
+        final ListAdapter la = new ListAdapter(this, mOptions, mResults);
         mlistView = findViewById(R.id.manual_listview);
         mlistView.setAdapter(la);
 
-
         mlistView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Log.d(TAG, String.valueOf(position));
 
                 switch (position){
                     case 1:
-                        onDateClick();
-                         break;
+                        onDateClick(la);
+                        break;
+
+                    case 2:
+                        onTimeClick(la);
+                        break;
 
                     case 3:
                     case 4:
-                        AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(Manal_Entry.this);
-                        builder.setTitle(mOptions[position]);
-                        View viewInflated = LayoutInflater.from(getApplicationContext()).inflate(R.layout.input_dialog, null);
-                        final EditText input =  viewInflated.findViewById(R.id.edit_text);
-                        builder.setView(viewInflated);
-
-                        builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.dismiss();
-                                String m_Text = input.getText().toString();
-                                mResults[position] = m_Text;
-
-                            }
-                        });
-                        builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.cancel();
-                            }
-                        });
-
-                        builder.show();
-                        break;
-
                     case 5:
                     case 6:
-
+                    case 7:
+                        showDiaglog(position);
                         break;
 
                     default:
                         break;
-
-
-
-
                 }
-
 
             }
         });
 
     }
 
-    public void onDateClick() {
-
+    public void onDateClick(final ListAdapter la) {
         DatePickerDialog.OnDateSetListener mDateListener = new DatePickerDialog.OnDateSetListener() {
             public void onDateSet(DatePicker view, int year, int month,
                                   int day) {
                 mDateTime.set(Calendar.YEAR, year);
                 mDateTime.set(Calendar.MONTH, month);
                 mDateTime.set(Calendar.DAY_OF_MONTH, day);
-//                String tmp = DateUtils.formatDateTime(getApplicationContext(),
-//                        mDateTime.getTimeInMillis(), DateUtils.FORMAT_SHOW_DATE
-//                                | DateUtils.FORMAT_SHOW_TIME);
-                Log.d(TAG,  String.valueOf(year));
+
+                mResults[1] = String.valueOf(year) + "-" + String.valueOf(month+1) + "-" + String.valueOf(day);
+                la.notifyDataSetChanged();
             }
         };
         new DatePickerDialog(Manal_Entry.this, mDateListener,
                 mDateTime.get(Calendar.YEAR),
                 mDateTime.get(Calendar.MONTH),
                 mDateTime.get(Calendar.DAY_OF_MONTH)).show();
-
     }
 
+    private void onTimeClick(final ListAdapter la) {
+        TimePickerDialog.OnTimeSetListener mTimeListener = new TimePickerDialog.OnTimeSetListener() {
+            public void onTimeSet(TimePicker view, int hour, int minute) {
+                mDateTime.set(Calendar.HOUR_OF_DAY, hour);
+                mDateTime.set(Calendar.MINUTE, minute);
+                mResults[2] = String.valueOf(hour) + ":" + String.valueOf(minute);
+                la.notifyDataSetChanged();
+            }
+        };
+
+        new TimePickerDialog(Manal_Entry.this, mTimeListener,
+                mDateTime.get(Calendar.HOUR_OF_DAY),
+                mDateTime.get(Calendar.MINUTE), true).show();
+    }
+
+
+    private void showDiaglog(final int position)
+    {
+        AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(Manal_Entry.this);
+        builder.setTitle(mOptions[position]);
+        View viewInflated = LayoutInflater.from(getApplicationContext()).inflate(R.layout.input_dialog, null);
+        final EditText input =  viewInflated.findViewById(R.id.edit_text);
+
+        if(position==5 || position == 6)
+            input.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_VARIATION_NORMAL);
+
+        if(position == 7)
+            input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_AUTO_COMPLETE);
+
+        builder.setView(viewInflated);
+
+        builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+                String tmp_txt = input.getText().toString();
+                if(position != 7)
+                {
+                    String[] arrOfStr = mResults[position].split("\\s+");
+                    mResults[position] = tmp_txt + " " + arrOfStr[1];
+                }
+
+                else
+                {
+                    mResults[position] = tmp_txt;
+                }
+
+                dialog.dismiss();
+            }
+        });
+        builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+
+        builder.show();
+    }
 
 }

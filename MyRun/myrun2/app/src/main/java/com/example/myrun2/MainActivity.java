@@ -6,6 +6,7 @@
 
 package com.example.myrun2;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
@@ -53,7 +54,6 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-
         mbottom_tab = findViewById(R.id.bottom_navigation);
         mbottom_tab.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
@@ -64,8 +64,6 @@ public class MainActivity extends AppCompatActivity {
         Log.d(TAG, "Creaet IDX "+String.valueOf(idx));
 
 //        loadFragment(fragments.get(idx));
-
-
 
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
@@ -135,7 +133,6 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {            // Inflate the menu
         getMenuInflater().inflate(R.menu.mainactivity_menu, menu);
@@ -144,19 +141,21 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-
+        Intent intent;
         switch (item.getItemId())
         {
             case R.id.action_settings:
-
+                intent = new Intent(MainActivity.this, Settings.class);
+                startActivity(intent);
                 return true;
 
             case R.id.action_edit_profile:
+                intent = new Intent(MainActivity.this, ProfileActivity.class);
+                startActivity(intent);
                 return true;
 
             default:
                 return super.onOptionsItemSelected(item);
         }
-
     }
 }

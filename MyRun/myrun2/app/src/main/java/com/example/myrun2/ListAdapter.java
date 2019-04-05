@@ -1,6 +1,7 @@
 package com.example.myrun2;
 
 import android.app.Activity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +12,7 @@ import androidx.annotation.NonNull;
 
 public class ListAdapter extends ArrayAdapter {
 
+    private static final String TAG = "ListAdapter";
     private final Activity context;
     private final String[] Options;
     private final String[] Results;
@@ -24,6 +26,27 @@ public class ListAdapter extends ArrayAdapter {
         this.Results = infoArrayParam;
 
     }
+
+//    public void setDate(String mdate)
+//    {
+//        this.Results[1] = mdate;
+//        LayoutInflater inflater=context.getLayoutInflater();
+//        View rowView = inflater.inflate(R.layout.listview_row, null,true);
+//
+//        TextView mResultsView =  rowView.findViewById(R.id.manual_result);
+//        mResultsView.setText(Results[1]);
+//        Log.d(TAG, "set??");
+//
+//    }
+
+//    @Override
+//    public boolean isEnabled(int position) {
+//        if(position == 0)
+//            return false;
+//
+//        return true;
+//    }
+
 
     @NonNull
     @Override
@@ -39,6 +62,7 @@ public class ListAdapter extends ArrayAdapter {
         mOPtionsView.setText(Options[position]);
         mResultsView.setText(Results[position]);
 
+        Log.d(TAG, "here??");
         return rowView;
 
     }
