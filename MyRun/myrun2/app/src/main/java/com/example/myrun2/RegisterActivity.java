@@ -38,6 +38,7 @@ import com.soundcloud.android.crop.Crop;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Objects;
 
 import androidx.exifinterface.media.ExifInterface;
@@ -46,31 +47,31 @@ import static java.lang.System.currentTimeMillis;
 
 public class RegisterActivity extends AppCompatActivity {
 
-    private static final String TAG = "RegisterActivity.lfcyc";
-    private static final String IS_TAKEN_CAMERA_KEY = "is_taken_camera";
-    private static final String IS_FIRST = "is_FIRST";
-    private static final String URI_INSTANCE_STATE_KEY = "saved_uri";
+    public static final String TAG = "RegisterActivity.lfcyc";
+    public static final String IS_TAKEN_CAMERA_KEY = "is_taken_camera";
+    public static final String IS_FIRST = "is_FIRST";
+    public static final String URI_INSTANCE_STATE_KEY = "saved_uri";
 
-    private AutoCompleteTextView mNameView;
-    private RadioGroup mGender;
-    private AutoCompleteTextView mEmailView;
-    private EditText mPasswordView;
-    private AutoCompleteTextView mPhone;
-    private AutoCompleteTextView mMajor;
-    private AutoCompleteTextView mClass;
+    protected AutoCompleteTextView mNameView;
+    protected RadioGroup mGender;
+    protected AutoCompleteTextView mEmailView;
+    protected EditText mPasswordView;
+    protected AutoCompleteTextView mPhone;
+    protected AutoCompleteTextView mMajor;
+    protected AutoCompleteTextView mClass;
 
-    private Uri mImageCaptureUri;
-    private ImageView mImageView;
-    private boolean isTakenFromCamera;
-    private Bitmap rotatedBitmap;
+    protected ImageView mImageView;
+    protected Uri mImageCaptureUri;
+    protected boolean isTakenFromCamera;
+    protected Bitmap rotatedBitmap;
 
     public static final int REQUEST_CODE_TAKE_FROM_CAMERA = 2;
-    private static final int INITIAL_REQUEST= 0;
-    private static final int CHECK_CAMERA_REQUEST = 1;
+    public static final int INITIAL_REQUEST= 0;
+    public static final int CHECK_CAMERA_REQUEST = 1;
     //private static final int CHECK_STORAGE_REQUEST = 2;
     SharedPreferences sharedPreferences;
     SharedPreferences.Editor editor;
-    private boolean isFirst = true;
+    protected boolean isFirst = true;
 
 
     @Override
@@ -126,7 +127,7 @@ public class RegisterActivity extends AppCompatActivity {
                 return true;
 
             case R.id.action_register:
-                attemptRegister();
+                checkValid();
                 return true;
 
             default:
@@ -134,9 +135,10 @@ public class RegisterActivity extends AppCompatActivity {
         }
     }
 
-    // attempt to register
-    private void attemptRegister() {
-        // Reset errors.
+
+    protected void checkValid()
+    {
+// Reset errors.
         mNameView.setError(null);
         mEmailView.setError(null);
         mPasswordView.setError(null);
@@ -200,6 +202,23 @@ public class RegisterActivity extends AppCompatActivity {
         if(!tmp.isEmpty())
             Dclass= Integer.valueOf(tmp);
 
+        ArrayList<String> putstr = new ArrayList<String>();
+        putstr.add(name);
+        putstr.add(email);
+        putstr.add(password);
+        putstr.add(phone);
+        putstr.add(major);
+
+        ArrayList<Integer> putint = new ArrayList<Integer>();
+        putint.add(Dclass);
+        putint.add(gender);
+
+        attemptRegister(cancel, focusView, putstr, putint);
+    }
+
+
+    // attempt to register
+    protected void attemptRegister(boolean cancel, View focusView, ArrayList<String> putstr, ArrayList<Integer> putint) {
 
         if (cancel) {
             focusView.requestFocus();
@@ -208,13 +227,13 @@ public class RegisterActivity extends AppCompatActivity {
             sharedPreferences = getSharedPreferences("profile", Context.MODE_PRIVATE);       //store the profile in the sharedpreference
             editor = sharedPreferences.edit();
             editor.clear();
-            editor.putString("key_name", name);
-            editor.putString("key_email", email);
-            editor.putString("key_password", password);
-            editor.putString("key_phone", phone);
-            editor.putString("key_major", major);
-            editor.putInt("key_class", Dclass);
-            editor.putInt("key_gender", gender);
+            editor.putString("key_name", putstr.get(0));
+            editor.putString("key_email", putstr.get(1));
+            editor.putString("key_password", putstr.get(2));
+            editor.putString("key_phone", putstr.get(3));
+            editor.putString("key_major", putstr.get(4));
+            editor.putInt("key_class", putint.get(0));
+            editor.putInt("key_gender", putint.get(1));
             editor.apply();
             saveSnap();
             Toast.makeText(this,"Successfully Registered", Toast.LENGTH_LONG).show();
@@ -223,11 +242,11 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
 
-    private boolean isEmailValid(String email) {
+    public boolean isEmailValid(String email) {
         return email.contains("@");
     }
 
-    private boolean isPasswordValid(String password) {
+    public boolean isPasswordValid(String password) {
         return password.length() >= 6;
     }
 
@@ -264,7 +283,7 @@ public class RegisterActivity extends AppCompatActivity {
         }
     }
 
-    private void checkCameraPermission() {        // check permissions for camera
+    public void checkCameraPermission() {        // check permissions for camera
         if (checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED)
         {
             requestPermissions(new String[]{Manifest.permission.CAMERA}, CHECK_CAMERA_REQUEST);
@@ -277,14 +296,14 @@ public class RegisterActivity extends AppCompatActivity {
 //        }
 //    }
 
-    private void checkPermissions() {       // check permissions for storage and camera
+    public void checkPermissions() {       // check permissions for storage and camera
         if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED
                 || checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
             requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA}, INITIAL_REQUEST);
         }
     }
 
-    private void startCamera()
+    public void startCamera()
     {
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 //        ContentValues values = new ContentValues(1);
@@ -384,7 +403,7 @@ public class RegisterActivity extends AppCompatActivity {
         }
     }
 
-    private void beginCrop(Uri source) {
+    public void beginCrop(Uri source) {
 
         try{
             String tmp = getExternalCacheDir() +"/"+ String.valueOf(currentTimeMillis()) + "photo.jpg";
@@ -397,7 +416,7 @@ public class RegisterActivity extends AppCompatActivity {
         }
     }
 
-    private void handleCrop(int resultCode, Intent result) {
+    public void handleCrop(int resultCode, Intent result) {
 
         if (resultCode == RESULT_OK) {
             Uri uri = Crop.getOutput(result);
@@ -415,7 +434,7 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
 
-    private void saveSnap() {
+    public void saveSnap() {
 
         if(checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)    // check permission to determine whether save in phone
         {
@@ -435,7 +454,7 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
 
-    private void loadSnap() {
+    public void loadSnap() {
         // Load profile photo from internal storage
         if(!isTakenFromCamera)
             mImageView.setImageResource(R.drawable.ic_launcher);
@@ -455,7 +474,7 @@ public class RegisterActivity extends AppCompatActivity {
 
     // code to handle image orientation issue -- sometimes the orientation is not right on the imageview
     // https://github.com/jdamcd/android-crop/issues/258
-    private Bitmap imageOreintationValidator(Bitmap bitmap, String path) {
+    public Bitmap imageOreintationValidator(Bitmap bitmap, String path) {
         ExifInterface ei;
         try {
             ei = new ExifInterface(path);
@@ -489,7 +508,7 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
 
-    private Bitmap rotateImage(Bitmap source, float angle) {     // rotate the img
+    public Bitmap rotateImage(Bitmap source, float angle) {     // rotate the img
         Matrix matrix = new Matrix();
         matrix.postRotate(angle);
         return Bitmap.createBitmap(source, 0, 0, source.getWidth(), source.getHeight(),

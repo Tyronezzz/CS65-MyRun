@@ -88,14 +88,22 @@ public class Settings extends AppCompatActivity {
                         else
                         {
                             Log.d(TAG, String.valueOf(mswitch.isChecked()));
-                            mswitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                                    // do something, the isChecked will be
-                                    // true if the switch is in the On position
 
-                                    mswitch.setChecked(isChecked);
+                            mswitch.setChecked(!mswitch.isChecked());
+                            mswitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                                @Override public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+
                                 }
                             });
+
+//                            mswitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+//                                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+//                                    // do something, the isChecked will be
+//                                    // true if the switch is in the On position
+//
+//                                    mswitch.setChecked(isChecked);
+//                                }
+//                            });
                         }
 
                         break;

@@ -4,10 +4,10 @@
 
     <item
         android:id="@+id/navigation_start"
-        android:icon="@drawable/ic_launcher"
         android:title="@string/start" />
     <item
         android:id="@+id/navigation_history"
+        android:icon="@android:drawable/ic_menu_recent_history"
         android:title="@string/history"
         android:iconTint="@color/design_default_color_primary_dark"/>
 
