@@ -7,20 +7,23 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
 public class main_start extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
+    private static final String ACT_IDX = "act_idx";
+    private static final String ISFIRST = "isfirst";
+    private static final String TAG = "Main_Start.lifecyc";
 
-    // TODO: Rename and change types of parameters
+
     private String mParam1;
     private String mParam2;
 
@@ -28,7 +31,8 @@ public class main_start extends Fragment {
     private Spinner mspinner_input;
     private Spinner mspinner_act;
     private FloatingActionButton mfab;
-
+    private int act_idx = 0;
+    private boolean isFirst = true;
 
     public main_start() {
         // Required empty public constructor
@@ -60,6 +64,9 @@ public class main_start extends Fragment {
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
 
+        if(isFirst)
+            isFirst = false;
+
     }
 
     @Override
@@ -78,20 +85,102 @@ public class main_start extends Fragment {
         mspinner_input.setAdapter(adapter);     // Apply the adapter to the spinner
 
 
-        ArrayAdapter<CharSequence> adapter2 = ArrayAdapter.createFromResource(getContext(),
+        final ArrayAdapter<CharSequence> adapter2 = ArrayAdapter.createFromResource(getContext(),
                 R.array.act_type, android.R.layout.simple_spinner_item);
         adapter2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);      // Specify the layout to use when the list of choices appears
         mspinner_act.setAdapter(adapter2);     // Apply the adapter to the spinner
 
 
+
+        if(savedInstanceState != null)
+        {
+            act_idx = savedInstanceState.getInt(ACT_IDX, 0);
+            isFirst = savedInstanceState.getBoolean(ISFIRST, true);
+        }
+
+
+        mspinner_input.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+                String tmp = mspinner_input.getSelectedItem().toString();
+
+                mspinner_act.setSelection(act_idx);
+                Log.d(TAG, "now" + act_idx);
+
+
+                if(tmp.equals("Automatic"))
+                {
+                    mspinner_act.setEnabled(false);
+                    mspinner_act.setClickable(false);
+                    mspinner_act.setAdapter(adapter2);
+                }
+
+                else
+                {
+                    mspinner_act.setEnabled(true);
+                    mspinner_act.setClickable(true);
+                    mspinner_act.setAdapter(adapter2);
+
+                }
+
+            }
+
+            public void onNothingSelected(AdapterView<?> adapterView) {
+                return;
+            }
+
+        });
+
+
+        mspinner_act.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+
+                if(!isFirst)
+                {
+                    act_idx = position;
+                    Log.d(TAG, "idx is"+act_idx);
+                }
+
+
+            }
+
+            public void onNothingSelected(AdapterView<?> adapterView) {
+                return;
+            }
+
+        });
+
+
+
+
         mfab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getContext(), Manal_Entry.class);
-                startActivity(intent);
+
+                String text = mspinner_input.getSelectedItem().toString();
+                Intent intent;
+                if(text.equals("Manual"))
+                {
+                    intent = new Intent(getContext(), Manal_Entry.class);
+                    startActivity(intent);
+                }
+
+                else
+                {
+                    intent = new Intent(getContext(), MapActivity.class);
+                    startActivity(intent);
+                }
             }
         });
+    }
 
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        act_idx = mspinner_act.getSelectedItemPosition();
+        outState.putInt(ACT_IDX, act_idx);
+        outState.putBoolean(ISFIRST, isFirst);
 
     }
 

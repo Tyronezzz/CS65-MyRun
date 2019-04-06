@@ -44,6 +44,7 @@
         android:layout_height="match_parent"
         android:layout_marginRight="20dp"
         android:layout_weight="1"
+        android:id="@+id/myswitch"
         android:gravity="center_vertical" />
 
 </LinearLayout>

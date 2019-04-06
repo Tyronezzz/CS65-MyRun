@@ -17,9 +17,13 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar"
         tools:ignore="AllowBackup,GoogleAppIndexingWarning">
-        <activity android:name=".ProfileActivity"
+        <activity android:name=".MapActivity"
+            android:label="Map"
             android:parentActivityName=".MainActivity">
         </activity>
+        <activity
+            android:name=".ProfileActivity"
+            android:parentActivityName=".MainActivity"></activity>
         <activity
             android:name=".Settings"
             android:label="Settings"

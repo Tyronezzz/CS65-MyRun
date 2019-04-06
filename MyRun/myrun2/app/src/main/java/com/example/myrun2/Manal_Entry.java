@@ -39,7 +39,7 @@ public class Manal_Entry extends AppCompatActivity {
         setSupportActionBar(myToolbar);
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);   // set up the tool bar
 
-        final ListAdapter la = new ListAdapter(this, mOptions, mResults);
+        final ListAdapter la = new ListAdapter(this, mOptions, mResults, 9);
         mlistView = findViewById(R.id.manual_listview);
         mlistView.setAdapter(la);
 
