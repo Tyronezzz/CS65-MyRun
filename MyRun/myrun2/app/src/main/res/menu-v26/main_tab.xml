@@ -4,6 +4,9 @@
 
     <item
         android:id="@+id/navigation_start"
+        android:icon="@drawable/start_icon"
+        android:showAsAction="always"
+        android:iconTint="@color/design_default_color_primary_dark"
         android:title="@string/start" />
     <item
         android:id="@+id/navigation_history"
