@@ -3,8 +3,10 @@ package edu.dartmouth.cs.actiontabs;
 import android.app.Fragment;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +21,7 @@ import android.widget.ToggleButton;
 
 public class FindFragment extends Fragment {
 
+    private static final String TAG = "Find.lifecyc";
     SharedPreferences prefs;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -44,7 +47,12 @@ public class FindFragment extends Fragment {
                 String birthDate=birthDateView.getText().toString();
                 int genderId= genderView.getCheckedRadioButtonId();
                 RadioButton radioButton = (RadioButton)genderView.findViewById(genderId);
-                String gender=((RadioButton)genderView.findViewById(genderId)).getText().toString();
+
+//                Log.d(TAG, "hrer"+genderId);
+                String gender = "";
+                if(genderId!=-1)
+                    gender=((RadioButton)genderView.findViewById(genderId)).getText().toString();
+
                 float rating= ratingBar.getRating();
                 boolean phoneOff= cellPhoneButton.isChecked();
                 boolean aForElse= checkBox.isChecked();
@@ -61,6 +69,9 @@ public class FindFragment extends Fragment {
         });
     }
     private void saveRecords(String email,String phone,String gender,String birthDate,float rating,boolean phoneOff, boolean aForElse){
+
+
+        prefs = getActivity().getSharedPreferences("PROFILE", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString("email", email);
         editor.putString("phone", phone);
