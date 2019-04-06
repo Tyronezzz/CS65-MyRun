@@ -26,9 +26,7 @@ public class MainActivity extends AppCompatActivity {
 
     private BottomNavigationView mbottom_tab;
     private int idx = 0;
-    private ArrayList<Fragment> fragments;
     private ViewPager viewPager;
-    private ActionTabsViewPagerAdapter myViewPageAdapter;
     private MenuItem prevMenuItem;
 
     @Override
@@ -39,7 +37,7 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(myToolbar);
 
 
-        fragments = new ArrayList<Fragment>();
+        ArrayList<Fragment> fragments = new ArrayList<>();
         fragments.add(new main_start());
         fragments.add(new main_history());
 
@@ -47,7 +45,7 @@ public class MainActivity extends AppCompatActivity {
         // create a fragment list in order.
         // use FragmentPagerAdapter to bind the TabLayout (tabs with different titles)
         // and ViewPager (different pages of fragment) together.
-        myViewPageAdapter =new ActionTabsViewPagerAdapter(this.getSupportFragmentManager(),
+        ActionTabsViewPagerAdapter myViewPageAdapter = new ActionTabsViewPagerAdapter(this.getSupportFragmentManager(),
                 fragments);
         // add the PagerAdapter to the viewPager
         viewPager.setAdapter(myViewPageAdapter);

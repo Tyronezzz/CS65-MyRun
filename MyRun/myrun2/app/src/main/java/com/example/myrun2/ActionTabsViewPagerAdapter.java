@@ -17,12 +17,12 @@ public class ActionTabsViewPagerAdapter extends FragmentPagerAdapter {
     private static final String TAG = ActionTabsViewPagerAdapter.class.getSimpleName();
     private ArrayList<Fragment> fragments;
 
-    public static final int START = 0;
-    public static final int HISTORY = 1;
-    public static final String UI_TAB_START = "START";
-    public static final String UI_TAB_HISTORY = "HISTORY";
+    private static final int START = 0;
+    private static final int HISTORY = 1;
+    private static final String UI_TAB_START = "START";
+    private static final String UI_TAB_HISTORY = "HISTORY";
 
-    public ActionTabsViewPagerAdapter(FragmentManager fm, ArrayList<Fragment> fragments){
+    ActionTabsViewPagerAdapter(FragmentManager fm, ArrayList<Fragment> fragments){
         super(fm);
         this.fragments = fragments;
     }

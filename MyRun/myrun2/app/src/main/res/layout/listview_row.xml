@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical">
@@ -13,8 +14,9 @@
         android:layout_weight="1"
         android:layout_marginTop="14dp"
         android:layout_marginBottom="14dp"
-        android:layout_marginLeft="10dp"
-        android:gravity="center_vertical">
+        android:layout_marginStart="10dp"
+        android:gravity="center_vertical"
+        tools:ignore="InefficientWeight,UselessParent">
 
         <TextView
             android:id="@+id/manual_option"
@@ -22,14 +24,14 @@
             android:layout_height="wrap_content"
             android:textSize="20sp"
             android:textStyle="bold"
-            android:text="Test" />
+            android:text="@string/test" />
 
         <TextView
             android:id="@+id/manual_result"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="15sp"
-            android:text="test" />
+            android:text="@string/test" />
     </LinearLayout>
 
 </LinearLayout>

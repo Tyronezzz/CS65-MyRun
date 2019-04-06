@@ -1,5 +1,6 @@
 package com.example.myrun2;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -21,12 +22,9 @@ import java.util.Objects;
 public class Settings extends AppCompatActivity {
     private static final String TAG = "Settings.lifecycle";
     private static final String IDX = "idx";
-    private ListView mlistView;
-    private ListView mlistView2;
-    private ListView mlistView3;
-    private int REQUEST_SETTING = 0;
-    private int REQUEST_PREFERENCE = 1;
-    private int REQUEST_SIGNOUT = 2;
+    public int REQUEST_SETTING = 0;
+    public int REQUEST_PREFERENCE = 1;
+    public int REQUEST_SIGNOUT = 2;
     private String[] values = {"Metric(Kilometers)", "Imperial(Miles)"};
     private Switch mswitch;
     AlertDialog alertDialog1;
@@ -34,11 +32,8 @@ public class Settings extends AppCompatActivity {
     SharedPreferences sharedPreferences;
     SharedPreferences.Editor editor;
 
-
-
     String[] moptions ={"Unit Preference", "Webpage"};
     String[] mresults = {"Select the unit", "https://www.cs.dartmouth.edu/~campbell/cs65/cs65.html"};
-    private boolean isSelect = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,24 +48,25 @@ public class Settings extends AppCompatActivity {
         if(savedInstanceState != null)
             idx = savedInstanceState.getInt(IDX, 0);
 
+        boolean isSelect = false;
         final ListAdapter la = new ListAdapter(this, new String[]{"Privacy Setting"}, new String[]{"Posting your records anonymously"}, isSelect, REQUEST_SETTING);
-        mlistView = findViewById(R.id.app_setting_listview);
+        ListView mlistView = findViewById(R.id.app_setting_listview);
         mlistView.setAdapter(la);
         la.notifyDataSetChanged();
 
         final ListAdapter la2 = new ListAdapter(this, moptions, mresults, REQUEST_PREFERENCE);
-        mlistView2 = findViewById(R.id.app_setting_listview2);
+        ListView mlistView2 = findViewById(R.id.app_setting_listview2);
         mlistView2.setAdapter(la2);
         la2.notifyDataSetChanged();
 
         final ListAdapter la3 = new ListAdapter(this, new String[]{"Sign Out"}, new String[]{""}, REQUEST_SIGNOUT);
-        mlistView3 = findViewById(R.id.app_setting_listview3);
+        ListView mlistView3 = findViewById(R.id.app_setting_listview3);
         mlistView3.setAdapter(la3);
         la3.notifyDataSetChanged();
 
 
 
-        View inflatedView = getLayoutInflater().inflate(R.layout.listview_row_clip_btn, null);
+        @SuppressLint("InflateParams") View inflatedView = getLayoutInflater().inflate(R.layout.listview_row_clip_btn, null);
         mswitch =  inflatedView.findViewById(R.id.myswitch);
 
 

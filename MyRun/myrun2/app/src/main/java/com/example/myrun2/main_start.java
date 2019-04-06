@@ -67,6 +67,14 @@ public class main_start extends Fragment {
         if(isFirst)
             isFirst = false;
 
+        if(savedInstanceState != null)
+        {
+            act_idx = savedInstanceState.getInt(ACT_IDX);
+            isFirst = savedInstanceState.getBoolean(ISFIRST, true);
+            Log.d(TAG, "notnull ");
+        }
+        Log.d(TAG, "now "+act_idx);
+
     }
 
     @Override
@@ -92,35 +100,27 @@ public class main_start extends Fragment {
 
 
 
-        if(savedInstanceState != null)
-        {
-            act_idx = savedInstanceState.getInt(ACT_IDX, 0);
-            isFirst = savedInstanceState.getBoolean(ISFIRST, true);
-        }
-
+        mspinner_act.setSelection(act_idx);
 
         mspinner_input.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
                 String tmp = mspinner_input.getSelectedItem().toString();
 
-                mspinner_act.setSelection(act_idx);
-                Log.d(TAG, "now" + act_idx);
-
-
+//                mspinner_act.setSelection(act_idx);
+//                Log.d(TAG, "now" + act_idx);
+//
+//
                 if(tmp.equals("Automatic"))
                 {
                     mspinner_act.setEnabled(false);
                     mspinner_act.setClickable(false);
-                    mspinner_act.setAdapter(adapter2);
                 }
 
                 else
                 {
                     mspinner_act.setEnabled(true);
                     mspinner_act.setClickable(true);
-                    mspinner_act.setAdapter(adapter2);
-
                 }
 
             }
@@ -176,13 +176,16 @@ public class main_start extends Fragment {
     }
 
     @Override
-    public void onSaveInstanceState(@NonNull Bundle outState) {
+    public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         act_idx = mspinner_act.getSelectedItemPosition();
         outState.putInt(ACT_IDX, act_idx);
         outState.putBoolean(ISFIRST, isFirst);
 
+        Log.d(TAG, "called"+act_idx);
+
     }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,

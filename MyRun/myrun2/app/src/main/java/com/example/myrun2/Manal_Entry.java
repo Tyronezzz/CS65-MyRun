@@ -1,5 +1,6 @@
 package com.example.myrun2;
 
+import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.DialogInterface;
@@ -26,7 +27,6 @@ public class Manal_Entry extends AppCompatActivity {
     private static final String TAG = "Manual_entry";
     String[] mOptions = {"Activity","Date","Time","Duration","Distance","Calorie", "Heartbeat","Comment"};
     String[] mResults = {"Manual", "2019-01-01", "10:10", "0 mins", "0 kms", "0 cals", "0 bpm", " "};
-    private ListView mlistView;
     private Calendar mDateTime = Calendar.getInstance();
 
 
@@ -40,7 +40,7 @@ public class Manal_Entry extends AppCompatActivity {
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);   // set up the tool bar
 
         final ListAdapter la = new ListAdapter(this, mOptions, mResults, 9);
-        mlistView = findViewById(R.id.manual_listview);
+        ListView mlistView = findViewById(R.id.manual_listview);
         mlistView.setAdapter(la);
 
         mlistView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -112,7 +112,7 @@ public class Manal_Entry extends AppCompatActivity {
     {
         AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(Manal_Entry.this);
         builder.setTitle(mOptions[position]);
-        View viewInflated = LayoutInflater.from(getApplicationContext()).inflate(R.layout.input_dialog, null);
+        @SuppressLint("InflateParams") View viewInflated = LayoutInflater.from(getApplicationContext()).inflate(R.layout.input_dialog, null);
         final EditText input =  viewInflated.findViewById(R.id.edit_text);
 
         if(position==5 || position == 6)

@@ -1,5 +1,6 @@
 package com.example.myrun2;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -20,9 +21,7 @@ public class ListAdapter extends ArrayAdapter {
     private String[] setting_descrp;
     private boolean isSelect;
     private int request_code;
-    private int REQUEST_SETTING = 0;
-    private int REQUEST_PREFERENCE = 1;
-    private int REQUEST_SIGNOUT = 2;
+    //    private int REQUEST_SIGNOUT = 2;
 
 
     ListAdapter(Activity context, String[] setting_opt, String[] setting_des, boolean isSelect, int rc){
@@ -75,7 +74,7 @@ public class ListAdapter extends ArrayAdapter {
         if(context.getLocalClassName().equals("com.example.myrun2.Manal_Entry"))
         {
             LayoutInflater inflater=context.getLayoutInflater();
-            View rowView = inflater.inflate(R.layout.listview_row, null,true);
+            @SuppressLint("InflateParams") View rowView = inflater.inflate(R.layout.listview_row, null,true);
 
             //this code gets references to objects in the listview_row.xml file
             TextView mOPtionsView = rowView.findViewById(R.id.manual_option);
@@ -90,10 +89,12 @@ public class ListAdapter extends ArrayAdapter {
 
         else
         {
+            int REQUEST_SETTING = 0;
+            int REQUEST_PREFERENCE = 1;
             if(request_code == REQUEST_PREFERENCE)
             {
                 LayoutInflater inflater=context.getLayoutInflater();
-                View rowView = inflater.inflate(R.layout.listview_row, null,true);
+                @SuppressLint("InflateParams") View rowView = inflater.inflate(R.layout.listview_row, null,true);
 
                 //this code gets references to objects in the listview_row.xml file
                 TextView mOPtionsView = rowView.findViewById(R.id.manual_option);
@@ -111,7 +112,7 @@ public class ListAdapter extends ArrayAdapter {
             else if(request_code == REQUEST_SETTING)
             {
                 LayoutInflater inflater=context.getLayoutInflater();
-                View rowView = inflater.inflate(R.layout.listview_row_clip_btn, null,true);
+                @SuppressLint("InflateParams") View rowView = inflater.inflate(R.layout.listview_row_clip_btn, null,true);
 
                 //this code gets references to objects in the listview_row.xml file
                 TextView mOPtionsView = rowView.findViewById(R.id.setting_option);
@@ -129,7 +130,7 @@ public class ListAdapter extends ArrayAdapter {
             else
             {
                 LayoutInflater inflater=context.getLayoutInflater();
-                View rowView = inflater.inflate(R.layout.listview_row, null,true);
+                @SuppressLint("InflateParams") View rowView = inflater.inflate(R.layout.listview_row, null,true);
 
                 //this code gets references to objects in the listview_row.xml file
                 TextView mOPtionsView = rowView.findViewById(R.id.manual_option);
