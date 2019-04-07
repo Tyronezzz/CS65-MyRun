@@ -13,7 +13,6 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.CompoundButton;
 import android.widget.ListView;
 import android.widget.Switch;
 
@@ -65,10 +64,10 @@ public class Settings extends AppCompatActivity {
         la3.notifyDataSetChanged();
 
 
-
         @SuppressLint("InflateParams") View inflatedView = getLayoutInflater().inflate(R.layout.listview_row_clip_btn, null);
         mswitch =  inflatedView.findViewById(R.id.myswitch);
-
+//        mswitch.setChecked(true);
+        //mswitch.clearFocus();
 
         mlistView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -85,12 +84,14 @@ public class Settings extends AppCompatActivity {
                         {
                             Log.d(TAG, String.valueOf(mswitch.isChecked()));
 
-                            mswitch.setChecked(!mswitch.isChecked());
-                            mswitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                                @Override public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+//                            mswitch.setChecked(!mswitch.isChecked());
+//                            la2.notifyDataSetChanged();
 
-                                }
-                            });
+//                            mswitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+//                                @Override public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+//
+//                                }
+//                            });
 
 //                            mswitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
 //                                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {

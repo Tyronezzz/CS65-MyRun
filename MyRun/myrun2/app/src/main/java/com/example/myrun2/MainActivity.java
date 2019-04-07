@@ -23,11 +23,11 @@ import java.util.ArrayList;
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "MainAct.lifecycle";
-
     private BottomNavigationView mbottom_tab;
     private int idx = 0;
     private ViewPager viewPager;
     private MenuItem prevMenuItem;
+    private main_start ms;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,30 +38,28 @@ public class MainActivity extends AppCompatActivity {
 
 
         ArrayList<Fragment> fragments = new ArrayList<>();
-        fragments.add(new main_start());
+        ms = new main_start();
+        fragments.add(ms);
         fragments.add(new main_history());
 
         viewPager = findViewById(R.id.viewpager);
-        // create a fragment list in order.
-        // use FragmentPagerAdapter to bind the TabLayout (tabs with different titles)
-        // and ViewPager (different pages of fragment) together.
         ActionTabsViewPagerAdapter myViewPageAdapter = new ActionTabsViewPagerAdapter(this.getSupportFragmentManager(),
                 fragments);
-        // add the PagerAdapter to the viewPager
-        viewPager.setAdapter(myViewPageAdapter);
-
+        viewPager.setAdapter(myViewPageAdapter);     // add the PagerAdapter to the viewPager
 
 
         mbottom_tab = findViewById(R.id.bottom_navigation);
         mbottom_tab.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
-        if(savedInstanceState != null)
-        {
-            idx = savedInstanceState.getInt("FRAG_INDEX", 0);
-        }
+//        if(savedInstanceState != null)
+//        {
+//            idx = savedInstanceState.getInt("FRAG_INDEX", 0);
+//
+//            ms = (main_start) getSupportFragmentManager().getFragment(savedInstanceState, "myFragmentName");
+//
+//
+//        }
         Log.d(TAG, "Creaet IDX "+String.valueOf(idx));
-
-//        loadFragment(fragments.get(idx));
 
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
@@ -95,6 +93,7 @@ public class MainActivity extends AppCompatActivity {
 
         Log.d(TAG, "IDX "+String.valueOf(idx));
         outState.putInt("FRAG_INDEX", idx);
+//        getSupportFragmentManager().putFragment(outState, "myFragmentName", ms);
 
     }
 

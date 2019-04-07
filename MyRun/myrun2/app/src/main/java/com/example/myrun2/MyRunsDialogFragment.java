@@ -43,7 +43,7 @@ public class MyRunsDialogFragment extends DialogFragment {
 
         switch (dialog_id)
         {
-            case DIALOG_ID_PHOTO_PICKER_REGISTER:        // take picture from camera
+            case DIALOG_ID_PHOTO_PICKER_REGISTER:        // take picture from camera in register
                 builder = new AlertDialog.Builder(parent);
                 builder.setTitle("Profile Picture Picker");
                 dlistener = new DialogInterface.OnClickListener(){
@@ -58,7 +58,7 @@ public class MyRunsDialogFragment extends DialogFragment {
                 builder.setItems(R.array.ui_profile_photo_picker_items, dlistener);
                 return builder.create();
 
-            case DIALOG_ID_PHOTO_PICKER_PROFILE:        // take picture from camera
+            case DIALOG_ID_PHOTO_PICKER_PROFILE:        // take picture from camera in edit profile
                builder = new AlertDialog.Builder(parent);
                 builder.setTitle("Profile Picture Picker");
                 dlistener = new DialogInterface.OnClickListener(){
