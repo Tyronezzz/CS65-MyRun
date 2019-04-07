@@ -16,7 +16,9 @@ import android.support.v4.app.DialogFragment;
 
 public class MyRunsDialogFragment extends DialogFragment {
 
-    public static final int DIALOG_ID_PHOTO_PICKER = 1;       // dialog IDs
+    public static final int DIALOG_ID_PHOTO_PICKER_REGISTER = 1;       // dialog IDs
+    public static final int DIALOG_ID_PHOTO_PICKER_PROFILE = 2;       // dialog IDs
+
     public static final int ID_PHOTO_PICKER_FROM_CAMERA = 0;    // For photo picker selection:
     public static final int ID_GALLERY_PICKER_FROM_CAMERA = 1;    // For photo picker selection:
     private static final String DIALOG_ID_KEY = "dialog_id";
@@ -36,13 +38,15 @@ public class MyRunsDialogFragment extends DialogFragment {
         assert getArguments() != null;
         int dialog_id = getArguments().getInt(DIALOG_ID_KEY);
         final Activity parent = getActivity();
+        AlertDialog.Builder builder;
+        DialogInterface.OnClickListener dlistener;
 
         switch (dialog_id)
         {
-            case DIALOG_ID_PHOTO_PICKER:        // take picture from camera
-                AlertDialog.Builder builder = new AlertDialog.Builder(parent);
+            case DIALOG_ID_PHOTO_PICKER_REGISTER:        // take picture from camera
+                builder = new AlertDialog.Builder(parent);
                 builder.setTitle("Profile Picture Picker");
-                DialogInterface.OnClickListener dlistener = new DialogInterface.OnClickListener(){
+                dlistener = new DialogInterface.OnClickListener(){
                     public void onClick(DialogInterface dialog, int item)
                     {
                         assert parent != null;
@@ -53,6 +57,22 @@ public class MyRunsDialogFragment extends DialogFragment {
 
                 builder.setItems(R.array.ui_profile_photo_picker_items, dlistener);
                 return builder.create();
+
+            case DIALOG_ID_PHOTO_PICKER_PROFILE:        // take picture from camera
+               builder = new AlertDialog.Builder(parent);
+                builder.setTitle("Profile Picture Picker");
+                dlistener = new DialogInterface.OnClickListener(){
+                    public void onClick(DialogInterface dialog, int item)
+                    {
+                        assert parent != null;
+                        ((ProfileActivity) parent)
+                                .onPhotoPickerItemSelected(item);
+                    }
+                };
+
+                builder.setItems(R.array.ui_profile_photo_picker_items, dlistener);
+                return builder.create();
+
 
             default:
                 return null;

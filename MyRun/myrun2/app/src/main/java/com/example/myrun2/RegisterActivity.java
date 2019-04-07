@@ -66,9 +66,10 @@ public class RegisterActivity extends AppCompatActivity {
     protected Bitmap rotatedBitmap;
 
     public static final int REQUEST_CODE_TAKE_FROM_CAMERA = 2;
+    public static final int REQUEST_CODE_GALLERY = 3;
     public static final int INITIAL_REQUEST= 0;
     public static final int CHECK_CAMERA_REQUEST = 1;
-    //private static final int CHECK_STORAGE_REQUEST = 2;
+//    public static final int CHECK_STORAGE_REQUEST = 2;
     SharedPreferences sharedPreferences;
     SharedPreferences.Editor editor;
     protected boolean isFirst = true;
@@ -197,7 +198,7 @@ public class RegisterActivity extends AppCompatActivity {
             cancel = true;
         }
 
-        int Dclass = 20;
+        int Dclass = -1;
         String tmp = mClass.getText().toString();
         if(!tmp.isEmpty())
             Dclass= Integer.valueOf(tmp);
@@ -253,7 +254,7 @@ public class RegisterActivity extends AppCompatActivity {
 
     // after click the change button, call this function
     public void onChangePhotoClicked(View v) {
-        int id = MyRunsDialogFragment.DIALOG_ID_PHOTO_PICKER;
+        int id = MyRunsDialogFragment.DIALOG_ID_PHOTO_PICKER_REGISTER;
         MyRunsDialogFragment fragment = MyRunsDialogFragment.newInstance(id);
         fragment.show(getSupportFragmentManager(), getString(R.string.dialog_fragment_tag_photo_picker));
     }
@@ -276,6 +277,11 @@ public class RegisterActivity extends AppCompatActivity {
 
             case MyRunsDialogFragment.ID_GALLERY_PICKER_FROM_CAMERA:
                 Log.d(TAG, "gallery");
+                Intent pickPhoto = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                startActivityForResult(pickPhoto, REQUEST_CODE_GALLERY);//one can be replaced with any action code
+
+
+
                 break;
 
             default:
@@ -388,6 +394,7 @@ public class RegisterActivity extends AppCompatActivity {
 
         switch (requestCode) {
             case REQUEST_CODE_TAKE_FROM_CAMERA:    // after taking the pic, begin crop
+            case REQUEST_CODE_GALLERY:
                 beginCrop(mImageCaptureUri);       // Send image taken from camera for cropping
                 break;
 
@@ -406,6 +413,8 @@ public class RegisterActivity extends AppCompatActivity {
     public void beginCrop(Uri source) {
 
         try{
+
+//            Uri destination = Uri.fromFile(new File(getCacheDir(), "cropped"));
             String tmp = getExternalCacheDir() +"/"+ String.valueOf(currentTimeMillis()) + "photo.jpg";
             Uri destination = Uri.fromFile(new File(tmp));   //getCacheDir(), "cropped"
             mImageCaptureUri = destination;
