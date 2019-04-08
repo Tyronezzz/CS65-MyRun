@@ -1,3 +1,9 @@
+/*
+ * @author  Tao Hou
+ * @version 1.0
+ * @since   2019-04-07
+ */
+
 package com.example.myrun2;
 
 import android.annotation.SuppressLint;
@@ -24,7 +30,6 @@ public class Settings extends AppCompatActivity {
     public int REQUEST_SETTING = 0;
     public int REQUEST_PREFERENCE = 1;
     public int REQUEST_SIGNOUT = 2;
-    private String[] values = {"Metric(Kilometers)", "Imperial(Miles)"};
     private Switch mswitch;
     AlertDialog alertDialog1;
     private int idx = 0;
@@ -32,6 +37,7 @@ public class Settings extends AppCompatActivity {
     SharedPreferences.Editor editor;
 
     String[] moptions ={"Unit Preference", "Webpage"};
+    private String[] values = {"Metric(Kilometers)", "Imperial(Miles)"};
     String[] mresults = {"Select the unit", "https://www.cs.dartmouth.edu/~campbell/cs65/cs65.html"};
 
     @Override
@@ -47,17 +53,21 @@ public class Settings extends AppCompatActivity {
         if(savedInstanceState != null)
             idx = savedInstanceState.getInt(IDX, 0);
 
+
+        // set up the Privacy Setting
         boolean isSelect = false;
         final ListAdapter la = new ListAdapter(this, new String[]{"Privacy Setting"}, new String[]{"Posting your records anonymously"}, isSelect, REQUEST_SETTING);
         ListView mlistView = findViewById(R.id.app_setting_listview);
         mlistView.setAdapter(la);
         la.notifyDataSetChanged();
 
+        // set up the Unit Preference and Webpage
         final ListAdapter la2 = new ListAdapter(this, moptions, mresults, REQUEST_PREFERENCE);
         ListView mlistView2 = findViewById(R.id.app_setting_listview2);
         mlistView2.setAdapter(la2);
         la2.notifyDataSetChanged();
 
+        // set up sign out
         final ListAdapter la3 = new ListAdapter(this, new String[]{"Sign Out"}, new String[]{""}, REQUEST_SIGNOUT);
         ListView mlistView3 = findViewById(R.id.app_setting_listview3);
         mlistView3.setAdapter(la3);
@@ -117,12 +127,12 @@ public class Settings extends AppCompatActivity {
                 Log.d(TAG, String.valueOf(position));
                 Intent intent;
                 switch (position){
-                    case 0:
+                    case 0:                 // click unit preference and show the dialog
                         showRadioDialog();
                         break;
 
                     case 1:
-                        intent = new Intent(Intent.ACTION_VIEW, Uri.parse(mresults[1]));
+                        intent = new Intent(Intent.ACTION_VIEW, Uri.parse(mresults[1]));     // jump to the Uri
                         startActivity(intent);
                         break;
                     default:
@@ -137,7 +147,7 @@ public class Settings extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
                 switch (position){
-                    case 0:
+                    case 0:             // click sign out and return the sign in activity
                         Intent intent = new Intent(Settings.this, LoginActivity.class);
                         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                         startActivity(intent);
@@ -165,10 +175,9 @@ public class Settings extends AppCompatActivity {
         final AlertDialog.Builder builder = new AlertDialog.Builder(Settings.this);
         builder.setTitle("Unit Preference");
 
-        builder.setSingleChoiceItems(values, idx, new DialogInterface.OnClickListener() {
+        builder.setSingleChoiceItems(values, idx, new DialogInterface.OnClickListener() {      // set the choice last time
 
-            public void onClick(DialogInterface dialog, int item) {
-
+            public void onClick(DialogInterface dialog, int item) {         // store the choice this time
                 idx = item;
                 sharedPreferences = getSharedPreferences("profile", Context.MODE_PRIVATE);       //store the profile in the sharedpreference
                 editor = sharedPreferences.edit();
@@ -189,6 +198,4 @@ public class Settings extends AppCompatActivity {
         alertDialog1.show();
 
     }
-
-
 }

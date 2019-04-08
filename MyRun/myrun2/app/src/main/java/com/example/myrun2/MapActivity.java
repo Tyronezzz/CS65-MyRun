@@ -1,3 +1,9 @@
+/*
+ * @author  Tao Hou
+ * @version 1.0
+ * @since   2019-04-07
+ */
+
 package com.example.myrun2;
 
 import android.support.v7.app.AppCompatActivity;

@@ -1,3 +1,9 @@
+/*
+ * @author  Tao Hou
+ * @version 1.0
+ * @since   2019-04-07
+ */
+
 package com.example.myrun2;
 
 import android.annotation.SuppressLint;
@@ -11,6 +17,8 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 
+
+// use this class for two listview, one with switch and one without switch
 public class ListAdapter extends ArrayAdapter {
 
     private static final String TAG = "ListAdapter";
@@ -43,7 +51,6 @@ public class ListAdapter extends ArrayAdapter {
     }
 
 
-
 //    public void setDate(String mdate)
 //    {
 //        this.Results[1] = mdate;
@@ -71,7 +78,7 @@ public class ListAdapter extends ArrayAdapter {
 
 
         Log.d(TAG, String.valueOf(position));
-        if(context.getLocalClassName().equals("com.example.myrun2.Manal_Entry"))
+        if(context.getLocalClassName().equals("com.example.myrun2.Manal_Entry"))     // set the listview for Manual Entry Activity
         {
             LayoutInflater inflater=context.getLayoutInflater();
             @SuppressLint("InflateParams") View rowView = inflater.inflate(R.layout.listview_row, null,true);
@@ -87,64 +94,60 @@ public class ListAdapter extends ArrayAdapter {
             return rowView;
         }
 
-        else
+        else              // set up the listview for Setting Activity
         {
             int REQUEST_SETTING = 0;
             int REQUEST_PREFERENCE = 1;
-            if(request_code == REQUEST_PREFERENCE)
+            if(request_code == REQUEST_PREFERENCE)              // listview without switch
             {
                 LayoutInflater inflater=context.getLayoutInflater();
                 @SuppressLint("InflateParams") View rowView = inflater.inflate(R.layout.listview_row, null,true);
 
-                //this code gets references to objects in the listview_row.xml file
                 TextView mOPtionsView = rowView.findViewById(R.id.manual_option);
                 TextView mResultsView =  rowView.findViewById(R.id.manual_result);
 
                 mOPtionsView.setTextSize(17);
                 mResultsView.setTextSize(13);
-                //this code sets the values of the objects to values from the arrays
+
                 mOPtionsView.setText(Options[position]);
                 mResultsView.setText(Results[position]);
 
                 return rowView;
             }
 
-            else if(request_code == REQUEST_SETTING)
+            else if(request_code == REQUEST_SETTING)          // listview with switch
             {
                 LayoutInflater inflater=context.getLayoutInflater();
                 @SuppressLint("InflateParams") View rowView = inflater.inflate(R.layout.listview_row_clip_btn, null,true);
 
-                //this code gets references to objects in the listview_row.xml file
                 TextView mOPtionsView = rowView.findViewById(R.id.setting_option);
                 TextView mResultsView =  rowView.findViewById(R.id.setting_result);
 
                 mOPtionsView.setTextSize(17);
                 mResultsView.setTextSize(13);
-                //this code sets the values of the objects to values from the arrays
+
                 mOPtionsView.setText(setting_option[position]);
                 mResultsView.setText(setting_descrp[position]);
 
                 return rowView;
             }
 
-            else
+            else                                              // sign out
             {
                 LayoutInflater inflater=context.getLayoutInflater();
                 @SuppressLint("InflateParams") View rowView = inflater.inflate(R.layout.listview_row, null,true);
 
-                //this code gets references to objects in the listview_row.xml file
                 TextView mOPtionsView = rowView.findViewById(R.id.manual_option);
                 TextView mResultsView =  rowView.findViewById(R.id.manual_result);
 
                 mOPtionsView.setTextSize(17);
                 mResultsView.setTextSize(0);
-                //this code sets the values of the objects to values from the arrays
+
                 mOPtionsView.setText(Options[position]);
                 mResultsView.setText(Results[position]);
 
                 return rowView;
             }
         }
-
     }
 }

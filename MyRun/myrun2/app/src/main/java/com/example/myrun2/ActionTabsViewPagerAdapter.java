@@ -1,3 +1,10 @@
+/*
+ * @author  Tao Hou
+ * @version 1.0
+ * @since   2019-04-07
+ */
+
+
 package com.example.myrun2;
 
 import android.support.v4.app.Fragment;
@@ -6,12 +13,6 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.util.Log;
 
 import java.util.ArrayList;
-
-// Implementation of PagerAdapter that represents each page as a Fragment that is persistently
-// kept in the fragment manager as long as the user can return to the page.
-// This version of the pager is best for use when there are a handful of typically more static
-// fragments to be paged through, such as a set of tabs. The fragment of each page the user
-// visits will be kept in memory.
 
 public class ActionTabsViewPagerAdapter extends FragmentPagerAdapter {
     private static final String TAG = ActionTabsViewPagerAdapter.class.getSimpleName();

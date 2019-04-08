@@ -37,19 +37,18 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(myToolbar);
 
 
-        ArrayList<Fragment> fragments = new ArrayList<>();
+        ArrayList<Fragment> fragments = new ArrayList<>();     // add fragments to the mainactivity
         ms = new main_start();
         fragments.add(ms);
         fragments.add(new main_history());
 
         viewPager = findViewById(R.id.viewpager);
-        ActionTabsViewPagerAdapter myViewPageAdapter = new ActionTabsViewPagerAdapter(this.getSupportFragmentManager(),
-                fragments);
+        ActionTabsViewPagerAdapter myViewPageAdapter = new ActionTabsViewPagerAdapter(this.getSupportFragmentManager(), fragments);
         viewPager.setAdapter(myViewPageAdapter);     // add the PagerAdapter to the viewPager
 
 
         mbottom_tab = findViewById(R.id.bottom_navigation);
-        mbottom_tab.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+        mbottom_tab.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);   // set up the bottom tab
 
 //        if(savedInstanceState != null)
 //        {
@@ -68,6 +67,12 @@ public class MainActivity extends AppCompatActivity {
             }
 
             @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+
+
+            @Override
             public void onPageSelected(int position) {
                 if (prevMenuItem != null)
                     prevMenuItem.setChecked(false);
@@ -78,10 +83,6 @@ public class MainActivity extends AppCompatActivity {
                 prevMenuItem = mbottom_tab.getMenu().getItem(position);
             }
 
-            @Override
-            public void onPageScrollStateChanged(int state) {
-
-            }
         });
 
     }
@@ -104,29 +105,22 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             switch (item.getItemId()) {
-                case R.id.navigation_start:
+                case R.id.navigation_start:            // click "start" and start fragment
                     fragment = new main_start();
                     idx=0;
                     viewPager.setCurrentItem(0);
-                    //loadFragment(fragment);
                     return true;
-                case R.id.navigation_history:
+
+                case R.id.navigation_history:        // click "history" and start fragment
                     fragment = new main_history();
                     idx=1;
                     viewPager.setCurrentItem(1);
-                    //loadFragment(fragment);
                     return true;
             }
             return false;
         }
     };
 
-//    private void loadFragment(Fragment fragment) {
-//        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-//        transaction.replace(R.id.frame_container, fragment);
-//        transaction.addToBackStack(null);
-//        transaction.commit();
-//    }
 
 
     @Override

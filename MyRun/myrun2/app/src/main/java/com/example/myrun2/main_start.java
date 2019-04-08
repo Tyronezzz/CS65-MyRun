@@ -1,3 +1,9 @@
+/*
+ * @author  Tao Hou
+ * @version 1.0
+ * @since   2019-04-07
+ */
+
 package com.example.myrun2;
 
 import android.content.Intent;
@@ -27,10 +33,9 @@ public class main_start extends Fragment {
     private String mParam1;
     private String mParam2;
 
-    private OnFragmentInteractionListener mListener;
+    //private OnFragmentInteractionListener mListener;
     private Spinner mspinner_input;
     private Spinner mspinner_act;
-    private FloatingActionButton mfab;
     private int act_idx = 0;
     private boolean isFirst = true;
 
@@ -78,21 +83,18 @@ public class main_start extends Fragment {
 
         mspinner_input = getView().findViewById(R.id.input_type);
         mspinner_act= getView().findViewById(R.id.activity_type);
-
-        mfab = getView().findViewById(R.id.fab);
+        FloatingActionButton mfab = getView().findViewById(R.id.fab);
 
 
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getContext(),
                 R.array.input_type, android.R.layout.simple_spinner_item);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);      // Specify the layout to use when the list of choices appears
-        mspinner_input.setAdapter(adapter);     // Apply the adapter to the spinner
-
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);      // specify the layout for spinner
+        mspinner_input.setAdapter(adapter);     // apply the adapter to the spinner
 
         final ArrayAdapter<CharSequence> adapter2 = ArrayAdapter.createFromResource(getContext(),
                 R.array.act_type, android.R.layout.simple_spinner_item);
-        adapter2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);      // Specify the layout to use when the list of choices appears
-        mspinner_act.setAdapter(adapter2);     // Apply the adapter to the spinner
-
+        adapter2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);      // specify the layout for spinner
+        mspinner_act.setAdapter(adapter2);     // apply the adapter to the spinner
 
 
         mspinner_act.setSelection(act_idx);
@@ -102,17 +104,13 @@ public class main_start extends Fragment {
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
                 String tmp = mspinner_input.getSelectedItem().toString();
 
-//                mspinner_act.setSelection(act_idx);
-//                Log.d(TAG, "now" + act_idx);
-//
-//
-                if(tmp.equals("Automatic"))
+                if(tmp.equals("Automatic"))                // disable the second spinner when the first select Automatic
                 {
                     mspinner_act.setEnabled(false);
                     mspinner_act.setClickable(false);
                 }
 
-                else
+                else                                      // enable
                 {
                     mspinner_act.setEnabled(true);
                     mspinner_act.setClickable(true);
@@ -121,7 +119,6 @@ public class main_start extends Fragment {
             }
 
             public void onNothingSelected(AdapterView<?> adapterView) {
-                return;
             }
 
         });
@@ -130,23 +127,17 @@ public class main_start extends Fragment {
         mspinner_act.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
-
                 if(!isFirst)
                 {
                     act_idx = position;
                     Log.d(TAG, "idx is"+act_idx);
                 }
-
-
             }
 
             public void onNothingSelected(AdapterView<?> adapterView) {
-                return;
             }
 
         });
-
-
 
 
         mfab.setOnClickListener(new View.OnClickListener() {
@@ -155,13 +146,13 @@ public class main_start extends Fragment {
 
                 String text = mspinner_input.getSelectedItem().toString();
                 Intent intent;
-                if(text.equals("Manual"))
+                if(text.equals("Manual"))                            // go to Manual Entry Activity
                 {
                     intent = new Intent(getContext(), Manal_Entry.class);
                     startActivity(intent);
                 }
 
-                else
+                else                                     // go to Map Activity
                 {
                     intent = new Intent(getContext(), MapActivity.class);
                     startActivity(intent);
@@ -185,15 +176,14 @@ public class main_start extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_main_start, container, false);
+        return inflater.inflate(R.layout.fragment_main_start, container, false);      // Inflate the layout for this fragment
     }
 
 
     @Override
     public void onDetach() {
         super.onDetach();
-        mListener = null;
+        //mListener = null;
     }
 
 

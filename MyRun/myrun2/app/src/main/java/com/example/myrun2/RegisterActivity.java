@@ -40,6 +40,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Objects;
+import java.util.regex.Pattern;
 
 import androidx.exifinterface.media.ExifInterface;
 
@@ -52,23 +53,23 @@ public class RegisterActivity extends AppCompatActivity {
     public static final String IS_FIRST = "is_FIRST";
     public static final String URI_INSTANCE_STATE_KEY = "saved_uri";
 
-    protected AutoCompleteTextView mNameView;
-    protected RadioGroup mGender;
-    protected AutoCompleteTextView mEmailView;
-    protected EditText mPasswordView;
-    protected AutoCompleteTextView mPhone;
-    protected AutoCompleteTextView mMajor;
-    protected AutoCompleteTextView mClass;
+    private AutoCompleteTextView mNameView;
+    private RadioGroup mGender;
+    private AutoCompleteTextView mEmailView;
+    private EditText mPasswordView;
+    private AutoCompleteTextView mPhone;
+    private AutoCompleteTextView mMajor;
+    private AutoCompleteTextView mClass;
 
-    protected ImageView mImageView;
-    protected Uri mImageCaptureUri;
-    protected boolean isTakenFromCamera;
-    protected Bitmap rotatedBitmap;
+    private ImageView mImageView;
+    private Uri mImageCaptureUri;
+    private boolean isTakenFromCamera;
+    private Bitmap rotatedBitmap;
 
-    public static final int REQUEST_CODE_TAKE_FROM_CAMERA = 2;
-    public static final int REQUEST_CODE_GALLERY = 3;
-    public static final int INITIAL_REQUEST= 0;
-    public static final int CHECK_CAMERA_REQUEST = 1;
+    private static final int REQUEST_CODE_TAKE_FROM_CAMERA = 2;
+    private static final int REQUEST_CODE_GALLERY = 3;
+    private static final int INITIAL_REQUEST= 0;
+    private static final int CHECK_CAMERA_REQUEST = 1;
 //    public static final int CHECK_STORAGE_REQUEST = 2;
     SharedPreferences sharedPreferences;
     SharedPreferences.Editor editor;
@@ -203,14 +204,14 @@ public class RegisterActivity extends AppCompatActivity {
         if(!tmp.isEmpty())
             Dclass= Integer.valueOf(tmp);
 
-        ArrayList<String> putstr = new ArrayList<String>();
+        ArrayList<String> putstr = new ArrayList<>();
         putstr.add(name);
         putstr.add(email);
         putstr.add(password);
         putstr.add(phone);
         putstr.add(major);
 
-        ArrayList<Integer> putint = new ArrayList<Integer>();
+        ArrayList<Integer> putint = new ArrayList<>();
         putint.add(Dclass);
         putint.add(gender);
 
@@ -235,6 +236,7 @@ public class RegisterActivity extends AppCompatActivity {
             editor.putString("key_major", putstr.get(4));
             editor.putInt("key_class", putint.get(0));
             editor.putInt("key_gender", putint.get(1));
+            editor.putString("key_pic", mImageCaptureUri.toString());
             editor.apply();
             saveSnap();
             Toast.makeText(this,"Successfully Registered", Toast.LENGTH_LONG).show();
@@ -243,11 +245,26 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
 
-    public boolean isEmailValid(String email) {
-        return email.contains("@");
+
+    private boolean isEmailValid(String email) {
+//        return email.contains("@");
+
+        String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\."+
+                "[a-zA-Z0-9_+&*-]+)*@" +
+                "(?:[a-zA-Z0-9-]+\\.)+[a-z" +
+                "A-Z]{2,7}$";
+
+        Pattern pat = Pattern.compile(emailRegex);
+        return pat.matcher(email).matches();
+
     }
 
-    public boolean isPasswordValid(String password) {
+//
+//    private boolean isEmailValid(String email) {
+//        return email.contains("@");
+//    }
+
+    private boolean isPasswordValid(String password) {
         return password.length() >= 6;
     }
 
@@ -280,8 +297,6 @@ public class RegisterActivity extends AppCompatActivity {
                 Intent pickPhoto = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                 startActivityForResult(pickPhoto, REQUEST_CODE_GALLERY);//one can be replaced with any action code
 
-
-
                 break;
 
             default:
@@ -289,7 +304,7 @@ public class RegisterActivity extends AppCompatActivity {
         }
     }
 
-    public void checkCameraPermission() {        // check permissions for camera
+    private void checkCameraPermission() {        // check permissions for camera
         if (checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED)
         {
             requestPermissions(new String[]{Manifest.permission.CAMERA}, CHECK_CAMERA_REQUEST);
@@ -302,14 +317,14 @@ public class RegisterActivity extends AppCompatActivity {
 //        }
 //    }
 
-    public void checkPermissions() {       // check permissions for storage and camera
+    private void checkPermissions() {       // check permissions for storage and camera
         if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED
                 || checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
             requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA}, INITIAL_REQUEST);
         }
     }
 
-    public void startCamera()
+    private void startCamera()
     {
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 //        ContentValues values = new ContentValues(1);
@@ -410,7 +425,7 @@ public class RegisterActivity extends AppCompatActivity {
         }
     }
 
-    public void beginCrop(Uri source) {
+    private void beginCrop(Uri source) {
 
         try{
 
@@ -425,7 +440,7 @@ public class RegisterActivity extends AppCompatActivity {
         }
     }
 
-    public void handleCrop(int resultCode, Intent result) {
+    private void handleCrop(int resultCode, Intent result) {
 
         if (resultCode == RESULT_OK) {
             Uri uri = Crop.getOutput(result);
@@ -443,7 +458,7 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
 
-    public void saveSnap() {
+    private void saveSnap() {
 
         if(checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)    // check permission to determine whether save in phone
         {
@@ -463,7 +478,7 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
 
-    public void loadSnap() {
+    private void loadSnap() {
         // Load profile photo from internal storage
         if(!isTakenFromCamera)
             mImageView.setImageResource(R.drawable.ic_launcher);

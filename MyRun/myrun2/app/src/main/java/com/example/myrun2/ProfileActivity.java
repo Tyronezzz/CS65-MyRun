@@ -1,13 +1,18 @@
+/*
+ * @author  Tao Hou
+ * @version 1.0
+ * @since   2019-04-07
+ */
+
+
 package com.example.myrun2;
 
 import android.Manifest;
-import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
 import android.net.Uri;
@@ -38,28 +43,28 @@ import java.util.Objects;
 
 import androidx.exifinterface.media.ExifInterface;
 
-import static java.lang.System.currentTimeMillis;
-
 public class ProfileActivity extends AppCompatActivity {
 
     private static final String TAG = "Profile.lifecyc";
 
     public static final String IS_TAKEN_CAMERA_KEY = "is_taken_camera";
+    public static final String IS_TAKEN_GALLERY_KEY = "is_taken_gallery";
     public static final String IS_FIRST = "is_FIRST";
     public static final String URI_INSTANCE_STATE_KEY = "saved_uri";
 
-    protected AutoCompleteTextView mNameView;
-    protected RadioGroup mGender;
-    protected AutoCompleteTextView mEmailView;
-    protected EditText mPasswordView;
-    protected AutoCompleteTextView mPhone;
-    protected AutoCompleteTextView mMajor;
-    protected AutoCompleteTextView mClass;
+    private AutoCompleteTextView mNameView;
+    private RadioGroup mGender;
+    private AutoCompleteTextView mEmailView;
+    private EditText mPasswordView;
+    private AutoCompleteTextView mPhone;
+    private AutoCompleteTextView mMajor;
+    private AutoCompleteTextView mClass;
 
-    protected ImageView mImageView;
-    protected Uri mImageCaptureUri;
-    protected boolean isTakenFromCamera;
-    protected Bitmap rotatedBitmap;
+    private ImageView mImageView;
+    private Uri mImageCaptureUri;
+    private boolean isTakenFromCamera;
+    private boolean isTakenFromGallery;
+    private Bitmap rotatedBitmap;
 
     public static final int REQUEST_CODE_TAKE_FROM_CAMERA = 2;
     public static final int REQUEST_CODE_GALLERY = 3;
@@ -68,7 +73,7 @@ public class ProfileActivity extends AppCompatActivity {
     //    public static final int CHECK_STORAGE_REQUEST = 2;
     SharedPreferences sharedPreferences;
     SharedPreferences.Editor editor;
-    protected boolean isFirst = true;
+    private boolean isFirst = true;
 
 
     @Override
@@ -96,19 +101,14 @@ public class ProfileActivity extends AppCompatActivity {
         StrictMode.setVmPolicy(builder.build());
 
 
-        if (savedInstanceState != null) {
+        if(savedInstanceState != null) {
             mImageCaptureUri = savedInstanceState.getParcelable(URI_INSTANCE_STATE_KEY);      // get the picture
             isFirst = savedInstanceState.getBoolean(IS_FIRST);
             isTakenFromCamera = savedInstanceState.getBoolean(IS_TAKEN_CAMERA_KEY);
+            isTakenFromGallery = savedInstanceState.getBoolean(IS_TAKEN_GALLERY_KEY);
         }
 
-        if(isFirst)            // ask for permissions for the first time
-        {
-            checkPermissions();
-            isFirst = false;
-        }
 
-        loadSnap();
 
 
         sharedPreferences = getSharedPreferences("profile", Context.MODE_PRIVATE);
@@ -119,6 +119,8 @@ public class ProfileActivity extends AppCompatActivity {
         String old_major = sharedPreferences.getString("key_major", "");
         int dclass = sharedPreferences.getInt("key_class", 0);
         int gender = sharedPreferences.getInt("key_gender", 0);
+        mImageCaptureUri = Uri.parse(sharedPreferences.getString("key_pic", ""));
+        Log.d(TAG, "uri is "+mImageCaptureUri);
 
 
         mNameView.setText(old_name);
@@ -137,6 +139,26 @@ public class ProfileActivity extends AppCompatActivity {
         mEmailView.setFocusable(false);
 
 
+
+//        if(mImageCaptureUri != null)
+//        {
+//            Bitmap bitmap = null;
+//            try {
+//                bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), mImageCaptureUri);
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//            mImageView.setImageBitmap(imageOreintationValidator(bitmap, mImageCaptureUri.getPath()));
+//        }
+
+
+        if(isFirst)            // ask for permissions for the first time
+        {
+            checkPermissions();
+            isFirst = false;
+        }
+
+        loadSnap();
 
     }
 
@@ -163,7 +185,7 @@ public class ProfileActivity extends AppCompatActivity {
         }
     }
 
-    protected void checkValid()
+    private void checkValid()
     {
         // Reset errors.
         mNameView.setError(null);
@@ -200,16 +222,16 @@ public class ProfileActivity extends AppCompatActivity {
             cancel = true;
         }
 
-        // Check for a valid email address.
-        if (TextUtils.isEmpty(email)) {
-            mEmailView.setError(getString(R.string.error_field_required));
-            focusView = mEmailView;
-            cancel = true;
-        } else if (!isEmailValid(email)) {
-            mEmailView.setError(getString(R.string.error_invalid_email));
-            focusView = mEmailView;
-            cancel = true;
-        }
+//        // Check for a valid email address.
+//        if (TextUtils.isEmpty(email)) {
+//            mEmailView.setError(getString(R.string.error_field_required));
+//            focusView = mEmailView;
+//            cancel = true;
+//        } else if (!isEmailValid(email)) {
+//            mEmailView.setError(getString(R.string.error_invalid_email));
+//            focusView = mEmailView;
+//            cancel = true;
+//        }
 
         // Check for a valid password, if the user entered one.
         if (TextUtils.isEmpty(password)) {
@@ -245,13 +267,12 @@ public class ProfileActivity extends AppCompatActivity {
 
 
     // attempt to register
-    protected void attemptSave(boolean cancel, View focusView, ArrayList<String> putstr, ArrayList<Integer> putint) {
+    private void attemptSave(boolean cancel, View focusView, ArrayList<String> putstr, ArrayList<Integer> putint) {
 
         if (cancel) {
             focusView.requestFocus();
         }
         else {
-
 
             String pwd_tmp = sharedPreferences.getString("key_password", "");
 
@@ -265,6 +286,8 @@ public class ProfileActivity extends AppCompatActivity {
             editor.putString("key_major", putstr.get(4));
             editor.putInt("key_class", putint.get(0));
             editor.putInt("key_gender", putint.get(1));
+            editor.putString("key_pic", mImageCaptureUri.toString());
+
             editor.apply();
             saveSnap();
             Toast.makeText(this,"Successfully Saved", Toast.LENGTH_LONG).show();
@@ -282,11 +305,20 @@ public class ProfileActivity extends AppCompatActivity {
         }
     }
 
-    public boolean isEmailValid(String email) {
-        return email.contains("@");
-    }
+//    private boolean isEmailValid(String email) {
+//
+//        String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\."+
+//                "[a-zA-Z0-9_+&*-]+)*@" +
+//                "(?:[a-zA-Z0-9-]+\\.)+[a-z" +
+//                "A-Z]{2,7}$";
+//
+//        Pattern pat = Pattern.compile(emailRegex);
+//
+//        return pat.matcher(email).matches();
+//
+//    }
 
-    public boolean isPasswordValid(String password) {
+    private boolean isPasswordValid(String password) {
         return password.length() >= 6;
     }
 
@@ -318,7 +350,7 @@ public class ProfileActivity extends AppCompatActivity {
                 Log.d(TAG, "gallery");
                 Intent pickPhoto = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                 startActivityForResult(pickPhoto, REQUEST_CODE_GALLERY);//one can be replaced with any action code
-
+                isTakenFromGallery = true;
                 break;
 
             default:
@@ -326,7 +358,7 @@ public class ProfileActivity extends AppCompatActivity {
         }
     }
 
-    public void checkCameraPermission() {        // check permissions for camera
+    private void checkCameraPermission() {        // check permissions for camera
         if (checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED)
         {
             requestPermissions(new String[]{Manifest.permission.CAMERA}, CHECK_CAMERA_REQUEST);
@@ -339,14 +371,14 @@ public class ProfileActivity extends AppCompatActivity {
 //        }
 //    }
 
-    public void checkPermissions() {       // check permissions for storage and camera
+    private void checkPermissions() {       // check permissions for storage and camera
         if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED
                 || checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
             requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA}, INITIAL_REQUEST);
         }
     }
 
-    public void startCamera()
+    private void startCamera()
     {
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 //        ContentValues values = new ContentValues(1);
@@ -393,6 +425,7 @@ public class ProfileActivity extends AppCompatActivity {
         outState.putParcelable(URI_INSTANCE_STATE_KEY, mImageCaptureUri);
         outState.putBoolean(IS_FIRST, isFirst);
         outState.putBoolean(IS_TAKEN_CAMERA_KEY, isTakenFromCamera);
+        outState.putBoolean(IS_TAKEN_GALLERY_KEY, isTakenFromGallery);
     }
 
 
@@ -407,13 +440,13 @@ public class ProfileActivity extends AppCompatActivity {
 
         switch (requestCode) {
             case REQUEST_CODE_TAKE_FROM_CAMERA:    // after taking the pic, begin crop
+                beginCrop(mImageCaptureUri);
+                break;
+
             case REQUEST_CODE_GALLERY:
-
                 Uri selectedImage = data.getData();
-                String ppath = getRealPathFromURI(selectedImage, this);
                 //mImageCaptureUri
-                beginCrop(Uri.parse(ppath));       // Send image taken from camera for cropping
-
+                beginCrop(selectedImage);       // Send image taken from camera for cropping
                 break;
 
             case Crop.REQUEST_CROP:     //
@@ -428,42 +461,50 @@ public class ProfileActivity extends AppCompatActivity {
         }
     }
 
-
-
-
-
-    public String getRealPathFromURI(Uri contentURI, Activity context) {
-        String[] projection = { MediaStore.Images.Media.DATA };
-        @SuppressWarnings("deprecation")
-        Cursor cursor = context.managedQuery(contentURI, projection, null,
-                null, null);
-        if (cursor == null)
-            return null;
-        int column_index = cursor
-                .getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-        if (cursor.moveToFirst()) {
-            String s = cursor.getString(column_index);
-            // cursor.close();
-            return s;
-        }
-        // cursor.close();
-        return null;
-    }
+//    public String getRealPathFromURI(Uri contentURI, Activity context) {
+//        String[] projection = { MediaStore.Images.Media.DATA };
+//        @SuppressWarnings("deprecation")
+//        Cursor cursor = context.managedQuery(contentURI, projection, null,
+//                null, null);
+//        if (cursor == null)
+//            return null;
+//        int column_index = cursor
+//                .getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+//        if (cursor.moveToFirst()) {
+//            String s = cursor.getString(column_index);
+//            // cursor.close();
+//            return s;
+//        }
+//        // cursor.close();
+//        return null;
+//    }
 
 
 
     public void beginCrop(Uri source) {
 
         try{
-            String tmp = getExternalCacheDir() +"/"+ String.valueOf(currentTimeMillis()) + "photo.jpg";
+
+
+//            File file = new File(getExternalCacheDir(), "photo.jpg");
+//            mImageCaptureUri = Uri.fromFile(file);         // define a tmp uri, save the picture in this uri
+//            Uri destination = mImageCaptureUri;
+
+//            String tmp = getExternalCacheDir() +"/"+ String.valueOf(currentTimeMillis()) + "photo.jpg";
+//            Uri destination = Uri.fromFile(new File(getCacheDir(), "cropped"));
+//            Log.d(TAG, "source " + source);
+//            destination = Uri.fromFile(new File(tmp));   //getCacheDir(), "cropped"
+//            mImageCaptureUri = destination;
+
+
+
+//            Log.d(TAG, "path " + destination);
+//            Crop.of(source, destination).asSquare().start(this);
+
+
 
             Uri destination = Uri.fromFile(new File(getCacheDir(), "cropped"));
-            Log.d(TAG, "source " + source);
-            destination = Uri.fromFile(new File(tmp));   //getCacheDir(), "cropped"
             mImageCaptureUri = destination;
-
-            Log.d(TAG, "path " + destination);
-
             Crop.of(source, destination).asSquare().start(this);
         }catch (Exception e)
         {
@@ -471,7 +512,7 @@ public class ProfileActivity extends AppCompatActivity {
         }
     }
 
-    public void handleCrop(int resultCode, Intent result) {
+    private void handleCrop(int resultCode, Intent result) {
 
         if (resultCode == RESULT_OK) {
             Uri uri = Crop.getOutput(result);
@@ -489,7 +530,7 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
 
-    public void saveSnap() {
+    private void saveSnap() {
 
         if(checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)    // check permission to determine whether save in phone
         {
@@ -509,9 +550,10 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
 
-    public void loadSnap() {
+    private void loadSnap() {
         // Load profile photo from internal storage
-        if(!isTakenFromCamera)
+        //!isTakenFromCamera && !isTakenFromGallery
+        if((mImageCaptureUri.toString() == "" || mImageCaptureUri == null))
             mImageView.setImageResource(R.drawable.ic_launcher);
 
         else
@@ -569,7 +611,4 @@ public class ProfileActivity extends AppCompatActivity {
         return Bitmap.createBitmap(source, 0, 0, source.getWidth(), source.getHeight(),
                 matrix, true);
     }
-
-
-
 }

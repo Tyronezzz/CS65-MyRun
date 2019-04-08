@@ -1,3 +1,9 @@
+/*
+ * @author  Tao Hou
+ * @version 1.0
+ * @since   2019-04-07
+ */
+
 package com.example.myrun2;
 
 import android.annotation.SuppressLint;
@@ -39,7 +45,7 @@ public class Manal_Entry extends AppCompatActivity {
         setSupportActionBar(myToolbar);
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);   // set up the tool bar
 
-        final ListAdapter la = new ListAdapter(this, mOptions, mResults, 9);
+        final ListAdapter la = new ListAdapter(this, mOptions, mResults, 9);        // set up the listadapter
         ListView mlistView = findViewById(R.id.manual_listview);
         mlistView.setAdapter(la);
 
@@ -50,11 +56,11 @@ public class Manal_Entry extends AppCompatActivity {
 
                 switch (position){
                     case 1:
-                        onDateClick(la);
+                        onDateClick(la);          // set the date
                         break;
 
                     case 2:
-                        onTimeClick(la);
+                        onTimeClick(la);        // set the time
                         break;
 
                     case 3:
@@ -62,7 +68,7 @@ public class Manal_Entry extends AppCompatActivity {
                     case 5:
                     case 6:
                     case 7:
-                        showDiaglog(position);
+                        showDiaglog(position);      // show the dialog
                         break;
 
                     default:
@@ -74,7 +80,7 @@ public class Manal_Entry extends AppCompatActivity {
 
     }
 
-    public void onDateClick(final ListAdapter la) {
+    public void onDateClick(final ListAdapter la) {             // set the date
         DatePickerDialog.OnDateSetListener mDateListener = new DatePickerDialog.OnDateSetListener() {
             public void onDateSet(DatePicker view, int year, int month,
                                   int day) {
@@ -92,7 +98,7 @@ public class Manal_Entry extends AppCompatActivity {
                 mDateTime.get(Calendar.DAY_OF_MONTH)).show();
     }
 
-    private void onTimeClick(final ListAdapter la) {
+    private void onTimeClick(final ListAdapter la) {       // set the time
         TimePickerDialog.OnTimeSetListener mTimeListener = new TimePickerDialog.OnTimeSetListener() {
             public void onTimeSet(TimePicker view, int hour, int minute) {
                 mDateTime.set(Calendar.HOUR_OF_DAY, hour);
@@ -115,10 +121,10 @@ public class Manal_Entry extends AppCompatActivity {
         @SuppressLint("InflateParams") View viewInflated = LayoutInflater.from(getApplicationContext()).inflate(R.layout.input_dialog, null);
         final EditText input =  viewInflated.findViewById(R.id.edit_text);
 
-        if(position==5 || position == 6)
+        if(position==5 || position == 6)                 // strict the input type as number
             input.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_VARIATION_NORMAL);
 
-        if(position == 7)
+        if(position == 7)                                  // strict the input type as text
             input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_AUTO_COMPLETE);
 
         builder.setView(viewInflated);
@@ -128,7 +134,7 @@ public class Manal_Entry extends AppCompatActivity {
             public void onClick(DialogInterface dialog, int which) {
 
                 String tmp_txt = input.getText().toString();
-                if(position != 7)
+                if(position != 7)          //
                 {
                     String[] arrOfStr = mResults[position].split("\\s+");
                     mResults[position] = tmp_txt + " " + arrOfStr[1];
