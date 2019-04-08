@@ -31,7 +31,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="?android:attr/windowBackground"
-                app:itemIconTint="@color/crop__button_bar"
+                app:itemIconTint="@color/design_default_color_primary"
                 app:itemTextAppearanceActive="@color/design_default_color_primary"
                 app:itemTextColor="@color/crop__selector_focused"
                 app:layout_constraintBottom_toBottomOf="parent"

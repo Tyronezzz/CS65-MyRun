@@ -1,11 +1,13 @@
 package com.example.myrun2;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
 import android.net.Uri;
@@ -107,8 +109,6 @@ public class ProfileActivity extends AppCompatActivity {
         }
 
         loadSnap();
-
-        // load snap????
 
 
         sharedPreferences = getSharedPreferences("profile", Context.MODE_PRIVATE);
@@ -319,8 +319,6 @@ public class ProfileActivity extends AppCompatActivity {
                 Intent pickPhoto = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                 startActivityForResult(pickPhoto, REQUEST_CODE_GALLERY);//one can be replaced with any action code
 
-
-
                 break;
 
             default:
@@ -410,7 +408,12 @@ public class ProfileActivity extends AppCompatActivity {
         switch (requestCode) {
             case REQUEST_CODE_TAKE_FROM_CAMERA:    // after taking the pic, begin crop
             case REQUEST_CODE_GALLERY:
-                beginCrop(mImageCaptureUri);       // Send image taken from camera for cropping
+
+                Uri selectedImage = data.getData();
+                String ppath = getRealPathFromURI(selectedImage, this);
+                //mImageCaptureUri
+                beginCrop(Uri.parse(ppath));       // Send image taken from camera for cropping
+
                 break;
 
             case Crop.REQUEST_CROP:     //
@@ -425,14 +428,42 @@ public class ProfileActivity extends AppCompatActivity {
         }
     }
 
+
+
+
+
+    public String getRealPathFromURI(Uri contentURI, Activity context) {
+        String[] projection = { MediaStore.Images.Media.DATA };
+        @SuppressWarnings("deprecation")
+        Cursor cursor = context.managedQuery(contentURI, projection, null,
+                null, null);
+        if (cursor == null)
+            return null;
+        int column_index = cursor
+                .getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+        if (cursor.moveToFirst()) {
+            String s = cursor.getString(column_index);
+            // cursor.close();
+            return s;
+        }
+        // cursor.close();
+        return null;
+    }
+
+
+
     public void beginCrop(Uri source) {
 
         try{
-
-//            Uri destination = Uri.fromFile(new File(getCacheDir(), "cropped"));
             String tmp = getExternalCacheDir() +"/"+ String.valueOf(currentTimeMillis()) + "photo.jpg";
-            Uri destination = Uri.fromFile(new File(tmp));   //getCacheDir(), "cropped"
+
+            Uri destination = Uri.fromFile(new File(getCacheDir(), "cropped"));
+            Log.d(TAG, "source " + source);
+            destination = Uri.fromFile(new File(tmp));   //getCacheDir(), "cropped"
             mImageCaptureUri = destination;
+
+            Log.d(TAG, "path " + destination);
+
             Crop.of(source, destination).asSquare().start(this);
         }catch (Exception e)
         {
