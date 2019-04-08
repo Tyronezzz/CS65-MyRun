@@ -6,7 +6,6 @@
 
 package com.example.myrun2;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -30,7 +29,7 @@ public class Settings extends AppCompatActivity {
     public int REQUEST_SETTING = 0;
     public int REQUEST_PREFERENCE = 1;
     public int REQUEST_SIGNOUT = 2;
-    private Switch mswitch;
+    public Switch mswitch;
     AlertDialog alertDialog1;
     private int idx = 0;
     SharedPreferences sharedPreferences;
@@ -49,14 +48,11 @@ public class Settings extends AppCompatActivity {
         setSupportActionBar(myToolbar);
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);   // set up the tool bar
 
-
         if(savedInstanceState != null)
             idx = savedInstanceState.getInt(IDX, 0);
 
-
         // set up the Privacy Setting
-        boolean isSelect = false;
-        final ListAdapter la = new ListAdapter(this, new String[]{"Privacy Setting"}, new String[]{"Posting your records anonymously"}, isSelect, REQUEST_SETTING);
+        final ListAdapter la = new ListAdapter(this, new String[]{"Privacy Setting"}, new String[]{"Posting your records anonymously"}, sharedPreferences, REQUEST_SETTING);
         ListView mlistView = findViewById(R.id.app_setting_listview);
         mlistView.setAdapter(la);
         la.notifyDataSetChanged();
@@ -73,12 +69,6 @@ public class Settings extends AppCompatActivity {
         mlistView3.setAdapter(la3);
         la3.notifyDataSetChanged();
 
-
-        @SuppressLint("InflateParams") View inflatedView = getLayoutInflater().inflate(R.layout.listview_row_clip_btn, null);
-        mswitch =  inflatedView.findViewById(R.id.myswitch);
-//        mswitch.setChecked(true);
-        //mswitch.clearFocus();
-
         mlistView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -86,33 +76,12 @@ public class Settings extends AppCompatActivity {
 
                 switch (position){
                     case 0:
-                        if(mswitch == null)
-                        {
-                            Log.d(TAG, "Sc");
-                        }
-                        else
-                        {
-                            Log.d(TAG, String.valueOf(mswitch.isChecked()));
-
-//                            mswitch.setChecked(!mswitch.isChecked());
-//                            la2.notifyDataSetChanged();
-
-//                            mswitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-//                                @Override public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-//
-//                                }
-//                            });
-
-//                            mswitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-//                                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-//                                    // do something, the isChecked will be
-//                                    // true if the switch is in the On position
-//
-//                                    mswitch.setChecked(isChecked);
-//                                }
-//                            });
-                        }
-
+                        sharedPreferences = getSharedPreferences("profile", Context.MODE_PRIVATE);       //store the profile in the sharedpreference
+                        editor = sharedPreferences.edit();
+                        Boolean ischecked = sharedPreferences.getBoolean("key_privacy_set", false);
+                        editor.putBoolean("key_privacy_set", !ischecked);
+                        editor.apply();
+                        la.notifyDataSetChanged();
                         break;
                     default:
                         break;

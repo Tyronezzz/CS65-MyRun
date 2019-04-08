@@ -149,6 +149,8 @@ public class main_start extends Fragment {
                 if(text.equals("Manual"))                            // go to Manual Entry Activity
                 {
                     intent = new Intent(getContext(), Manal_Entry.class);
+                    String text2 = mspinner_act.getSelectedItem().toString();
+                    intent.putExtra("ACT", text2);
                     startActivity(intent);
                 }
 

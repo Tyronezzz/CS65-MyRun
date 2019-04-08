@@ -10,6 +10,7 @@ import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -44,6 +45,10 @@ public class Manal_Entry extends AppCompatActivity {
         Toolbar myToolbar = findViewById(R.id.manual_toolbar);
         setSupportActionBar(myToolbar);
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);   // set up the tool bar
+
+        Intent intent = getIntent();
+        String act_name = intent.getStringExtra("ACT");        // get the activity type name
+        mResults[0] = act_name;
 
         final ListAdapter la = new ListAdapter(this, mOptions, mResults, 9);        // set up the listadapter
         ListView mlistView = findViewById(R.id.manual_listview);

@@ -8,11 +8,15 @@ package com.example.myrun2;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.CompoundButton;
+import android.widget.Switch;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -27,19 +31,19 @@ public class ListAdapter extends ArrayAdapter {
     private String[] Results;
     private String[] setting_option;
     private String[] setting_descrp;
-    private boolean isSelect;
     private int request_code;
+    private SharedPreferences sharedPreferences;
+    private SharedPreferences.Editor editor;
     //    private int REQUEST_SIGNOUT = 2;
 
 
-    ListAdapter(Activity context, String[] setting_opt, String[] setting_des, boolean isSelect, int rc){
+    ListAdapter(Activity context, String[] setting_opt, String[] setting_des, SharedPreferences sharedPreferences, int rc){
         super(context, R.layout.listview_row, setting_des);
         this.context = context;
         this.setting_option = setting_opt;
         this.setting_descrp = setting_des;
-        this.isSelect = isSelect;
+        this.sharedPreferences = sharedPreferences;
         this.request_code = rc;
-        Log.d(TAG, "check");
     }
 
     ListAdapter(Activity context, String[] nameArrayParam, String[] infoArrayParam, int rc){
@@ -48,36 +52,13 @@ public class ListAdapter extends ArrayAdapter {
         this.Options = nameArrayParam;
         this.Results = infoArrayParam;
         this.request_code = rc;
+
     }
-
-
-//    public void setDate(String mdate)
-//    {
-//        this.Results[1] = mdate;
-//        LayoutInflater inflater=context.getLayoutInflater();
-//        View rowView = inflater.inflate(R.layout.listview_row, null,true);
-//
-//        TextView mResultsView =  rowView.findViewById(R.id.manual_result);
-//        mResultsView.setText(Results[1]);
-//        Log.d(TAG, "set??");
-//
-//    }
-
-//    @Override
-//    public boolean isEnabled(int position) {
-//        if(position == 0)
-//            return false;
-//
-//        return true;
-//    }
-
 
     @NonNull
     @Override
     public View getView(int position,View view, @NonNull ViewGroup parent) {
 
-
-        Log.d(TAG, String.valueOf(position));
         if(context.getLocalClassName().equals("com.example.myrun2.Manal_Entry"))     // set the listview for Manual Entry Activity
         {
             LayoutInflater inflater=context.getLayoutInflater();
@@ -117,11 +98,30 @@ public class ListAdapter extends ArrayAdapter {
 
             else if(request_code == REQUEST_SETTING)          // listview with switch
             {
+
+                Log.d(TAG, "update");
                 LayoutInflater inflater=context.getLayoutInflater();
                 @SuppressLint("InflateParams") View rowView = inflater.inflate(R.layout.listview_row_clip_btn, null,true);
 
                 TextView mOPtionsView = rowView.findViewById(R.id.setting_option);
                 TextView mResultsView =  rowView.findViewById(R.id.setting_result);
+                final Switch myswitch = rowView.findViewById(R.id.myswitch);
+
+
+                sharedPreferences = context.getSharedPreferences("profile", Context.MODE_PRIVATE);
+                boolean ischecked = sharedPreferences.getBoolean("key_privacy_set", false);
+                myswitch.setChecked(ischecked);
+
+                myswitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                        sharedPreferences = context.getSharedPreferences("profile", Context.MODE_PRIVATE);       //store the profile in the sharedpreference
+                        editor = sharedPreferences.edit();
+                        editor.putBoolean("key_privacy_set", myswitch.isChecked());
+                        editor.apply();
+
+                        Log.d(TAG, "save " + myswitch.isChecked());
+                    }
+                });
 
                 mOPtionsView.setTextSize(17);
                 mResultsView.setTextSize(13);
