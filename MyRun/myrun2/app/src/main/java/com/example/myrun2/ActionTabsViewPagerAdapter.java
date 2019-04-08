@@ -10,8 +10,6 @@ package com.example.myrun2;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.util.Log;
-
 import java.util.ArrayList;
 
 public class ActionTabsViewPagerAdapter extends FragmentPagerAdapter {
@@ -30,23 +28,22 @@ public class ActionTabsViewPagerAdapter extends FragmentPagerAdapter {
 
     // Return the Fragment associated with a specified position.
     public Fragment getItem(int pos){
-        Log.d(TAG, "getItem " + "position" + pos);
         return fragments.get(pos);
     }
 
     // Return the number of views available
     public int getCount(){
-        Log.d(TAG, "getCount " + "size " + fragments.size());
         return fragments.size();
     }
 
     // This method may be called by the ViewPager to obtain a title string
     // to describe the specified page
     public CharSequence getPageTitle(int position) {
-        Log.d(TAG, "getPageTitle " + "position " + position);
+
         switch (position) {
             case START:
                 return UI_TAB_START;
+
             case HISTORY:
                 return UI_TAB_HISTORY;
 

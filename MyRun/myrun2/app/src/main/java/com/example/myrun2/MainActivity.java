@@ -140,7 +140,8 @@ public class MainActivity extends AppCompatActivity {
                 return true;
 
             case R.id.action_edit_profile:
-                intent = new Intent(MainActivity.this, ProfileActivity.class);
+                intent = new Intent(MainActivity.this, RegisterActivity.class);
+                intent.putExtra("PARENTNAME", "MAIN");
                 startActivity(intent);
                 return true;
 

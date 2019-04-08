@@ -65,11 +65,12 @@ public class LoginActivity extends AppCompatActivity {
             public void onClick(View v) {
                 try {
 
-//                    Intent k = new Intent(LoginActivity.this, MainActivity.class);     //jump to mainactivity
-//                    startActivity(k);
-
-                    Intent k = new Intent(LoginActivity.this, RegisterActivity.class);
+                    Intent k = new Intent(LoginActivity.this, MainActivity.class);     //jump to mainactivity
                     startActivity(k);
+
+//                    Intent k = new Intent(LoginActivity.this, RegisterActivity.class);
+//                    k.putExtra("PARENTNAME", "LOGIN");
+//                    startActivity(k);
                 } catch(Exception e) {
                     e.printStackTrace();
                 }

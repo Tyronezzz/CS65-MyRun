@@ -1,8 +1,9 @@
 /*
  * @author  Tao Hou
- * @version 1.0
+ * @version 2.0
  * @since   2019-04-03
  * @reference https://www.cs.dartmouth.edu/~campbell/cs65/lecture14/lecture14.html
+ * @description add profile edit activity in this activity, since they have common functions. Use a string to judge parent activity.
  */
 
 package com.example.myrun2;
@@ -32,24 +33,21 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RadioGroup;
 import android.widget.Toast;
-
 import com.soundcloud.android.crop.Crop;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Objects;
 import java.util.regex.Pattern;
-
 import androidx.exifinterface.media.ExifInterface;
-
 import static java.lang.System.currentTimeMillis;
 
 public class RegisterActivity extends AppCompatActivity {
 
     public static final String TAG = "RegisterActivity.lfcyc";
     public static final String IS_TAKEN_CAMERA_KEY = "is_taken_camera";
+    public static final String IS_TAKEN_GALLERY_KEY = "is_taken_gallery";
     public static final String IS_FIRST = "is_FIRST";
     public static final String URI_INSTANCE_STATE_KEY = "saved_uri";
 
@@ -64,24 +62,31 @@ public class RegisterActivity extends AppCompatActivity {
     private ImageView mImageView;
     private Uri mImageCaptureUri;
     private boolean isTakenFromCamera;
+    private boolean isTakenFromGallery;
     private Bitmap rotatedBitmap;
 
-    private static final int REQUEST_CODE_TAKE_FROM_CAMERA = 2;
-    private static final int REQUEST_CODE_GALLERY = 3;
     private static final int INITIAL_REQUEST= 0;
     private static final int CHECK_CAMERA_REQUEST = 1;
+    private static final int REQUEST_CODE_TAKE_FROM_CAMERA = 2;
+    private static final int REQUEST_CODE_GALLERY = 3;
 //    public static final int CHECK_STORAGE_REQUEST = 2;
     SharedPreferences sharedPreferences;
     SharedPreferences.Editor editor;
-    protected boolean isFirst = true;
+    private boolean isFirst = true;
+    private String parentName;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
-
         Toolbar myToolbar = findViewById(R.id.my_toolbar);
+
+        Intent intent = getIntent();
+        parentName = intent.getStringExtra("PARENTNAME");        // get the parent activity name
+        if(parentName.equals("MAIN"))
+            myToolbar.setTitle("Profile");
+
         setSupportActionBar(myToolbar);
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);   // set up the tool bar
 
@@ -103,7 +108,44 @@ public class RegisterActivity extends AppCompatActivity {
             mImageCaptureUri = savedInstanceState.getParcelable(URI_INSTANCE_STATE_KEY);      // get the picture
             isFirst = savedInstanceState.getBoolean(IS_FIRST);
             isTakenFromCamera = savedInstanceState.getBoolean(IS_TAKEN_CAMERA_KEY);
+            isTakenFromGallery = savedInstanceState.getBoolean(IS_TAKEN_GALLERY_KEY);
         }
+
+
+        if(parentName.equals("MAIN"))             // if parent activity is main, then this is edit profile activity. Restore the options
+        {
+            sharedPreferences = getSharedPreferences("profile", Context.MODE_PRIVATE);
+            String old_name= sharedPreferences.getString("key_name", "");
+            String old_email= sharedPreferences.getString("key_email", "");
+            String old_password = sharedPreferences.getString("key_password", "");
+            String old_phone = sharedPreferences.getString("key_phone", "");
+            String old_major = sharedPreferences.getString("key_major", "");
+            int dclass = sharedPreferences.getInt("key_class", 0);
+            int gender = sharedPreferences.getInt("key_gender", 0);
+
+            if(!isTakenFromGallery && !isTakenFromCamera)         //
+            {
+                mImageCaptureUri = Uri.parse(sharedPreferences.getString("key_pic", ""));
+            }
+
+            Log.d(TAG, "uri is "+mImageCaptureUri);
+
+            mNameView.setText(old_name);
+            mEmailView.setText(old_email);
+            mPasswordView.setText(old_password);
+            mPhone.setText(old_phone);
+            mMajor.setText(old_major);
+
+            if(dclass==-1)
+                mClass.setText("");
+
+            else
+                mClass.setText(String.valueOf(dclass));
+
+            mGender.check(mGender.getChildAt(gender).getId());
+            mEmailView.setFocusable(false);
+        }
+
 
         if(isFirst)            // ask for permissions for the first time
         {
@@ -118,6 +160,13 @@ public class RegisterActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.register_menu, menu);     // Inflate the menu
+
+        if(parentName.equals("MAIN"))
+        {
+            MenuItem item = menu.findItem(R.id.action_register);
+            item.setTitle("SAVE");
+        }
+
         return true;
     }
 
@@ -140,7 +189,7 @@ public class RegisterActivity extends AppCompatActivity {
 
     protected void checkValid()
     {
-// Reset errors.
+        // Reset errors.
         mNameView.setError(null);
         mEmailView.setError(null);
         mPasswordView.setError(null);
@@ -226,6 +275,12 @@ public class RegisterActivity extends AppCompatActivity {
             focusView.requestFocus();
         }
         else {
+            String pwd_tmp = "";
+            if(parentName.equals("MAIN"))
+            {
+                pwd_tmp = sharedPreferences.getString("key_password", "");
+            }
+
             sharedPreferences = getSharedPreferences("profile", Context.MODE_PRIVATE);       //store the profile in the sharedpreference
             editor = sharedPreferences.edit();
             editor.clear();
@@ -239,15 +294,32 @@ public class RegisterActivity extends AppCompatActivity {
             editor.putString("key_pic", mImageCaptureUri.toString());
             editor.apply();
             saveSnap();
+
+
+            if(parentName.equals("MAIN"))
+            {
+                if(!putstr.get(2).equals(pwd_tmp))
+                {
+                    Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(intent);
+                }
+
+                else
+                {
+                    finish();
+                    Toast.makeText(this,"Successfully Saved!", Toast.LENGTH_LONG).show();
+                }
+
+            }
             Toast.makeText(this,"Successfully Registered", Toast.LENGTH_LONG).show();
+
             finish();
         }
     }
 
 
-
-    private boolean isEmailValid(String email) {
-//        return email.contains("@");
+    private boolean isEmailValid(String email) {       // check the validity of email
 
         String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\."+
                 "[a-zA-Z0-9_+&*-]+)*@" +
@@ -256,18 +328,12 @@ public class RegisterActivity extends AppCompatActivity {
 
         Pattern pat = Pattern.compile(emailRegex);
         return pat.matcher(email).matches();
-
     }
 
-//
-//    private boolean isEmailValid(String email) {
-//        return email.contains("@");
-//    }
 
     private boolean isPasswordValid(String password) {
         return password.length() >= 6;
     }
-
 
     // after click the change button, call this function
     public void onChangePhotoClicked(View v) {
@@ -296,7 +362,7 @@ public class RegisterActivity extends AppCompatActivity {
                 Log.d(TAG, "gallery");
                 Intent pickPhoto = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                 startActivityForResult(pickPhoto, REQUEST_CODE_GALLERY);//one can be replaced with any action code
-
+                isTakenFromGallery = true;
                 break;
 
             default:
@@ -331,7 +397,7 @@ public class RegisterActivity extends AppCompatActivity {
 //        values.put(MediaStore.Images.Media.MIME_TYPE, "image/jpg");
 //        mImageCaptureUri = getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
 
-        File file = new File(getExternalCacheDir(), "photo.jpg");
+        File file = new File(getExternalCacheDir(), String.valueOf(currentTimeMillis()));
         mImageCaptureUri = Uri.fromFile(file);         // define a tmp uri, save the picture in this uri
 
         intent.putExtra(MediaStore.EXTRA_OUTPUT, mImageCaptureUri);
@@ -364,26 +430,6 @@ public class RegisterActivity extends AppCompatActivity {
             }
         }
 
-//        if(permissions.length>1)
-//        {
-//            if (grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
-//                Log.d(TAG, "ALL permit");
-//            }
-//            else if (grantResults[0] == PackageManager.PERMISSION_DENIED || grantResults[1] == PackageManager.PERMISSION_DENIED)
-//            {
-//                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-//                {
-//                    if (shouldShowRequestPermissionRationale(Manifest.permission.CAMERA)||shouldShowRequestPermissionRationale(Manifest.permission.WRITE_EXTERNAL_STORAGE))
-//                    {
-//                        Log.d(TAG, "partail permit");
-//                    }
-//                    else{
-//                        //Never ask again and handle your app without permission.
-//                        Log.d(TAG, "DK");
-//                    }
-//                }
-//            }
-//        }
     }
 
     @Override
@@ -391,10 +437,10 @@ public class RegisterActivity extends AppCompatActivity {
         super.onSaveInstanceState(outState);
         // Save the image capture uri before the activity goes into background
 
-        Log.d(TAG, "OnSaveInstance called!");
         outState.putParcelable(URI_INSTANCE_STATE_KEY, mImageCaptureUri);
         outState.putBoolean(IS_FIRST, isFirst);
         outState.putBoolean(IS_TAKEN_CAMERA_KEY, isTakenFromCamera);
+        outState.putBoolean(IS_TAKEN_GALLERY_KEY, isTakenFromGallery);
     }
 
 
@@ -409,18 +455,17 @@ public class RegisterActivity extends AppCompatActivity {
 
         switch (requestCode) {
             case REQUEST_CODE_TAKE_FROM_CAMERA:    // after taking the pic, begin crop
-            case REQUEST_CODE_GALLERY:
                 beginCrop(mImageCaptureUri);       // Send image taken from camera for cropping
                 break;
 
+            case REQUEST_CODE_GALLERY:
+                Uri selectedImage = data.getData();
+                beginCrop(selectedImage);       // Send image taken from camera for cropping
+                break;
+
+
             case Crop.REQUEST_CROP:     //
                 handleCrop(resultCode, data);      // Update image view after image crop
-//                if (isTakenFromCamera) {
-//                    File f = new File(mImageCaptureUri.getPath());
-//                    if (f.exists())
-//                        f.delete();
-//                    Log.d(TAG, "chose OK");
-//                }
                 break;
         }
     }
@@ -428,12 +473,21 @@ public class RegisterActivity extends AppCompatActivity {
     private void beginCrop(Uri source) {
 
         try{
+            if(parentName.equals("MAIN"))
+            {
+                Uri destination = Uri.fromFile(new File(getCacheDir(), String.valueOf(currentTimeMillis()) +".jpg"));
+                mImageCaptureUri = destination;
+                Crop.of(source, destination).asSquare().start(this);
+            }
 
-//            Uri destination = Uri.fromFile(new File(getCacheDir(), "cropped"));
-            String tmp = getExternalCacheDir() +"/"+ String.valueOf(currentTimeMillis()) + "photo.jpg";
-            Uri destination = Uri.fromFile(new File(tmp));   //getCacheDir(), "cropped"
-            mImageCaptureUri = destination;
-            Crop.of(source, destination).asSquare().start(this);
+            else
+            {
+                String tmp = getExternalCacheDir() +"/"+ String.valueOf(currentTimeMillis()) + "photo.jpg";
+                Uri destination = Uri.fromFile(new File(tmp));   //getCacheDir(), "cropped"
+                mImageCaptureUri = destination;
+                Crop.of(source, destination).asSquare().start(this);
+
+            }
         }catch (Exception e)
         {
             Log.d(TAG, "Error here");
@@ -448,6 +502,8 @@ public class RegisterActivity extends AppCompatActivity {
                 Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), uri);
                 mImageView.setImageBitmap(imageOreintationValidator(bitmap, uri.getPath()));
                 mImageCaptureUri = uri;
+                Log.d(TAG, "handle " + mImageCaptureUri);
+
             }catch (Exception e){
                 Log.d("Error", "error");
             }
@@ -467,20 +523,29 @@ public class RegisterActivity extends AppCompatActivity {
             try {
                 FileOutputStream fos = openFileOutput(getString(R.string.profile_photo_file_name), MODE_PRIVATE);
                 bmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
-//                String path = this.getFilesDir().getAbsolutePath();
-//                Log.d(TAG, "path of profile_photo.png is" + path);
+                String path = this.getFilesDir().getAbsolutePath();
+                Log.d(TAG, "path of profile_photo.png is" + path);
                 fos.flush();
                 fos.close();
+                Log.d(TAG, "save????");
+
             } catch (IOException ioe) {
                 ioe.printStackTrace();
             }
+        }
+
+
+        else
+        {
+            Log.d(TAG, "wtf????");
         }
     }
 
 
     private void loadSnap() {
         // Load profile photo from internal storage
-        if(!isTakenFromCamera)
+
+        if((mImageCaptureUri == null || mImageCaptureUri.toString() == ""))
             mImageView.setImageResource(R.drawable.ic_launcher);
 
         else
