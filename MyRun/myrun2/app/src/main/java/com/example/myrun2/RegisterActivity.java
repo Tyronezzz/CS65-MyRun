@@ -33,14 +33,18 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RadioGroup;
 import android.widget.Toast;
+
 import com.soundcloud.android.crop.Crop;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Objects;
 import java.util.regex.Pattern;
+
 import androidx.exifinterface.media.ExifInterface;
+
 import static java.lang.System.currentTimeMillis;
 
 public class RegisterActivity extends AppCompatActivity {
@@ -155,6 +159,7 @@ public class RegisterActivity extends AppCompatActivity {
 
         loadSnap();
     }
+
 
 
     @Override

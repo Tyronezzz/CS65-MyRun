@@ -13,7 +13,7 @@ import android.support.v4.app.FragmentPagerAdapter;
 import java.util.ArrayList;
 
 public class ActionTabsViewPagerAdapter extends FragmentPagerAdapter {
-    private static final String TAG = ActionTabsViewPagerAdapter.class.getSimpleName();
+//    private static final String TAG = ActionTabsViewPagerAdapter.class.getSimpleName();
     private ArrayList<Fragment> fragments;
 
     private static final int START = 0;
