@@ -11,7 +11,8 @@ In this project, it continues the work from MyRun1 and adds extra activities. It
 
 
 ### 2 warnings?
-on super(), 
+In ListAdapter.java, there are 2 warnings on super(), I have tried many times but cannot solve it. I customized my own ArrayAdapter by overriding the class ArrayAdapter, and I have to use super() to invoke parent method, but the parameters here I do not understand how to eliminate the warning.
+
 
 ### Extra Credit
 I changed the Imageview to circle background using cardview.

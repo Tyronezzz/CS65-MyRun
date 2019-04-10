@@ -39,8 +39,8 @@ public class ListAdapter extends ArrayAdapter {
 
     ListAdapter(Activity context, String[] setting_opt, String[] setting_des, SharedPreferences sharedPreferences, int rc){
 
-//        super(context, rc);
         super(context, R.layout.listview_row, setting_des);
+
         this.context = context;
         this.setting_option = setting_opt;
         this.setting_descrp = setting_des;
@@ -49,18 +49,21 @@ public class ListAdapter extends ArrayAdapter {
     }
 
     ListAdapter(Activity context, String[] nameArrayParam, String[] infoArrayParam, int rc){
+
         super(context, R.layout.listview_row_clip_btn , nameArrayParam);
+        
         this.context = context;
         this.Options = nameArrayParam;
         this.Results = infoArrayParam;
         this.request_code = rc;
-
     }
 
 
     @NonNull
     @Override
     public View getView(int position,View view, @NonNull ViewGroup parent) {
+
+        Log.d(TAG, "Settgs");
 
         if(context.getLocalClassName().equals("com.example.myrun2.Manal_Entry"))     // set the listview for Manual Entry Activity
         {
@@ -80,6 +83,8 @@ public class ListAdapter extends ArrayAdapter {
 
         else              // set up the listview for Setting Activity
         {
+            Log.d(TAG, "Settings");
+
             int REQUEST_SETTING = 0;
             int REQUEST_PREFERENCE = 1;
             if(request_code == REQUEST_PREFERENCE)              // listview without switch
