@@ -27,7 +27,6 @@ public class MainActivity extends AppCompatActivity {
     private int idx = 0;
     private ViewPager viewPager;
     private MenuItem prevMenuItem;
-    private main_start ms;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,9 +35,8 @@ public class MainActivity extends AppCompatActivity {
         Toolbar myToolbar = findViewById(R.id.main_toolbar);
         setSupportActionBar(myToolbar);
 
-
         ArrayList<Fragment> fragments = new ArrayList<>();     // add fragments to the mainactivity
-        ms = new main_start();
+        main_start ms = new main_start();
         fragments.add(ms);
         fragments.add(new main_history());
 
@@ -50,27 +48,14 @@ public class MainActivity extends AppCompatActivity {
         mbottom_tab = findViewById(R.id.bottom_navigation);
         mbottom_tab.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);   // set up the bottom tab
 
-//        if(savedInstanceState != null)
-//        {
-//            idx = savedInstanceState.getInt("FRAG_INDEX", 0);
-//
-//            ms = (main_start) getSupportFragmentManager().getFragment(savedInstanceState, "myFragmentName");
-//
-//
-//        }
-        Log.d(TAG, "Creaet IDX "+String.valueOf(idx));
-
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
             }
 
             @Override
             public void onPageScrollStateChanged(int state) {
-
             }
-
 
             @Override
             public void onPageSelected(int position) {
@@ -91,14 +76,11 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-
         Log.d(TAG, "IDX "+String.valueOf(idx));
         outState.putInt("FRAG_INDEX", idx);
-//        getSupportFragmentManager().putFragment(outState, "myFragmentName", ms);
-
     }
 
-    private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
+    private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener      // bottom tab
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
 
         Fragment fragment;
@@ -134,12 +116,12 @@ public class MainActivity extends AppCompatActivity {
         Intent intent;
         switch (item.getItemId())
         {
-            case R.id.action_settings:
+            case R.id.action_settings:      // click settings
                 intent = new Intent(MainActivity.this, Settings.class);
                 startActivity(intent);
                 return true;
 
-            case R.id.action_edit_profile:
+            case R.id.action_edit_profile:      // click edit profile
                 intent = new Intent(MainActivity.this, RegisterActivity.class);
                 intent.putExtra("PARENTNAME", "MAIN");
                 startActivity(intent);

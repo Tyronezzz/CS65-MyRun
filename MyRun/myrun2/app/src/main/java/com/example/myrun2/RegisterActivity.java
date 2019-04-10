@@ -550,7 +550,7 @@ public class RegisterActivity extends AppCompatActivity {
     private void loadSnap() {
         // Load profile photo from internal storage
 
-        if((mImageCaptureUri == null || mImageCaptureUri.toString() == ""))
+        if((mImageCaptureUri == null || mImageCaptureUri.toString().equals("")))
             mImageView.setImageResource(R.drawable.ic_launcher);
 
         else

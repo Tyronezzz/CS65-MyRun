@@ -39,6 +39,7 @@ public class ListAdapter extends ArrayAdapter {
 
     ListAdapter(Activity context, String[] setting_opt, String[] setting_des, SharedPreferences sharedPreferences, int rc){
 
+//        super(context, rc);
         super(context, R.layout.listview_row, setting_des);
         this.context = context;
         this.setting_option = setting_opt;

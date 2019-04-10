@@ -19,7 +19,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.Switch;
 
 import java.util.Objects;
 
@@ -29,7 +28,6 @@ public class Settings extends AppCompatActivity {
     public int REQUEST_SETTING = 0;
     public int REQUEST_PREFERENCE = 1;
     public int REQUEST_SIGNOUT = 2;
-    public Switch mswitch;
     AlertDialog alertDialog1;
     private int idx = 0;
     SharedPreferences sharedPreferences;
@@ -78,7 +76,7 @@ public class Settings extends AppCompatActivity {
                     case 0:
                         sharedPreferences = getSharedPreferences("profile", Context.MODE_PRIVATE);       //store the profile in the sharedpreference
                         editor = sharedPreferences.edit();
-                        Boolean ischecked = sharedPreferences.getBoolean("key_privacy_set", false);
+                        boolean ischecked = sharedPreferences.getBoolean("key_privacy_set", false);
                         editor.putBoolean("key_privacy_set", !ischecked);
                         editor.apply();
                         la.notifyDataSetChanged();

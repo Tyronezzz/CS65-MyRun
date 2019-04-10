@@ -7,7 +7,6 @@
 package com.example.myrun2;
 
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -23,17 +22,10 @@ import android.widget.Spinner;
 
 public class main_start extends Fragment {
 
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
     private static final String ACT_IDX = "act_idx";
     private static final String ISFIRST = "isfirst";
     private static final String TAG = "Main_Start.lifecyc";
 
-
-    private String mParam1;
-    private String mParam2;
-
-    //private OnFragmentInteractionListener mListener;
     private Spinner mspinner_input;
     private Spinner mspinner_act;
     private int act_idx = 0;
@@ -43,7 +35,7 @@ public class main_start extends Fragment {
         // Required empty public constructor
     }
 
-    // TODO: Rename and change types and number of parameters
+
 //    public static main_start newInstance(String param1, String param2) {
 //        main_start fragment = new main_start();
 //        Bundle args = new Bundle();
@@ -56,13 +48,6 @@ public class main_start extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        if (getArguments() != null) {
-//            mParam1 = getArguments().getString(ARG_PARAM1);
-//            mParam2 = getArguments().getString(ARG_PARAM2);
-//        }
-
-
-//        setRetainInstance(true);
 
         if(isFirst)
             isFirst = false;
@@ -124,7 +109,7 @@ public class main_start extends Fragment {
         });
 
 
-        mspinner_act.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        mspinner_act.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {         // click the activity type spinner
             @Override
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
                 if(!isFirst)
@@ -163,34 +148,33 @@ public class main_start extends Fragment {
         });
     }
 
+
     @Override
-    public void onSaveInstanceState(Bundle outState) {
+    public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         act_idx = mspinner_act.getSelectedItemPosition();
         outState.putInt(ACT_IDX, act_idx);
         outState.putBoolean(ISFIRST, isFirst);
-
-        Log.d(TAG, "called"+act_idx);
+//        Log.d(TAG, "called"+act_idx);
 
     }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+//        Log.d(TAG, "req" + requestCode);
+    }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_main_start, container, false);      // Inflate the layout for this fragment
     }
 
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        //mListener = null;
-    }
-
-
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
-    }
+//
+//    @Override
+//    public void onDetach() {
+//        super.onDetach();
+//    }
+//
 }

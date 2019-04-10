@@ -17,7 +17,7 @@ import android.support.v4.app.DialogFragment;
 public class MyRunsDialogFragment extends DialogFragment {
 
     public static final int DIALOG_ID_PHOTO_PICKER_REGISTER = 1;       // dialog IDs
-    public static final int DIALOG_ID_PHOTO_PICKER_PROFILE = 2;       // dialog IDs
+//    public static final int DIALOG_ID_PHOTO_PICKER_PROFILE = 2;       // dialog IDs
 
     public static final int ID_PHOTO_PICKER_FROM_CAMERA = 0;    // For photo picker selection:
     public static final int ID_GALLERY_PICKER_FROM_CAMERA = 1;    // For photo picker selection:
