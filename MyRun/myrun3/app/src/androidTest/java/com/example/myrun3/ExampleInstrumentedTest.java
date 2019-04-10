@@ -1,4 +1,4 @@
-package com.example.myrun2;
+package com.example.myrun3;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;

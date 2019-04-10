@@ -4,7 +4,7 @@
  * @since   2019-04-07
  */
 
-package com.example.myrun2;
+package com.example.myrun3;
 
 import android.content.Intent;
 import android.os.Bundle;

@@ -6,7 +6,7 @@
  * @description add profile edit activity in this activity, since they have common functions. Use a string to judge parent activity.
  */
 
-package com.example.myrun2;
+package com.example.myrun3;
 
 import android.Manifest;
 import android.content.ActivityNotFoundException;

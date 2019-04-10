@@ -4,7 +4,7 @@
  * @since   2019-04-03
  */
 
-package com.example.myrun2;
+package com.example.myrun3;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -70,7 +70,7 @@ public class LoginActivity extends AppCompatActivity {
 
 //                    Intent k = new Intent(LoginActivity.this, RegisterActivity.class);
 //                    k.putExtra("PARENTNAME", "LOGIN");
-//                    startActivity(k);
+                    startActivity(k);
                 } catch(Exception e) {
                     e.printStackTrace();
                 }
@@ -81,7 +81,7 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        Log.d(TAG, "onSaveInstanceState(12e12e");
+        Log.d(TAG, "onSaveInstanceState333");
     }
 
 
