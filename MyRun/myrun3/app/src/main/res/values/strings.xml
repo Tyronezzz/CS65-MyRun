@@ -1,0 +1,73 @@
+<resources>
+    <string name="app_name">MyRun2</string>
+    <!-- Strings related to login -->
+    <string name="prompt_email">Email</string>
+    <string name="prompt_password">Password</string>
+    <string name="action_sign_in">Sign in</string>
+    <string name="action_sign_in_short">Sign in</string>
+    <string name="error_invalid_email">This email address is invalid</string>
+    <string name="error_invalid_password">This password is too short</string>
+    <string name="error_incorrect_password">This password is incorrect</string>
+    <string name="error_field_required">This field is required</string>
+    <string name="permission_rationale">"Contacts permissions are needed for providing email
+        completions."
+    </string>
+    <string name="register_button">register</string>
+    <string name="phone">Phone</string>
+    <string name="male">MALE</string>
+    <string name="female">FEMALE</string>
+    <string name="name">Name</string>
+    <string name="major">Major</string>
+    <string name="dartmouth_class">Dartmouth Class</string>
+    <string name="Register_head">Sign Up</string>
+    <string name="Profile_Picture_Picker">Profile Picture Picker</string>
+    <string name="dialog_fragment_tag_photo_picker">dialog_fragment_photo_picker</string>
+    <string name="ui_profile_toast_save_text">profile saved</string>
+    <string name="profile_photo_file_name">profile_photo.png</string>
+    <string name="MainActivity">MainActivity</string>
+    <string name="action_setting">action_setting</string>
+    <string name="edit_profile">Edit Profile</string>
+    <string name="settings">Settings</string>
+    <string name="change">CHANGE</string>
+
+
+    <string-array name="ui_profile_photo_picker_items">
+        <item>Take from camera</item>
+        <item>Select from gallery</item>
+    </string-array>
+
+    <string-array name="input_type">
+        <item>Manual</item>
+        <item>GPS</item>
+        <item>Automatic</item>
+    </string-array>
+
+    <string-array name="act_type">
+        <item>Running</item>
+        <item>Walking</item>
+        <item>Standing</item>
+        <item>Cycling</item>
+        <item>Hiking</item>
+        <item>Downhill Skiing</item>
+        <item>Cross-Country Skiing</item>
+        <item>Snowboarding</item>
+        <item>Skating</item>
+        <item>Swimming</item>
+        <item>Mountain Biking</item>
+        <item>Wheelchair</item>
+        <item>Elliptical</item>
+        <item>Other</item>
+    </string-array>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="start">Start</string>
+    <string name="history">History</string>
+    <string name="application_settings">Application Settings</string>
+    <string name="account_settings">Account Settings</string>
+    <string name="activity_type">Activity Type</string>
+    <string name="input_type">Input Type</string>
+    <string name="test">Test</string>
+
+
+</resources>
