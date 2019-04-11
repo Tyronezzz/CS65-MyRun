@@ -12,12 +12,18 @@ import android.app.TimePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.Loader;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.InputType;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.DatePicker;
@@ -26,10 +32,11 @@ import android.widget.ListView;
 import android.widget.TimePicker;
 
 import java.util.Calendar;
+import java.util.List;
 import java.util.Objects;
 
 
-public class Manal_Entry extends AppCompatActivity {
+public class Manal_Entry extends AppCompatActivity implements LoaderManager.LoaderCallbacks<List<ExerciseEntry>> {
 
     private static final String TAG = "Manual_entry";
     String[] mOptions = {"Activity","Date","Time","Duration","Distance","Calorie", "Heartbeat","Comment"};
@@ -163,4 +170,47 @@ public class Manal_Entry extends AppCompatActivity {
         builder.show();
     }
 
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.manual_menu, menu);     // Inflate the menu
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {    // operations on the toolbar
+        switch (item.getItemId()) {
+
+            case R.id.action_save:
+                Log.d(TAG, "save it");
+                // store into the db and return
+                MySQLiteHelper mysqlhelper = new MySQLiteHelper(getApplication());
+                // insert
+
+
+
+                finish();
+                return true;
+
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+
+    @NonNull
+    @Override
+    public Loader<List<ExerciseEntry>> onCreateLoader(int i, @Nullable Bundle bundle) {
+        return null;
+    }
+
+    @Override
+    public void onLoadFinished(@NonNull Loader<List<ExerciseEntry>> loader, List<ExerciseEntry> exerciseEntries) {
+
+    }
+
+    @Override
+    public void onLoaderReset(@NonNull Loader<List<ExerciseEntry>> loader) {
+
+    }
 }

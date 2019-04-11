@@ -68,6 +68,7 @@
     <string name="activity_type">Activity Type</string>
     <string name="input_type">Input Type</string>
     <string name="test">Test</string>
+    <string name="save">SAVE</string>
 
 
 </resources>

@@ -63,9 +63,9 @@ public class ListAdapter extends ArrayAdapter {
     @Override
     public View getView(int position,View view, @NonNull ViewGroup parent) {
 
-        Log.d(TAG, "Settgs");
+        Log.d(TAG, "class name" + context.getLocalClassName());
 
-        if(context.getLocalClassName().equals("com.example.myrun2.Manal_Entry"))     // set the listview for Manual Entry Activity
+        if(context.getLocalClassName().equals("Manal_Entry"))     // set the listview for Manual Entry Activity
         {
             LayoutInflater inflater=context.getLayoutInflater();
             @SuppressLint("InflateParams") View rowView = inflater.inflate(R.layout.listview_row, null,true);
