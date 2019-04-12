@@ -6,6 +6,8 @@ import android.support.annotation.Nullable;
 import android.support.v4.content.AsyncTaskLoader;
 import android.util.Log;
 
+import com.example.myrun3.model.ExerciseEntry;
+
 import java.util.List;
 
 public class EntryListLoader extends AsyncTaskLoader<List<ExerciseEntry>> {

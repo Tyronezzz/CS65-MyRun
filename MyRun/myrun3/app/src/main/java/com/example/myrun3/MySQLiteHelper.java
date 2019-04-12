@@ -7,7 +7,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
-import java.sql.RowId;
+import com.example.myrun3.model.ExerciseEntry;
+
 import java.util.ArrayList;
 
 public class MySQLiteHelper extends SQLiteOpenHelper {
@@ -30,6 +31,9 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
     private static final String DBNAME = "MyRunDB";
     private static final int DBVERSION = 3;
     private SQLiteDatabase db;
+
+
+
 
 
     public static final String CREATE_TABLE_ENTRIES = "CREATE TABLE IF NOT EXISTS "
@@ -88,19 +92,21 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
 
 
     // Insert a item given each column value
-    public long insertEntry(ExerciseEntry entry) {
+    public void insertEntry(ExerciseEntry entry) {
 
         db = getWritableDatabase();
         ContentValues values = new ContentValues();
-        values.put(MySQLiteHelper.KEY_INPUT_TYPE, entry.getInputType());
-
-
-
-
-
-
-
-
+        //values.put(MySQLiteHelper.KEY_INPUT_TYPE, entry.getInputType());
+        values.put(MySQLiteHelper.KEY_ACTIVITY_TYPE, entry.getActType());
+        values.put(MySQLiteHelper.KEY_DATE_TIME, entry.getDateTime());
+        values.put(MySQLiteHelper.KEY_DURATION, entry.getDuration());
+        values.put(MySQLiteHelper.KEY_DISTANCE, entry.getDistance());
+        //values.put(MySQLiteHelper.KEY_AVG_PACE, entry.getAvgPace());
+        //values.put(MySQLiteHelper.KEY_AVG_SPEED, entry.getAvgSpeed());
+        values.put(MySQLiteHelper.KEY_CALORIES, entry.getCalorie());
+        //values.put(MySQLiteHelper.KEY_CLIMB, entry.getClimb());
+        values.put(MySQLiteHelper.KEY_HEARTRATE, entry.getHeartrate());
+        values.put(MySQLiteHelper.KEY_COMMENT, entry.getComment());
 
 
         long newRowId = db.insert(TABLE_NAME_ENTRIES, null, values);
@@ -108,8 +114,8 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
             Log.d(TAG, "Error in inserting!");
 
 
-
-        cursor.close();
+        // need cursor here?????
+        //cursor.close();
         db.close();
         this.close();
 
@@ -133,7 +139,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
     public ExerciseEntry fetchEntryByIndex(long rowId) {
 
         db = getReadableDatabase();
-        String sortOrder = FeedEntry.COLUMN_NAME_SUBTITLE + " DESC";
+//        String sortOrder = FeedEntry.COLUMN_NAME_SUBTITLE + " DESC";
         String selection = KEY_ROWID + " LIKE ?";
         String[] selectionArgs = { String.valueOf(rowId) };
 
@@ -144,8 +150,10 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
                 selectionArgs,          // The values for the WHERE clause
                 null,                   // don't group the rows
                 null,                   // don't filter by row groups
-                sortOrder               // The sort order
+                null               // The sort order
         );
+
+
 
 
 

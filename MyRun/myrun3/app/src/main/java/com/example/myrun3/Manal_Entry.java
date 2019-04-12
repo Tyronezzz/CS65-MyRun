@@ -11,11 +11,8 @@ import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.Loader;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -31,17 +28,19 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TimePicker;
 
+import com.example.myrun3.model.ExerciseEntry;
+
 import java.util.Calendar;
-import java.util.List;
 import java.util.Objects;
 
 
-public class Manal_Entry extends AppCompatActivity implements LoaderManager.LoaderCallbacks<List<ExerciseEntry>> {
+public class Manal_Entry extends AppCompatActivity{
 
     private static final String TAG = "Manual_entry";
     String[] mOptions = {"Activity","Date","Time","Duration","Distance","Calorie", "Heartbeat","Comment"};
     String[] mResults = {"Manual", "2019-01-01", "10:10", "0 mins", "0 kms", "0 cals", "0 bpm", " "};
     private Calendar mDateTime = Calendar.getInstance();
+    private AsynWriteSQL writesqlhelper = null;
 
 
     @Override
@@ -183,9 +182,11 @@ public class Manal_Entry extends AppCompatActivity implements LoaderManager.Load
 
             case R.id.action_save:
                 Log.d(TAG, "save it");
-                // store into the db and return
-                MySQLiteHelper mysqlhelper = new MySQLiteHelper(getApplication());
-                // insert
+
+//                ExerciseEntry entryInsert = new ExerciseEntry();
+                writesqlhelper = new AsynWriteSQL();       // execute the asyn task
+                writesqlhelper.execute();
+
 
 
 
@@ -198,19 +199,40 @@ public class Manal_Entry extends AppCompatActivity implements LoaderManager.Load
     }
 
 
-    @NonNull
-    @Override
-    public Loader<List<ExerciseEntry>> onCreateLoader(int i, @Nullable Bundle bundle) {
-        return null;
+    class AsynWriteSQL extends AsyncTask<Void, Void, Void> {
+
+        private String []entrylist;
+
+        AsynWriteSQL()
+        {
+
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+
+            // store into the db and return
+            MySQLiteHelper mysqlhelper = new MySQLiteHelper(getApplication());
+            // insert
+            ExerciseEntry entry = new ExerciseEntry(null, mResults[0], mResults[1]+" "+mResults[2],
+                    mResults[3], mResults[4],null, null, mResults[5], null, mResults[6], mResults[7], null, null);
+
+            mysqlhelper.insertEntry(entry);
+            return null;
+        }
+
+
+        @Override
+        protected void onPostExecute(Void unused) {
+
+            // update ui
+            // fetch all activities
+            // show it???
+
+
+
+        }
     }
 
-    @Override
-    public void onLoadFinished(@NonNull Loader<List<ExerciseEntry>> loader, List<ExerciseEntry> exerciseEntries) {
 
-    }
-
-    @Override
-    public void onLoaderReset(@NonNull Loader<List<ExerciseEntry>> loader) {
-
-    }
 }
