@@ -37,7 +37,7 @@ public class ListAdapter extends ArrayAdapter {
     //    private int REQUEST_SIGNOUT = 2;
 
 
-    ListAdapter(Activity context, String[] setting_opt, String[] setting_des, SharedPreferences sharedPreferences, int rc){
+    public ListAdapter(Activity context, String[] setting_opt, String[] setting_des, SharedPreferences sharedPreferences, int rc){
 
         super(context, R.layout.listview_row, setting_des);
 
@@ -48,7 +48,7 @@ public class ListAdapter extends ArrayAdapter {
         this.request_code = rc;
     }
 
-    ListAdapter(Activity context, String[] nameArrayParam, String[] infoArrayParam, int rc){
+    public ListAdapter(Activity context, String[] nameArrayParam, String[] infoArrayParam, int rc){
 
         super(context, R.layout.listview_row_clip_btn , nameArrayParam);
 
@@ -65,7 +65,7 @@ public class ListAdapter extends ArrayAdapter {
 
         Log.d(TAG, "class name" + context.getLocalClassName());
 
-        if(context.getLocalClassName().equals("Manal_Entry"))     // set the listview for Manual Entry Activity
+        if(context.getLocalClassName().contains("Manal_Entry"))     // set the listview for Manual Entry Activity
         {
             LayoutInflater inflater=context.getLayoutInflater();
             @SuppressLint("InflateParams") View rowView = inflater.inflate(R.layout.listview_row, null,true);

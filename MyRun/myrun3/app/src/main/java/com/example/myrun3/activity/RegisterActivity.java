@@ -6,7 +6,7 @@
  * @description add profile edit activity in this activity, since they have common functions. Use a string to judge parent activity.
  */
 
-package com.example.myrun3;
+package com.example.myrun3.activity;
 
 import android.Manifest;
 import android.content.ActivityNotFoundException;
@@ -34,7 +34,8 @@ import android.widget.ImageView;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
-import com.example.myrun3.activity.LoginActivity;
+import com.example.myrun3.fragment.MyRunsDialogFragment;
+import com.example.myrun3.R;
 import com.soundcloud.android.crop.Crop;
 
 import java.io.File;

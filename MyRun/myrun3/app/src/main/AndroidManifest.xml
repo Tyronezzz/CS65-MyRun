@@ -16,24 +16,24 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar"
         tools:ignore="AllowBackup,GoogleAppIndexingWarning">
-        <activity android:name=".MapActivity"
+        <activity android:name=".activity.MapActivity"
             android:label="Map"
-            android:parentActivityName=".MainActivity">
+            android:parentActivityName=".activity.MainActivity">
         </activity>
         <!--<activity-->
             <!--android:name=".ProfileActivity"-->
             <!--android:label="Profile"-->
             <!--android:parentActivityName=".MainActivity" />-->
         <activity
-            android:name=".Settings"
+            android:name=".activity.Settings"
             android:label="Settings"
-            android:parentActivityName=".MainActivity">
+            android:parentActivityName=".activity.MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainActivity" />
+                android:value=".activity.MainActivity" />
         </activity>
         <activity
-            android:name=".MainActivity"
+            android:name=".activity.MainActivity"
             android:label="@string/MainActivity"
             android:parentActivityName=".activity.LoginActivity">
         </activity>
@@ -45,7 +45,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".RegisterActivity"
+            android:name=".activity.RegisterActivity"
             android:label="@string/Register_head"
             android:parentActivityName=".activity.LoginActivity">
             <meta-data
@@ -54,12 +54,12 @@
         </activity>
         <activity android:name="com.soundcloud.android.crop.CropImageActivity" />
         <activity
-            android:name=".Manal_Entry"
+            android:name=".activity.Manal_Entry"
             android:label="Manual Entry Activity"
-            android:parentActivityName=".MainActivity">
+            android:parentActivityName=".activity.MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainActivity" />
+                android:value=".activity.MainActivity" />
         </activity>
     </application>
 

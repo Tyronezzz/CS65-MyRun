@@ -4,7 +4,7 @@
  * @since   2019-04-03
  */
 
-package com.example.myrun3;
+package com.example.myrun3.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -17,6 +17,11 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+
+import com.example.myrun3.ActionTabsViewPagerAdapter;
+import com.example.myrun3.R;
+import com.example.myrun3.fragment.main_history;
+import com.example.myrun3.fragment.main_start;
 
 import java.util.ArrayList;
 

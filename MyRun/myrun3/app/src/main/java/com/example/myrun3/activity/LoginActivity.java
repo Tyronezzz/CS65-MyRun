@@ -25,7 +25,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.example.myrun3.MainActivity;
 import com.example.myrun3.R;
 
 public class LoginActivity extends AppCompatActivity {

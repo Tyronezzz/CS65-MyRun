@@ -21,7 +21,7 @@ public class ActionTabsViewPagerAdapter extends FragmentPagerAdapter {
     private static final String UI_TAB_START = "START";
     private static final String UI_TAB_HISTORY = "HISTORY";
 
-    ActionTabsViewPagerAdapter(FragmentManager fm, ArrayList<Fragment> fragments){
+    public ActionTabsViewPagerAdapter(FragmentManager fm, ArrayList<Fragment> fragments){
         super(fm);
         this.fragments = fragments;
     }

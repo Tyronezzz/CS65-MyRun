@@ -4,7 +4,7 @@
  * @since   2019-04-07
  */
 
-package com.example.myrun3;
+package com.example.myrun3.activity;
 
 import android.content.Context;
 import android.content.DialogInterface;
@@ -20,7 +20,8 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
-import com.example.myrun3.activity.LoginActivity;
+import com.example.myrun3.ListAdapter;
+import com.example.myrun3.R;
 
 import java.util.Objects;
 
