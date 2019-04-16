@@ -20,6 +20,8 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
+import com.example.myrun3.activity.LoginActivity;
+
 import java.util.Objects;
 
 public class Settings extends AppCompatActivity {

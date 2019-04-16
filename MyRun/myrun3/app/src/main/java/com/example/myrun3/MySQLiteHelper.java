@@ -2,14 +2,11 @@ package com.example.myrun3;
 
 import android.content.ContentValues;
 import android.content.Context;
-import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
 import com.example.myrun3.model.ExerciseEntry;
-
-import java.util.ArrayList;
 
 public class MySQLiteHelper extends SQLiteOpenHelper {
 
@@ -34,13 +31,11 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
 
 
 
-
-
     public static final String CREATE_TABLE_ENTRIES = "CREATE TABLE IF NOT EXISTS "
             + TABLE_NAME_ENTRIES
             + " ("
             + KEY_ROWID
-            + "integer primary key autoincrement, "
+            + " integer primary key autoincrement, "
             + KEY_INPUT_TYPE
             + " TEXT, "
             + KEY_ACTIVITY_TYPE
@@ -136,58 +131,55 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
     }
 
     // Query a specific entry by its index.
-    public ExerciseEntry fetchEntryByIndex(long rowId) {
-
-        db = getReadableDatabase();
-//        String sortOrder = FeedEntry.COLUMN_NAME_SUBTITLE + " DESC";
-        String selection = KEY_ROWID + " LIKE ?";
-        String[] selectionArgs = { String.valueOf(rowId) };
-
-        Cursor cursor = db.query(
-                TABLE_NAME_ENTRIES,   // The table to query
-                null,             // The array of columns to return (pass null to get all)
-                selection,              // The columns for the WHERE clause
-                selectionArgs,          // The values for the WHERE clause
-                null,                   // don't group the rows
-                null,                   // don't filter by row groups
-                null               // The sort order
-        );
-
-
-
-
-
-
-    }
+//    public ExerciseEntry fetchEntryByIndex(long rowId) {
+//
+//        db = getReadableDatabase();
+////        String sortOrder = FeedEntry.COLUMN_NAME_SUBTITLE + " DESC";
+//        String selection = KEY_ROWID + " LIKE ?";
+//        String[] selectionArgs = { String.valueOf(rowId) };
+//
+//        Cursor cursor = db.query(
+//                TABLE_NAME_ENTRIES,   // The table to query
+//                null,             // The array of columns to return (pass null to get all)
+//                selection,              // The columns for the WHERE clause
+//                selectionArgs,          // The values for the WHERE clause
+//                null,                   // don't group the rows
+//                null,                   // don't filter by row groups
+//                null               // The sort order
+//        );
+//
+//
+//
+//    }
 
     // Query the entire table, return all rows
-    public ArrayList<ExerciseEntry> fetchEntries() {
-
-        ArrayList<ExerciseEntry> entries = new ArrayList<>();
-        db = getReadableDatabase();
-        String sortOrder = KEY_DATE_TIME + " ASC";
-
-        Cursor cursor = db.query(
-                TABLE_NAME_ENTRIES,   // The table to query
-                null,             // The array of columns to return (pass null to get all)
-                null,              // The columns for the WHERE clause
-                null,          // The values for the WHERE clause
-                null,                   // don't group the rows
-                null,                   // don't filter by row groups
-                sortOrder               // The sort order
-        );
-
-        cursor.moveToFirst();
-        while (!cursor.isAfterLast()) {
-            ExerciseEntry entry = cursorToComment(cursor);
-//            Log.d(TAG, "get entry = " + cursorToComment(cursor).toString());
-            entries.add(entry);
-            cursor.moveToNext();
-        }
-        // Make sure to close the cursor
-        cursor.close();
-        return entries;
-    }
+//    public ArrayList<ExerciseEntry> fetchEntries() {
+//
+//        ArrayList<ExerciseEntry> entries = new ArrayList<>();
+//        db = getReadableDatabase();
+//        String sortOrder = KEY_DATE_TIME + " ASC";
+//
+//        Cursor cursor = db.query(
+//                TABLE_NAME_ENTRIES,   // The table to query
+//                null,             // The array of columns to return (pass null to get all)
+//                null,              // The columns for the WHERE clause
+//                null,          // The values for the WHERE clause
+//                null,                   // don't group the rows
+//                null,                   // don't filter by row groups
+//                sortOrder               // The sort order
+//        );
+//
+//        cursor.moveToFirst();
+//        while (!cursor.isAfterLast()) {
+//            ExerciseEntry entry = cursorToComment(cursor);
+////            Log.d(TAG, "get entry = " + cursorToComment(cursor).toString());
+//            entries.add(entry);
+//            cursor.moveToNext();
+//        }
+//        // Make sure to close the cursor
+//        cursor.close();
+//        return entries;
+//    }
 
 
 }

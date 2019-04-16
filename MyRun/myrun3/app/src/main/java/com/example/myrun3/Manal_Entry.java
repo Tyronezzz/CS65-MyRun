@@ -30,6 +30,8 @@ import android.widget.TimePicker;
 
 import com.example.myrun3.model.ExerciseEntry;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Objects;
 
@@ -37,6 +39,7 @@ import java.util.Objects;
 public class Manal_Entry extends AppCompatActivity{
 
     private static final String TAG = "Manual_entry";
+    private static final String RESULT_LIST = "result_list";
     String[] mOptions = {"Activity","Date","Time","Duration","Distance","Calorie", "Heartbeat","Comment"};
     String[] mResults = {"Manual", "2019-01-01", "10:10", "0 mins", "0 kms", "0 cals", "0 bpm", " "};
     private Calendar mDateTime = Calendar.getInstance();
@@ -51,6 +54,13 @@ public class Manal_Entry extends AppCompatActivity{
         Toolbar myToolbar = findViewById(R.id.manual_toolbar);
         setSupportActionBar(myToolbar);
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);   // set up the tool bar
+
+
+        if(savedInstanceState != null)
+        {
+            mResults = savedInstanceState.getStringArrayList(RESULT_LIST).toArray(new String[0]);
+        }
+
 
         Intent intent = getIntent();
         String act_name = intent.getStringExtra("ACT");        // get the activity type name
@@ -88,6 +98,13 @@ public class Manal_Entry extends AppCompatActivity{
 
             }
         });
+
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putStringArrayList(RESULT_LIST, new ArrayList<String>(Arrays.asList(mResults)));
 
     }
 

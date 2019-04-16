@@ -24,7 +24,8 @@ public class EntryListLoader extends AsyncTaskLoader<List<ExerciseEntry>> {
     public List<ExerciseEntry> loadInBackground() {
 
         Log.d("loader ", "loader here");
-        return dataSource.fetchEntries();
+//        return dataSource.fetchEntries();
+        return null;
     }
 
 }

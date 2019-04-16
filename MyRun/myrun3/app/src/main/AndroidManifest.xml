@@ -35,9 +35,9 @@
         <activity
             android:name=".MainActivity"
             android:label="@string/MainActivity"
-            android:parentActivityName=".LoginActivity">
+            android:parentActivityName=".activity.LoginActivity">
         </activity>
-        <activity android:name=".LoginActivity">
+        <activity android:name=".activity.LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -47,10 +47,10 @@
         <activity
             android:name=".RegisterActivity"
             android:label="@string/Register_head"
-            android:parentActivityName=".LoginActivity">
+            android:parentActivityName=".activity.LoginActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".LoginActivity" />
+                android:value=".activity.LoginActivity" />
         </activity>
         <activity android:name="com.soundcloud.android.crop.CropImageActivity" />
         <activity

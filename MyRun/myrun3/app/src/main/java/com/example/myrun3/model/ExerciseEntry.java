@@ -17,9 +17,9 @@ public class ExerciseEntry {
     private String gps;
 
 
-    ExerciseEntry(String input_type, String activity_type, String date_time, String duration,
-                  String distance, String avg_page, String avg_speed, String calorie, String climb,
-                  String heart_rate, String comment, String privacy, String gps){
+    public ExerciseEntry(String input_type, String activity_type, String date_time, String duration,
+                         String distance, String avg_page, String avg_speed, String calorie, String climb,
+                         String heart_rate, String comment, String privacy, String gps){
         this.input_type = input_type;
         this.activity_type = activity_type;
         this.date_time = date_time;

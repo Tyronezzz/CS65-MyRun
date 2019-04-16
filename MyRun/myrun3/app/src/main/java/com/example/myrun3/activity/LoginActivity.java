@@ -4,7 +4,7 @@
  * @since   2019-04-03
  */
 
-package com.example.myrun3;
+package com.example.myrun3.activity;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -24,6 +24,9 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import com.example.myrun3.MainActivity;
+import com.example.myrun3.R;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -70,7 +73,7 @@ public class LoginActivity extends AppCompatActivity {
 
 //                    Intent k = new Intent(LoginActivity.this, RegisterActivity.class);
 //                    k.putExtra("PARENTNAME", "LOGIN");
-                    startActivity(k);
+//                    startActivity(k);
                 } catch(Exception e) {
                     e.printStackTrace();
                 }

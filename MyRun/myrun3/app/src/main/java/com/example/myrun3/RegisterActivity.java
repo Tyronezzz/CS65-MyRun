@@ -34,6 +34,7 @@ import android.widget.ImageView;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
+import com.example.myrun3.activity.LoginActivity;
 import com.soundcloud.android.crop.Crop;
 
 import java.io.File;
@@ -102,6 +103,8 @@ public class RegisterActivity extends AppCompatActivity {
         mMajor = findViewById(R.id.register_major);
         mClass = findViewById(R.id.register_class);
         mGender = findViewById(R.id.register_gender);
+
+
 
 
         StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
@@ -296,7 +299,8 @@ public class RegisterActivity extends AppCompatActivity {
             editor.putString("key_major", putstr.get(4));
             editor.putInt("key_class", putint.get(0));
             editor.putInt("key_gender", putint.get(1));
-            editor.putString("key_pic", mImageCaptureUri.toString());
+            if(mImageCaptureUri != null)
+                editor.putString("key_pic", mImageCaptureUri.toString());
             editor.apply();
             saveSnap();
 
