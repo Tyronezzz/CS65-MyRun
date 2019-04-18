@@ -219,20 +219,20 @@ public class Manal_Entry extends AppCompatActivity{
     }
 
 
+    @SuppressLint("StaticFieldLeak")
     class AsynWriteSQL extends AsyncTask<Void, Void, Void> {
 
         private String []entrylist;
+        MySQLiteHelper mysqlhelper;
 
         AsynWriteSQL()
         {
-
+            mysqlhelper = new MySQLiteHelper(getApplication());
         }
 
         @Override
         protected Void doInBackground(Void... voids) {
 
-            // store into the db and return
-            MySQLiteHelper mysqlhelper = new MySQLiteHelper(getApplication());
             // insert
             ExerciseEntry entry = new ExerciseEntry(null, mResults[0], mResults[1]+" "+mResults[2],
                     mResults[3], mResults[4],null, null, mResults[5], null, mResults[6], mResults[7], null, null);
@@ -249,7 +249,34 @@ public class Manal_Entry extends AppCompatActivity{
             // fetch all activities
             // show it???
 
+            ArrayList<ExerciseEntry> act_entries = mysqlhelper.fetchEntries();
+            Log.d(TAG, "here " + act_entries.size());
 
+
+            String[] act_title = new String[act_entries.size()];
+            String[] act_des = new String[act_entries.size()];
+            String[] act_datetime = new String[act_entries.size()];
+            for(int i=0;i<act_entries.size();i++)
+            {
+                act_title[i] = act_entries.get(i).getActType();
+                act_des[i] = act_entries.get(i).getDistance() + ", " + act_entries.get(i).getDuration();
+                act_datetime[i] = act_entries.get(i).getDateTime();
+            }
+
+
+//            LayoutInflater inflater = Manal_Entry.this.getLayoutInflater();
+//            @SuppressLint("InflateParams") View rowView = inflater.inflate(R.layout.listview_history, null,true);
+//
+//            main_history mh =
+//
+//
+//
+//            ListAdapter la = new ListAdapter(Manal_Entry.this, act_title, act_des, act_datetime, 99);        // set up the listadapter
+//            ListView mlistView = rowView.findViewById(R.id.manual_hislistview);
+//            if(mlistView == null)
+//                Log.d(TAG, "sdcsdvsd");
+//
+//            mlistView.setAdapter(la);
 
         }
     }

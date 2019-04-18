@@ -13,7 +13,8 @@ import java.util.List;
 public class EntryListLoader extends AsyncTaskLoader<List<ExerciseEntry>> {
 
     private MySQLiteHelper dataSource;
-    EntryListLoader(@NonNull Context context) {
+
+    public EntryListLoader(@NonNull Context context) {
         super(context);
         this.dataSource = new MySQLiteHelper(context);         // create the database
     }
@@ -24,8 +25,8 @@ public class EntryListLoader extends AsyncTaskLoader<List<ExerciseEntry>> {
     public List<ExerciseEntry> loadInBackground() {
 
         Log.d("loader ", "loader here");
-//        return dataSource.fetchEntries();
-        return null;
+        return dataSource.fetchEntries();
+
     }
 
 }

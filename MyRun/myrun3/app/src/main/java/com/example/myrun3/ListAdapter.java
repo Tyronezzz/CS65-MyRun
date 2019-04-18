@@ -19,6 +19,11 @@ import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.TextView;
 
+import com.example.myrun3.model.ExerciseEntry;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import androidx.annotation.NonNull;
 
 
@@ -31,10 +36,12 @@ public class ListAdapter extends ArrayAdapter {
     private String[] Results;
     private String[] setting_option;
     private String[] setting_descrp;
+    private String[] act_datetime;
     private int request_code;
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor editor;
-    //    private int REQUEST_SIGNOUT = 2;
+    private List<ExerciseEntry> exetry;
+    private int REQUEST_SIGNOUT = 2;
 
 
     public ListAdapter(Activity context, String[] setting_opt, String[] setting_des, SharedPreferences sharedPreferences, int rc){
@@ -57,6 +64,35 @@ public class ListAdapter extends ArrayAdapter {
         this.Results = infoArrayParam;
         this.request_code = rc;
     }
+
+//    public ListAdapter(Activity context, String[] act_title, String[] act_des, String[] act_datetime, int rc) {
+//        super(context, R.layout.listview_history, act_title);
+//
+//        this.context = context;
+//        this.setting_option = act_title;
+//        this.setting_descrp = act_des;
+//        this.act_datetime = act_datetime;
+//        this.request_code = rc;
+//
+//    }
+
+
+
+    public ListAdapter(Activity context, ArrayList<ExerciseEntry> exetry, String[] tmp,int rc) {
+        super(context, R.layout.listview_history, tmp);   //??????
+        this.context = context;
+        this.exetry = exetry;
+        this.request_code = rc;
+        this.setting_option = tmp;
+
+    }
+
+
+    public void addall(List<ExerciseEntry> items) {
+        this.exetry = items;
+        Log.d(TAG, "Size of array" + String.valueOf(items.size()));
+    }
+
 
 
     @NonNull
@@ -83,7 +119,7 @@ public class ListAdapter extends ArrayAdapter {
 
         else              // set up the listview for Setting Activity
         {
-            Log.d(TAG, "Settings");
+
 
             int REQUEST_SETTING = 0;
             int REQUEST_PREFERENCE = 1;
@@ -140,7 +176,7 @@ public class ListAdapter extends ArrayAdapter {
                 return rowView;
             }
 
-            else                                              // sign out
+            else if(request_code == REQUEST_SIGNOUT)                                              // sign out
             {
                 LayoutInflater inflater=context.getLayoutInflater();
                 @SuppressLint("InflateParams") View rowView = inflater.inflate(R.layout.listview_row, null,true);
@@ -153,6 +189,26 @@ public class ListAdapter extends ArrayAdapter {
 
                 mOPtionsView.setText(Options[position]);
                 mResultsView.setText(Results[position]);
+
+                return rowView;
+            }
+
+            else
+            {
+                Log.d(TAG, "set exes");
+                LayoutInflater inflater=context.getLayoutInflater();
+                @SuppressLint("InflateParams") View rowView = inflater.inflate(R.layout.listview_history, null,true);
+
+
+//                TextView mTitleView = rowView.findViewById(R.id.manual_title);
+//                TextView mDateView =  rowView.findViewById(R.id.manual_datetime);
+//                TextView mDuration =  rowView.findViewById(R.id.manual_des);
+//
+//                //this code sets the values of the objects to values from the arrays
+//                mTitleView.setText(exetry.get(position).getActType());
+//                mDateView.setText(exetry.get(position).getDateTime());
+//                mDuration.setText(exetry.get(position).getDuration());
+
 
                 return rowView;
             }

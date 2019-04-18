@@ -5,4 +5,9 @@
     tools:context="com.example.myrun3.fragment.main_history">
 
 
+    <ListView
+        android:id="@+id/manual_hislistview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
 </FrameLayout>
