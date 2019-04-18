@@ -17,6 +17,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.example.myrun3.EntryListLoader;
@@ -35,7 +36,7 @@ public class main_history extends Fragment implements LoaderManager.LoaderCallba
     private static final String TAG = "Mainhistory";
     private MySQLiteHelper dataSource;
     private ListAdapter mAdapter;
-    ArrayList<ExerciseEntry> exetry;
+    ArrayList<ExerciseEntry> exetry = new ArrayList<>();
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
@@ -46,12 +47,12 @@ public class main_history extends Fragment implements LoaderManager.LoaderCallba
 
 
 
-//    @Override
-//    public void onCreate(Bundle savedInstanceState) {
-//
-//        super.onCreate(savedInstanceState);
-//
-//    }
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+
+        super.onCreate(savedInstanceState);
+
+    }
 
 
     @Override
@@ -60,11 +61,34 @@ public class main_history extends Fragment implements LoaderManager.LoaderCallba
 
 
         dataSource = new MySQLiteHelper(getContext());
-        ListView mListView = getView().findViewById(R.id.manual_hislistview);
-        mAdapter = new ListAdapter(getActivity(), exetry, new String[]{}, 9);
-        mListView.setAdapter(mAdapter);
+        ListView mhisView = getView().findViewById(R.id.manual_hislistview);
 
-        // start loader in the background thread.
+//        ExerciseEntry entry_one = new ExerciseEntry(null, "1", "1", "1",
+//                "1",null, null, "1", null,
+//                "1", "1", null, null);
+        exetry = new ArrayList<ExerciseEntry>();
+//        exetry.add(entry_one);
+
+        mAdapter = new ListAdapter(getActivity(), 3, exetry);  // new String[]{}
+        mhisView.setAdapter(mAdapter);
+
+
+        mhisView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Log.d(TAG, String.valueOf(position));
+
+                // start activity
+//                Intent k = new Intent(LoginActivity.this, RegisterActivity.class);
+//                    k.putExtra("PARENTNAME", "LOGIN");
+//                    startActivity(k);
+
+
+            }
+        });
+
+
+                // start loader in the background thread.
         LoaderManager mLoader = getLoaderManager();       //  getSupportLoaderManager
         mLoader.initLoader(ALL_EXERCISE_LOADER_ID, null, this).forceLoad();
 
@@ -94,7 +118,9 @@ public class main_history extends Fragment implements LoaderManager.LoaderCallba
             // returns the List<Comment> from queried from the db
             // Use the UI with the adapter to show the elements in a ListView
             if(exerciseEntries.size() > 0){
-                mAdapter.addall(exerciseEntries);      // ??????
+
+                Log.d(TAG, "size of input " + exerciseEntries.size());
+                mAdapter.addall(exerciseEntries);
                 mAdapter.notifyDataSetChanged();           // force notification -- tell the adapter to display
             }
 

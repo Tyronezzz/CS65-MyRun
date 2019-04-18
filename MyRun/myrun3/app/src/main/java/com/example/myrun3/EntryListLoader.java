@@ -8,6 +8,7 @@ import android.util.Log;
 
 import com.example.myrun3.model.ExerciseEntry;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class EntryListLoader extends AsyncTaskLoader<List<ExerciseEntry>> {
@@ -22,7 +23,7 @@ public class EntryListLoader extends AsyncTaskLoader<List<ExerciseEntry>> {
 
     @Nullable
     @Override
-    public List<ExerciseEntry> loadInBackground() {
+    public ArrayList<ExerciseEntry> loadInBackground() {
 
         Log.d("loader ", "loader here");
         return dataSource.fetchEntries();

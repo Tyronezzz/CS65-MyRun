@@ -41,7 +41,9 @@ public class ListAdapter extends ArrayAdapter {
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor editor;
     private List<ExerciseEntry> exetry;
+    int REQUEST_SETTING = 0;
     private int REQUEST_SIGNOUT = 2;
+    private int REQUEST_HISTORY = 3;
 
 
     public ListAdapter(Activity context, String[] setting_opt, String[] setting_des, SharedPreferences sharedPreferences, int rc){
@@ -57,7 +59,7 @@ public class ListAdapter extends ArrayAdapter {
 
     public ListAdapter(Activity context, String[] nameArrayParam, String[] infoArrayParam, int rc){
 
-        super(context, R.layout.listview_row_clip_btn , nameArrayParam);
+        super(context, R.layout.listview_row_clip_btn, nameArrayParam);
 
         this.context = context;
         this.Options = nameArrayParam;
@@ -78,19 +80,46 @@ public class ListAdapter extends ArrayAdapter {
 
 
 
-    public ListAdapter(Activity context, ArrayList<ExerciseEntry> exetry, String[] tmp,int rc) {
-        super(context, R.layout.listview_history, tmp);   //??????
+    public ListAdapter(Activity context, int rc, List<ExerciseEntry> exetry) {   //
+        super(context, R.layout.listview_history, exetry);
         this.context = context;
         this.exetry = exetry;
         this.request_code = rc;
-        this.setting_option = tmp;
+        Log.d(TAG, "ini  ");
+
 
     }
 
 
     public void addall(List<ExerciseEntry> items) {
-        this.exetry = items;
-        Log.d(TAG, "Size of array" + String.valueOf(items.size()));
+
+        exetry = new ArrayList<>(items);
+
+//        for(int i=0;i<items.size();i++)
+//l            exetry.set(i, items.get(i));
+//        this.exetry = items;
+        Log.d(TAG, "Size of array ");
+    }
+
+
+
+    @Override
+    public int getCount() {
+
+
+
+        if(request_code == REQUEST_HISTORY)
+            return exetry.size();
+
+
+
+        else if(request_code == REQUEST_SETTING)
+            return setting_option.length;
+
+        else //if(context.getLocalClassName().contains("Manal_Entry"))
+            return Options.length;
+
+
     }
 
 
@@ -99,7 +128,9 @@ public class ListAdapter extends ArrayAdapter {
     @Override
     public View getView(int position,View view, @NonNull ViewGroup parent) {
 
-        Log.d(TAG, "class name" + context.getLocalClassName());
+
+        Log.d(TAG, "get here");
+//        Log.d(TAG, "class name" + context.getLocalClassName());
 
         if(context.getLocalClassName().contains("Manal_Entry"))     // set the listview for Manual Entry Activity
         {
@@ -121,7 +152,7 @@ public class ListAdapter extends ArrayAdapter {
         {
 
 
-            int REQUEST_SETTING = 0;
+
             int REQUEST_PREFERENCE = 1;
             if(request_code == REQUEST_PREFERENCE)              // listview without switch
             {
@@ -200,16 +231,16 @@ public class ListAdapter extends ArrayAdapter {
                 @SuppressLint("InflateParams") View rowView = inflater.inflate(R.layout.listview_history, null,true);
 
 
-//                TextView mTitleView = rowView.findViewById(R.id.manual_title);
-//                TextView mDateView =  rowView.findViewById(R.id.manual_datetime);
-//                TextView mDuration =  rowView.findViewById(R.id.manual_des);
-//
-//                //this code sets the values of the objects to values from the arrays
-//                mTitleView.setText(exetry.get(position).getActType());
-//                mDateView.setText(exetry.get(position).getDateTime());
-//                mDuration.setText(exetry.get(position).getDuration());
+                TextView mTitleView = rowView.findViewById(R.id.manual_title);
+                TextView mDateView =  rowView.findViewById(R.id.manual_datetime);
+                TextView mDuration =  rowView.findViewById(R.id.manual_des);
 
+                //this code sets the values of the objects to values from the arrays
+                mTitleView.setText(exetry.get(position).getActType());
+                mDateView.setText(exetry.get(position).getDateTime());
+                mDuration.setText(exetry.get(position).getDuration());
 
+                Log.d(TAG, "arrr ziess " + exetry.size());
                 return rowView;
             }
         }
