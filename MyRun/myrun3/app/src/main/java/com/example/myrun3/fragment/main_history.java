@@ -7,6 +7,7 @@
 
 package com.example.myrun3.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -24,6 +25,7 @@ import com.example.myrun3.EntryListLoader;
 import com.example.myrun3.ListAdapter;
 import com.example.myrun3.MySQLiteHelper;
 import com.example.myrun3.R;
+import com.example.myrun3.activity.Manal_Entry;
 import com.example.myrun3.model.ExerciseEntry;
 
 import java.util.ArrayList;
@@ -58,37 +60,31 @@ public class main_history extends Fragment implements LoaderManager.LoaderCallba
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
-
         dataSource = new MySQLiteHelper(getContext());
         ListView mhisView = getView().findViewById(R.id.manual_hislistview);
 
-//        ExerciseEntry entry_one = new ExerciseEntry(null, "1", "1", "1",
-//                "1",null, null, "1", null,
-//                "1", "1", null, null);
-        exetry = new ArrayList<ExerciseEntry>();
-//        exetry.add(entry_one);
 
-        mAdapter = new ListAdapter(getActivity(), 3, exetry);  // new String[]{}
+        exetry = new ArrayList<>();
+        mAdapter = new ListAdapter(getActivity(), 3, exetry);
         mhisView.setAdapter(mAdapter);
 
 
         mhisView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Log.d(TAG, String.valueOf(position));
+//                Log.d(TAG, String.valueOf(position));
 
                 // start activity
-//                Intent k = new Intent(LoginActivity.this, RegisterActivity.class);
-//                    k.putExtra("PARENTNAME", "LOGIN");
-//                    startActivity(k);
+                Intent k = new Intent(getActivity(), Manal_Entry.class);
+                k.putExtra("PARENTNAME", "MAINHISTORY");
+                k.putExtra("EXENTRY", exetry.get(position));
+                k.putExtra("INDEX", exetry.get(position).getId());
 
-
+                startActivity(k);
             }
         });
 
-
-                // start loader in the background thread.
+        // start loader in the background thread.
         LoaderManager mLoader = getLoaderManager();       //  getSupportLoaderManager
         mLoader.initLoader(ALL_EXERCISE_LOADER_ID, null, this).forceLoad();
 
@@ -99,7 +95,6 @@ public class main_history extends Fragment implements LoaderManager.LoaderCallba
     @NonNull
     @Override
     public Loader<List<ExerciseEntry>> onCreateLoader(int i, @Nullable Bundle bundle) {
-
 
         if(i == ALL_EXERCISE_LOADER_ID){
             Log.d(TAG, "start here");
@@ -120,6 +115,7 @@ public class main_history extends Fragment implements LoaderManager.LoaderCallba
             if(exerciseEntries.size() > 0){
 
                 Log.d(TAG, "size of input " + exerciseEntries.size());
+                exetry = new ArrayList<>(exerciseEntries);
                 mAdapter.addall(exerciseEntries);
                 mAdapter.notifyDataSetChanged();           // force notification -- tell the adapter to display
             }

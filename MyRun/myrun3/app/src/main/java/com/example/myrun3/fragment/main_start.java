@@ -140,6 +140,7 @@ public class main_start extends Fragment {
                     intent = new Intent(getContext(), Manal_Entry.class);
                     String text2 = mspinner_act.getSelectedItem().toString();
                     intent.putExtra("ACT", text2);
+                    intent.putExtra("PARENTNAME", "MAINSTART");
                     startActivity(intent);
                 }
 

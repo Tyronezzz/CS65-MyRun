@@ -93,7 +93,8 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
 
         db = getWritableDatabase();
         ContentValues values = new ContentValues();
-        //values.put(MySQLiteHelper.KEY_INPUT_TYPE, entry.getInputType());
+
+//        values.put(MySQLiteHelper.KEY_INPUT_TYPE, entry.getInputType());
         values.put(MySQLiteHelper.KEY_ACTIVITY_TYPE, entry.getActType());
         values.put(MySQLiteHelper.KEY_DATE_TIME, entry.getDateTime());
         values.put(MySQLiteHelper.KEY_DURATION, entry.getDuration());
@@ -125,11 +126,13 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         String selection = KEY_ROWID + " LIKE ?";
         String[] selectionArgs = { String.valueOf(rowIndex) };
 
-        int deletedRows = db.delete(TABLE_NAME_ENTRIES, selection, selectionArgs);
-        Log.d(TAG, String.valueOf(deletedRows) + " row(s) have been deleted");
+//        int deletedRows = db.delete(TABLE_NAME_ENTRIES, selection, selectionArgs);
+        db.delete(TABLE_NAME_ENTRIES, KEY_ROWID + " = " + rowIndex, null);
+        Log.d(TAG, rowIndex + " have been deleted");
 
         db.close();
         this.close();
+
     }
 
     // Query a specific entry by its index.
@@ -174,6 +177,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         cursor.moveToFirst();
         while (!cursor.isAfterLast()) {
 
+            long id = cursor.getLong(0);
             String act_name = cursor.getString(2);
             String date_time = cursor.getString(3);
             String duration = cursor.getString(4);
@@ -182,7 +186,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
             String heartrate = cursor.getString(10);
             String comment = cursor.getString(11);
 
-            ExerciseEntry entry = new ExerciseEntry(null, act_name, date_time, duration,
+            ExerciseEntry entry = new ExerciseEntry(id,null, act_name, date_time, duration,
                     distance,null, null, cal, null,
                    heartrate, comment, null, null);
 

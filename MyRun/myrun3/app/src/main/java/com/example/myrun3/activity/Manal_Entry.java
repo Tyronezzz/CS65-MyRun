@@ -47,7 +47,9 @@ public class Manal_Entry extends AppCompatActivity{
     String[] mResults = {"Manual", "2019-01-01", "10:10", "0 mins", "0 kms", "0 cals", "0 bpm", " "};
     private Calendar mDateTime = Calendar.getInstance();
     private AsynWriteSQL writesqlhelper = null;
-
+    private MySQLiteHelper mysqlhelper;
+    private String parentName;
+    private long index;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,55 +61,84 @@ public class Manal_Entry extends AppCompatActivity{
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);   // set up the tool bar
 
 
-        if(savedInstanceState != null)
+        Intent intent = getIntent();
+        parentName = intent.getStringExtra("PARENTNAME");        // get the parent activity name
+        String act_name = intent.getStringExtra("ACT");        // get the activity type name
+        index = intent.getLongExtra("INDEX", 0);
+
+
+        if(parentName.equals("MAINHISTORY"))
         {
-            mResults = savedInstanceState.getStringArrayList(RESULT_LIST).toArray(new String[0]);
+
+            ExerciseEntry entry = (ExerciseEntry) getIntent().getSerializableExtra("EXENTRY");
+            String[] arrOfStr = entry.getDateTime().split("\\s+");
+
+            mResults[0] = entry.getActType();
+            mResults[1] = arrOfStr[0];
+            mResults[2] = arrOfStr[1];
+            mResults[3] = entry.getDuration();
+            mResults[4] = entry.getDistance();
+            mResults[5] = entry.getCalorie();
+            mResults[6] = entry.getHeartrate();
+            mResults[7] = entry.getComment();
+
+            final ListAdapter la_history = new ListAdapter(this, mOptions, mResults, 9);        // set up the listadapter
+            ListView mlistView = findViewById(R.id.manual_listview);
+            mlistView.setAdapter(la_history);
+            mlistView.setEnabled(false);
+
+            mysqlhelper = new MySQLiteHelper(getApplication());
         }
 
-
-        Intent intent = getIntent();
-        String act_name = intent.getStringExtra("ACT");        // get the activity type name
-        mResults[0] = act_name;
-
-        final ListAdapter la = new ListAdapter(this, mOptions, mResults, 9);        // set up the listadapter
-        ListView mlistView = findViewById(R.id.manual_listview);
-        mlistView.setAdapter(la);
-
-        mlistView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Log.d(TAG, String.valueOf(position));
-
-                switch (position){
-                    case 1:
-                        onDateClick(la);          // set the date
-                        break;
-
-                    case 2:
-                        onTimeClick(la);        // set the time
-                        break;
-
-                    case 3:
-                    case 4:
-                    case 5:
-                    case 6:
-                    case 7:
-                        showDiaglog(position);      // show the dialog
-                        break;
-
-                    default:
-                        break;
-                }
-
+        else
+        {
+            if(savedInstanceState != null)
+            {
+                mResults = savedInstanceState.getStringArrayList(RESULT_LIST).toArray(new String[0]);
             }
-        });
+
+            mResults[0] = act_name;
+
+            final ListAdapter la = new ListAdapter(this, mOptions, mResults, 9);        // set up the listadapter
+            ListView mlistView = findViewById(R.id.manual_listview);
+            mlistView.setAdapter(la);
+
+            mlistView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    Log.d(TAG, String.valueOf(position));
+
+                    switch (position){
+                        case 1:
+                            onDateClick(la);          // set the date
+                            break;
+
+                        case 2:
+                            onTimeClick(la);        // set the time
+                            break;
+
+                        case 3:
+                        case 4:
+                        case 5:
+                        case 6:
+                        case 7:
+                            showDiaglog(position);      // show the dialog
+                            break;
+
+                        default:
+                            break;
+                    }
+
+                }
+            });
+        }
 
     }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putStringArrayList(RESULT_LIST, new ArrayList<String>(Arrays.asList(mResults)));
+        outState.putStringArrayList(RESULT_LIST, new ArrayList<>(Arrays.asList(mResults)));
 
     }
 
@@ -193,6 +224,13 @@ public class Manal_Entry extends AppCompatActivity{
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.manual_menu, menu);     // Inflate the menu
+
+        if(parentName.equals("MAINHISTORY"))
+        {
+            MenuItem item = menu.findItem(R.id.action_save);
+            item.setTitle("DELETE");
+        }
+
         return true;
     }
 
@@ -200,17 +238,28 @@ public class Manal_Entry extends AppCompatActivity{
     public boolean onOptionsItemSelected(MenuItem item) {    // operations on the toolbar
         switch (item.getItemId()) {
 
-            case R.id.action_save:
-                Log.d(TAG, "save it");
-
-//                ExerciseEntry entryInsert = new ExerciseEntry();
-                writesqlhelper = new AsynWriteSQL();       // execute the asyn task
-                writesqlhelper.execute();
-
-
-
-
+            case android.R.id.home:
                 finish();
+                return true;
+
+
+            case R.id.action_save:
+                if(parentName.equals("MAINHISTORY"))
+                {
+                    // delete the entry
+                    Log.d(TAG, "delete");
+                    mysqlhelper.removeEntry(index);
+                    finish();
+                }
+
+                else
+                {
+//                    ExerciseEntry entryInsert = new ExerciseEntry();
+                    writesqlhelper = new AsynWriteSQL();       // execute the asyn task
+                    writesqlhelper.execute();
+
+                    finish();
+                }
                 return true;
 
             default:
@@ -232,9 +281,8 @@ public class Manal_Entry extends AppCompatActivity{
 
         @Override
         protected Void doInBackground(Void... voids) {
-
             // insert
-            ExerciseEntry entry = new ExerciseEntry(null, mResults[0], mResults[1]+" "+mResults[2],
+            ExerciseEntry entry = new ExerciseEntry(0, "Manual", mResults[0], mResults[1]+" "+mResults[2],
                     mResults[3], mResults[4],null, null, mResults[5], null, mResults[6], mResults[7], null, null);
 
             mysqlhelper.insertEntry(entry);
@@ -246,38 +294,27 @@ public class Manal_Entry extends AppCompatActivity{
         protected void onPostExecute(Void unused) {
 
             // update ui
-            // fetch all activities
             // show it???
-
+            Log.d(TAG, "after insert");
             ArrayList<ExerciseEntry> act_entries = mysqlhelper.fetchEntries();
-            Log.d(TAG, "here " + act_entries.size());
 
 
-            String[] act_title = new String[act_entries.size()];
-            String[] act_des = new String[act_entries.size()];
-            String[] act_datetime = new String[act_entries.size()];
-            for(int i=0;i<act_entries.size();i++)
-            {
-                act_title[i] = act_entries.get(i).getActType();
-                act_des[i] = act_entries.get(i).getDistance() + ", " + act_entries.get(i).getDuration();
-                act_datetime[i] = act_entries.get(i).getDateTime();
-            }
+//            String[] act_title = new String[act_entries.size()];
+//            String[] act_des = new String[act_entries.size()];
+//            String[] act_datetime = new String[act_entries.size()];
+//            for(int i=0;i<act_entries.size();i++)
+//            {
+//                act_title[i] = act_entries.get(i).getActType();
+//                act_des[i] = act_entries.get(i).getDistance() + ", " + act_entries.get(i).getDuration();
+//                act_datetime[i] = act_entries.get(i).getDateTime();
+//            }
 
-
-//            LayoutInflater inflater = Manal_Entry.this.getLayoutInflater();
-//            @SuppressLint("InflateParams") View rowView = inflater.inflate(R.layout.listview_history, null,true);
-//
-//            main_history mh =
-//
-//
-//
-//            ListAdapter la = new ListAdapter(Manal_Entry.this, act_title, act_des, act_datetime, 99);        // set up the listadapter
-//            ListView mlistView = rowView.findViewById(R.id.manual_hislistview);
-//            if(mlistView == null)
-//                Log.d(TAG, "sdcsdvsd");
-//
-//            mlistView.setAdapter(la);
-
+            final LayoutInflater factory = getLayoutInflater();
+            final View textEntryView = factory.inflate(R.layout.fragment_main_history, null);
+            ListView mhisView = textEntryView.findViewById(R.id.manual_hislistview);
+            ListAdapter mAdapter = new ListAdapter(Manal_Entry.this, 3, act_entries);
+            mhisView.setAdapter(mAdapter);
+            mAdapter.notifyDataSetChanged();
         }
     }
 

@@ -1,6 +1,8 @@
 package com.example.myrun3.model;
 
-public class ExerciseEntry {
+import java.io.Serializable;
+
+public class ExerciseEntry implements Serializable {
     private long id;
     private String input_type;
     private String activity_type;
@@ -17,9 +19,10 @@ public class ExerciseEntry {
     private String gps;
 
 
-    public ExerciseEntry(String input_type, String activity_type, String date_time, String duration,
+    public ExerciseEntry(long id, String input_type, String activity_type, String date_time, String duration,
                          String distance, String avg_page, String avg_speed, String calorie, String climb,
                          String heart_rate, String comment, String privacy, String gps){
+        this.id = id;
         this.input_type = input_type;
         this.activity_type = activity_type;
         this.date_time = date_time;
@@ -44,11 +47,6 @@ public class ExerciseEntry {
     public void setId(long id) {
         this.id = id;
     }
-
-    public void setExerciseEntry(){
-
-    }
-
 
     public String getActType() {
         return activity_type;
@@ -77,7 +75,6 @@ public class ExerciseEntry {
     public String getComment() {
         return comment;
     }
-
 
     public String getInputType() {
         return this.input_type;

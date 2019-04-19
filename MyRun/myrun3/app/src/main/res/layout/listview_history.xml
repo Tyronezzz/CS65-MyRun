@@ -25,23 +25,46 @@
             android:orientation="horizontal"
             android:layout_gravity="center_horizontal">
 
+            <!--<TextView-->
+                <!--android:id="@+id/manual_title"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_gravity="left"-->
+                <!--android:text="@string/test"-->
+                <!--android:textSize="18sp"-->
+                <!--android:textStyle="bold" />-->
+
+
+            <!--<TextView-->
+                <!--android:id="@+id/manual_datetime"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_gravity="right"-->
+                <!--android:text="@string/test"-->
+                <!--android:textSize="18sp"-->
+                <!--android:textStyle="bold" />-->
+
             <TextView
                 android:id="@+id/manual_title"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="@string/test"
-                android:textSize="20sp"
-                android:textStyle="bold" />
-
+                android:layout_gravity="right"
+                android:textSize="18sp"
+                android:layout_weight="1"
+                android:textStyle="bold"
+                android:text=""
+                tools:ignore="RtlHardcoded" />
 
             <TextView
                 android:id="@+id/manual_datetime"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_gravity="right"
-                android:text="@string/test"
-                android:textSize="20sp"
-                android:textStyle="bold" />
+                android:layout_gravity="left"
+                android:layout_weight="1"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:text=""
+                tools:ignore="RtlHardcoded" />
 
         </LinearLayout>
 
