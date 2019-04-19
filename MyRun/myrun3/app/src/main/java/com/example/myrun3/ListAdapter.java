@@ -69,7 +69,7 @@ public class ListAdapter extends ArrayAdapter {
         this.context = context;
         this.exetry = new ArrayList<>(exetry);
         this.request_code = rc;
-        Log.d(TAG, "sizee " + exetry.size());
+        Log.d(TAG, "size " + exetry.size());
     }
 
 
@@ -105,7 +105,7 @@ public class ListAdapter extends ArrayAdapter {
 
         Log.d(TAG, "class name" + context.getLocalClassName());
 
-        if(context.getLocalClassName().contains("Manal_Entry"))     // set the listview for Manual Entry Activity
+        if(context.getLocalClassName().contains("Manal_Entry") && request_code != 3)     // set the listview for Manual Entry Activity
         {
             LayoutInflater inflater=context.getLayoutInflater();
             @SuppressLint("InflateParams") View rowView = inflater.inflate(R.layout.listview_row, null,true);
@@ -197,6 +197,8 @@ public class ListAdapter extends ArrayAdapter {
 
             else
             {
+
+                Log.d(TAG, "update HISTOrY");
                 LayoutInflater inflater=context.getLayoutInflater();
                 @SuppressLint("InflateParams") View rowView = inflater.inflate(R.layout.listview_history, null,true);
 
@@ -204,9 +206,28 @@ public class ListAdapter extends ArrayAdapter {
                 TextView mDateView =  rowView.findViewById(R.id.manual_datetime);
                 TextView mDuration =  rowView.findViewById(R.id.manual_des);
 
+
+                sharedPreferences = context.getSharedPreferences("profile", Context.MODE_PRIVATE);       //store the profile in the sharedpreference
+                int km_mile_idx = sharedPreferences.getInt("key_unit_pre", 0);
+                
+                String tmpdis = exetry.get(position).getDistance();
+                if(km_mile_idx == 1 && tmpdis.contains("kms"))
+                {
+                    String[] substr = exetry.get(position).getDistance().split("\\s+");
+                    tmpdis = String.valueOf(Double.parseDouble(substr[0])*1.609) + " miles";
+                }
+
+                else if(km_mile_idx == 0 && tmpdis.contains("mile"))
+                {
+                    String[] substr = exetry.get(position).getDistance().split("\\s+");
+                    tmpdis = String.valueOf(Double.parseDouble(substr[0])*0.621) + " kms";
+                }
+
+
+                
                 mTitleView.setText( "Manual: " + exetry.get(position).getActType());     //this code sets the values of the objects to values from the arrays
                 mDateView.setText(exetry.get(position).getDateTime());
-                mDuration.setText(exetry.get(position).getDistance() + ", " + exetry.get(position).getDuration());
+                mDuration.setText(tmpdis + ", " + exetry.get(position).getDuration());
 
                 return rowView;
             }

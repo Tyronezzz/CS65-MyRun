@@ -9,8 +9,10 @@ package com.example.myrun3.activity;
 import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
@@ -50,6 +52,9 @@ public class Manal_Entry extends AppCompatActivity{
     private MySQLiteHelper mysqlhelper;
     private String parentName;
     private long index;
+    private ListAdapter mAdapter;
+    ListView mhisView;
+    SharedPreferences sharedPreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,7 +72,7 @@ public class Manal_Entry extends AppCompatActivity{
         index = intent.getLongExtra("INDEX", 0);
 
 
-        if(parentName.equals("MAINHISTORY"))
+        if(parentName.equals("MAINHISTORY"))      // from mainhistory, to delete
         {
 
             ExerciseEntry entry = (ExerciseEntry) getIntent().getSerializableExtra("EXENTRY");
@@ -81,6 +86,22 @@ public class Manal_Entry extends AppCompatActivity{
             mResults[5] = entry.getCalorie();
             mResults[6] = entry.getHeartrate();
             mResults[7] = entry.getComment();
+
+            sharedPreferences = getSharedPreferences("profile", Context.MODE_PRIVATE);       //store the profile in the sharedpreference
+            int km_mile_idx = sharedPreferences.getInt("key_unit_pre", 0);
+            String[] substr = mResults[4].split("\\s+");
+            String tmpdis = mResults[4];
+            if(km_mile_idx == 1 && tmpdis.contains("kms"))
+            {
+                tmpdis = String.valueOf(Double.parseDouble(substr[0])*1.609) + " miles";
+            }
+
+            else if(km_mile_idx == 0 && tmpdis.contains("mile"))
+            {
+                tmpdis = String.valueOf(Double.parseDouble(substr[0])*0.621) + " kms";
+            }
+
+            mResults[4] = tmpdis;
 
             final ListAdapter la_history = new ListAdapter(this, mOptions, mResults, 9);        // set up the listadapter
             ListView mlistView = findViewById(R.id.manual_listview);
@@ -99,9 +120,26 @@ public class Manal_Entry extends AppCompatActivity{
 
             mResults[0] = act_name;
 
+            sharedPreferences = getSharedPreferences("profile", Context.MODE_PRIVATE);       //store the profile in the sharedpreference
+            int km_mile_idx = sharedPreferences.getInt("key_unit_pre", 0);
+
+            String[] substr = mResults[4].split("\\s+");
+            if(km_mile_idx == 1)
+                mResults[4] = substr[0] + " miles";
+
+            else
+                mResults[4] = substr[0] + " kms";
+
+
             final ListAdapter la = new ListAdapter(this, mOptions, mResults, 9);        // set up the listadapter
             ListView mlistView = findViewById(R.id.manual_listview);
             mlistView.setAdapter(la);
+
+
+            final LayoutInflater factory = getLayoutInflater();
+            final View textEntryView = factory.inflate(R.layout.fragment_main_history, null);
+            mhisView = textEntryView.findViewById(R.id.manual_hislistview);
+
 
             mlistView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
@@ -255,7 +293,7 @@ public class Manal_Entry extends AppCompatActivity{
                 else
                 {
 //                    ExerciseEntry entryInsert = new ExerciseEntry();
-                    writesqlhelper = new AsynWriteSQL();       // execute the asyn task
+                    writesqlhelper = new AsynWriteSQL(mhisView);       // execute the asyn task
                     writesqlhelper.execute();
 
                     finish();
@@ -271,17 +309,26 @@ public class Manal_Entry extends AppCompatActivity{
     @SuppressLint("StaticFieldLeak")
     class AsynWriteSQL extends AsyncTask<Void, Void, Void> {
 
-        private String []entrylist;
-        MySQLiteHelper mysqlhelper;
 
-        AsynWriteSQL()
+        MySQLiteHelper mysqlhelper;
+        ListView mhistoryView;
+
+        AsynWriteSQL(ListView mhisView)
         {
             mysqlhelper = new MySQLiteHelper(getApplication());
+            mhistoryView = mhisView;
         }
 
         @Override
         protected Void doInBackground(Void... voids) {
             // insert
+//            if(mResults[4].contains("miles"))
+//            {
+//                String[] substr = mResults[4].split("\\s+");
+//                mResults[4] = String.valueOf(Double.parseDouble(substr[0])*1.609) + " kms";
+//            }
+
+
             ExerciseEntry entry = new ExerciseEntry(0, "Manual", mResults[0], mResults[1]+" "+mResults[2],
                     mResults[3], mResults[4],null, null, mResults[5], null, mResults[6], mResults[7], null, null);
 
@@ -296,7 +343,9 @@ public class Manal_Entry extends AppCompatActivity{
             // update ui
             // show it???
             Log.d(TAG, "after insert");
-            ArrayList<ExerciseEntry> act_entries = mysqlhelper.fetchEntries();
+
+//            mysqlhelper.deleteAll();
+            final ArrayList<ExerciseEntry> act_entries = mysqlhelper.fetchEntries();
 
 
 //            String[] act_title = new String[act_entries.size()];
@@ -309,13 +358,21 @@ public class Manal_Entry extends AppCompatActivity{
 //                act_datetime[i] = act_entries.get(i).getDateTime();
 //            }
 
-            final LayoutInflater factory = getLayoutInflater();
-            final View textEntryView = factory.inflate(R.layout.fragment_main_history, null);
-            ListView mhisView = textEntryView.findViewById(R.id.manual_hislistview);
-            ListAdapter mAdapter = new ListAdapter(Manal_Entry.this, 3, act_entries);
-            mhisView.setAdapter(mAdapter);
-            mAdapter.notifyDataSetChanged();
+
+
+            Manal_Entry.this.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    mAdapter = new ListAdapter(Manal_Entry.this, 3, act_entries);
+                    mAdapter.clear();
+                    mhistoryView.setAdapter(mAdapter);
+                    mAdapter.addall(act_entries);
+                    mAdapter.notifyDataSetChanged();
+                }
+            });
+
         }
+
     }
 
 

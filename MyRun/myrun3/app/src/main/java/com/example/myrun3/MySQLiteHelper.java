@@ -135,6 +135,17 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
 
     }
 
+
+    public void deleteAll() {
+        db = getWritableDatabase();
+
+        Log.d(TAG, "delete all = ");
+        db.delete(TABLE_NAME_ENTRIES, null, null);
+        db.close();
+        this.close();
+    }
+
+
     // Query a specific entry by its index.
     public void fetchEntryByIndex(long rowId) {
 

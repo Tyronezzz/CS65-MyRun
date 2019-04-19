@@ -51,9 +51,7 @@ public class main_history extends Fragment implements LoaderManager.LoaderCallba
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
-
     }
 
 
@@ -89,6 +87,7 @@ public class main_history extends Fragment implements LoaderManager.LoaderCallba
         mLoader.initLoader(ALL_EXERCISE_LOADER_ID, null, this).forceLoad();
 
     }
+
 
 
 
