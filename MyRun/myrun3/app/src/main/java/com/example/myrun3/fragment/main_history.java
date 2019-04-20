@@ -59,14 +59,11 @@ public class main_history extends Fragment implements LoaderManager.LoaderCallba
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-//        dataSource = new MySQLiteHelper(getContext());
         ListView mhisView = getView().findViewById(R.id.manual_hislistview);
-
 
         exetry = new ArrayList<>();
         mAdapter = new ListAdapter(getActivity(), 3, exetry);
         mhisView.setAdapter(mAdapter);
-
 
         mhisView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -85,7 +82,6 @@ public class main_history extends Fragment implements LoaderManager.LoaderCallba
         mLoader = getLoaderManager();       //  getSupportLoaderManager
         mLoader.initLoader(ALL_EXERCISE_LOADER_ID, null, this).forceLoad();
         lc = this;
-
     }
 
 
@@ -100,7 +96,6 @@ public class main_history extends Fragment implements LoaderManager.LoaderCallba
 
         switch (requestCode) {
             case REQUEST_CODE_DELETE:    //
-                Log.d(TAG, "after delete");
                 long idx = data.getLongExtra("DELETEIDX", 0);
                 runThread(idx);
 
@@ -132,13 +127,10 @@ public class main_history extends Fragment implements LoaderManager.LoaderCallba
     public void onLoadFinished(@NonNull Loader<List<ExerciseEntry>> loader, List<ExerciseEntry> exerciseEntries) {
 
         Log.d(TAG, "onLoadFinsh " + loader.getId());
-
         if(loader.getId() == ALL_EXERCISE_LOADER_ID){
-            // returns the List<Comment> from queried from the db
-            // Use the UI with the adapter to show the elements in a ListView
-            if(exerciseEntries.size() > 0){
 
-                Log.d(TAG, "size of input " + exerciseEntries.size());
+//            if(exerciseEntries.size() > 0)
+            {
                 exetry = new ArrayList<>(exerciseEntries);
                 mAdapter.addall(exerciseEntries);
                 mAdapter.notifyDataSetChanged();           // force notification -- tell the adapter to display
@@ -161,8 +153,6 @@ public class main_history extends Fragment implements LoaderManager.LoaderCallba
 
         Thread t1 = new Thread(new Runnable() {
             public void run() {
-                Log.d(TAG, "runThread() Name ");
-
                 MySQLiteHelper mysqlhelper = new MySQLiteHelper(getContext());
                 mysqlhelper.removeEntry(index);
             }
@@ -170,5 +160,4 @@ public class main_history extends Fragment implements LoaderManager.LoaderCallba
         t1.start();
 
     }
-
 }

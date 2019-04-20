@@ -76,11 +76,11 @@ public class Manal_Entry extends AppCompatActivity{
         index = intent.getLongExtra("INDEX", 0);
 
 
-        String date = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
+        String date = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());  // set the current date
         mResults[1] = date;
 
         Calendar tmpcld = Calendar.getInstance();
-        @SuppressLint("SimpleDateFormat") SimpleDateFormat mdformat = new SimpleDateFormat("HH:mm");
+        @SuppressLint("SimpleDateFormat") SimpleDateFormat mdformat = new SimpleDateFormat("HH:mm");     // set the current time
         String strDate = mdformat.format(tmpcld.getTime());
         mResults[2] = strDate;
 
@@ -120,8 +120,6 @@ public class Manal_Entry extends AppCompatActivity{
             ListView mlistView = findViewById(R.id.manual_listview);
             mlistView.setAdapter(la_history);
             mlistView.setEnabled(false);
-
-//            mysqlhelper = new MySQLiteHelper(getApplication());
         }
 
         else
@@ -325,7 +323,6 @@ public class Manal_Entry extends AppCompatActivity{
     @SuppressLint("StaticFieldLeak")
     class AsynWriteSQL extends AsyncTask<Void, Void, Void> {
 
-
         MySQLiteHelper mysqlhelper;
         ListView mhistoryView;
 
@@ -341,7 +338,7 @@ public class Manal_Entry extends AppCompatActivity{
             ExerciseEntry entry = new ExerciseEntry(0, "Manual", mResults[0], mResults[1]+" "+mResults[2],
                     mResults[3], mResults[4],null, null, mResults[5], null, mResults[6], mResults[7], null, null);
 
-            mysqlhelper.insertEntry(entry);
+            mysqlhelper.insertEntry(entry);                    // insert an entry
             return null;
         }
 
@@ -350,12 +347,11 @@ public class Manal_Entry extends AppCompatActivity{
         protected void onPostExecute(Void unused) {
             Log.d(TAG, "after insert");
 
-            LoaderManager mLoader = main_history.mLoader;
+            LoaderManager mLoader = main_history.mLoader;        // reinit a loader to update the ui
             if (mLoader != null)
             {
                 mLoader.destroyLoader(1);
             }
-            //mLoader.restartLoader(1, null, main_history.lc);
             mLoader.initLoader(1, null, main_history.lc).forceLoad();
 
 
@@ -379,7 +375,6 @@ public class Manal_Entry extends AppCompatActivity{
         }
 
     }
-
 
 
 }

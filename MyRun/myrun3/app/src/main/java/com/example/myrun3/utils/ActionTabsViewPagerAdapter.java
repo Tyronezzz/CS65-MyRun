@@ -13,9 +13,8 @@ import android.support.v4.app.FragmentPagerAdapter;
 import java.util.ArrayList;
 
 public class ActionTabsViewPagerAdapter extends FragmentPagerAdapter {
-//    private static final String TAG = ActionTabsViewPagerAdapter.class.getSimpleName();
-    private ArrayList<Fragment> fragments;
 
+    private ArrayList<Fragment> fragments;
     private static final int START = 0;
     private static final int HISTORY = 1;
     private static final String UI_TAB_START = "START";
@@ -36,8 +35,7 @@ public class ActionTabsViewPagerAdapter extends FragmentPagerAdapter {
         return fragments.size();
     }
 
-    // This method may be called by the ViewPager to obtain a title string
-    // to describe the specified page
+
     public CharSequence getPageTitle(int position) {
 
         switch (position) {
