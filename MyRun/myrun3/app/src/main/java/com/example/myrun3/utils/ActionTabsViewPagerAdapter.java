@@ -5,7 +5,7 @@
  */
 
 
-package com.example.myrun3;
+package com.example.myrun3.utils;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;

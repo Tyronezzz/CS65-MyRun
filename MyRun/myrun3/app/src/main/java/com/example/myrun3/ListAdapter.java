@@ -198,14 +198,13 @@ public class ListAdapter extends ArrayAdapter {
             else
             {
 
-                Log.d(TAG, "update HISTOrY");
+//                Log.d(TAG, "update history");
                 LayoutInflater inflater=context.getLayoutInflater();
                 @SuppressLint("InflateParams") View rowView = inflater.inflate(R.layout.listview_history, null,true);
 
                 TextView mTitleView = rowView.findViewById(R.id.manual_title);
                 TextView mDateView =  rowView.findViewById(R.id.manual_datetime);
                 TextView mDuration =  rowView.findViewById(R.id.manual_des);
-
 
                 sharedPreferences = context.getSharedPreferences("profile", Context.MODE_PRIVATE);       //store the profile in the sharedpreference
                 int km_mile_idx = sharedPreferences.getInt("key_unit_pre", 0);

@@ -1,3 +1,9 @@
+/*
+ * @author  Tao Hou
+ * @version 1.0
+ * @since   2019-04-15
+ */
+
 package com.example.myrun3;
 
 import android.content.ContentValues;
@@ -33,8 +39,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
     private SQLiteDatabase db;
 
 
-
-    private static final String CREATE_TABLE_ENTRIES = "CREATE TABLE IF NOT EXISTS "
+    private static final String CREATE_TABLE_ENTRIES = "CREATE TABLE IF NOT EXISTS "      // create the table
             + TABLE_NAME_ENTRIES
             + " ("
             + KEY_ROWID
@@ -113,18 +118,16 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
 
         else
             Log.d(TAG, "Successs in insert!");
-        // need cursor here?????
-        //cursor.close();
+
         db.close();
         this.close();
 
     }
 
 
-    public void removeEntry(long rowIndex) {            // Remove an entry by giving its index
+    // Remove an entry by giving its index
+    public void removeEntry(long rowIndex) {
         db = getWritableDatabase();
-//        String selection = KEY_ROWID + " LIKE ?";
-//        String[] selectionArgs = { String.valueOf(rowIndex) };
         db.delete(TABLE_NAME_ENTRIES, KEY_ROWID + " = " + rowIndex, null);
         Log.d(TAG, rowIndex + " have been deleted");
 
@@ -164,7 +167,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
 //    }
 
     // Query the entire table, return all rows
-    ArrayList<ExerciseEntry> fetchEntries() {
+    public ArrayList<ExerciseEntry> fetchEntries() {
 
         ArrayList<ExerciseEntry> entries = new ArrayList<>();
         db = getReadableDatabase();
@@ -181,7 +184,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         );
 
         cursor.moveToFirst();
-        while (!cursor.isAfterLast()) {
+        while (!cursor.isAfterLast()) {     // move cursor to get each column
 
             long id = cursor.getLong(0);
             String act_name = cursor.getString(2);
@@ -199,10 +202,9 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
             entries.add(entry);
             cursor.moveToNext();
         }
-        // Make sure to close the cursor
 
         db.close();
-        cursor.close();
+        cursor.close();       //close the cursor
         return entries;
     }
 

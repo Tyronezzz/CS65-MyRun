@@ -18,7 +18,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.example.myrun3.ActionTabsViewPagerAdapter;
+import com.example.myrun3.utils.ActionTabsViewPagerAdapter;
 import com.example.myrun3.R;
 import com.example.myrun3.fragment.main_history;
 import com.example.myrun3.fragment.main_start;

@@ -21,7 +21,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import com.example.myrun3.EntryListLoader;
+import com.example.myrun3.utils.EntryListLoader;
 import com.example.myrun3.ListAdapter;
 import com.example.myrun3.MySQLiteHelper;
 import com.example.myrun3.R;

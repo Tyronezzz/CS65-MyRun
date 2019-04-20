@@ -1,7 +1,15 @@
+/*
+ * @author  Tao Hou
+ * @version 1.0
+ * @since   2019-04-15
+ */
+
 package com.example.myrun3.model;
 
 import java.io.Serializable;
 
+
+// constructor of ExerciseEntry
 public class ExerciseEntry implements Serializable {
     private long id;
     private String activity_type;
