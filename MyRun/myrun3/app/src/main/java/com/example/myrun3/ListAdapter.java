@@ -222,8 +222,6 @@ public class ListAdapter extends ArrayAdapter {
                     String[] substr = exetry.get(position).getDistance().split("\\s+");
                     tmpdis = String.valueOf(Double.parseDouble(substr[0])*0.621) + " kms";
                 }
-
-
                 
                 mTitleView.setText( "Manual: " + exetry.get(position).getActType());     //this code sets the values of the objects to values from the arrays
                 mDateView.setText(exetry.get(position).getDateTime());

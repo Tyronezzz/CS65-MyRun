@@ -13,28 +13,28 @@ import java.util.ArrayList;
 
 public class MySQLiteHelper extends SQLiteOpenHelper {
 
-    public static final String TABLE_NAME_ENTRIES = "manual_entry_table";
-    public static final String KEY_ROWID = "_id";
-    public static final String KEY_INPUT_TYPE = "input_type";
-    public static final String KEY_ACTIVITY_TYPE = "activity_type";
-    public static final String KEY_DATE_TIME = "date_time";
-    public static final String KEY_DURATION = "duration";
-    public static final String KEY_DISTANCE = "distance";
-    public static final String KEY_AVG_PACE = "avg_page";
-    public static final String KEY_AVG_SPEED = "avg_speed";
-    public static final String KEY_CALORIES = "calorie";
-    public static final String KEY_CLIMB = "climb";
-    public static final String KEY_HEARTRATE = "heart_rate";
-    public static final String KEY_COMMENT = "comment";
-    public static final String KEY_PRIVACY = "privacy";
-    public static final String KEY_GPS_DATA = "gps";
+    private static final String TABLE_NAME_ENTRIES = "manual_entry_table";
+    private static final String KEY_ROWID = "_id";
+    private static final String KEY_INPUT_TYPE = "input_type";
+    private static final String KEY_ACTIVITY_TYPE = "activity_type";
+    private static final String KEY_DATE_TIME = "date_time";
+    private static final String KEY_DURATION = "duration";
+    private static final String KEY_DISTANCE = "distance";
+    private static final String KEY_AVG_PACE = "avg_page";
+    private static final String KEY_AVG_SPEED = "avg_speed";
+    private static final String KEY_CALORIES = "calorie";
+    private static final String KEY_CLIMB = "climb";
+    private static final String KEY_HEARTRATE = "heart_rate";
+    private static final String KEY_COMMENT = "comment";
+    private static final String KEY_PRIVACY = "privacy";
+    private static final String KEY_GPS_DATA = "gps";
     private static final String DBNAME = "MyRunDB";
     private static final int DBVERSION = 3;
     private SQLiteDatabase db;
 
 
 
-    public static final String CREATE_TABLE_ENTRIES = "CREATE TABLE IF NOT EXISTS "
+    private static final String CREATE_TABLE_ENTRIES = "CREATE TABLE IF NOT EXISTS "
             + TABLE_NAME_ENTRIES
             + " ("
             + KEY_ROWID
@@ -123,53 +123,48 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
 
     public void removeEntry(long rowIndex) {            // Remove an entry by giving its index
         db = getWritableDatabase();
-        String selection = KEY_ROWID + " LIKE ?";
-        String[] selectionArgs = { String.valueOf(rowIndex) };
-
-//        int deletedRows = db.delete(TABLE_NAME_ENTRIES, selection, selectionArgs);
+//        String selection = KEY_ROWID + " LIKE ?";
+//        String[] selectionArgs = { String.valueOf(rowIndex) };
         db.delete(TABLE_NAME_ENTRIES, KEY_ROWID + " = " + rowIndex, null);
         Log.d(TAG, rowIndex + " have been deleted");
 
         db.close();
         this.close();
-
     }
 
 
-    public void deleteAll() {
-        db = getWritableDatabase();
-
-        Log.d(TAG, "delete all = ");
-        db.delete(TABLE_NAME_ENTRIES, null, null);
-        db.close();
-        this.close();
-    }
+//    public void deleteAll() {
+//        db = getWritableDatabase();
+//
+//        Log.d(TAG, "delete all = ");
+//        db.delete(TABLE_NAME_ENTRIES, null, null);
+//        db.close();
+//        this.close();
+//    }
 
 
     // Query a specific entry by its index.
-    public void fetchEntryByIndex(long rowId) {
-
-        db = getReadableDatabase();
-//        String sortOrder = FeedEntry.COLUMN_NAME_SUBTITLE + " DESC";
-        String selection = KEY_ROWID + " LIKE ?";
-        String[] selectionArgs = { String.valueOf(rowId) };
-
-        Cursor cursor = db.query(
-                TABLE_NAME_ENTRIES,   // The table to query
-                null,             // The array of columns to return (pass null to get all)
-                selection,              // The columns for the WHERE clause
-                selectionArgs,          // The values for the WHERE clause
-                null,                   // don't group the rows
-                null,                   // don't filter by row groups
-                null               // The sort order
-        );
-
-
-
-    }
+//    public void fetchEntryByIndex(long rowId) {
+//
+//        db = getReadableDatabase();
+////        String sortOrder = FeedEntry.COLUMN_NAME_SUBTITLE + " DESC";
+//        String selection = KEY_ROWID + " LIKE ?";
+//        String[] selectionArgs = { String.valueOf(rowId) };
+//
+//        Cursor cursor = db.query(
+//                TABLE_NAME_ENTRIES,   // The table to query
+//                null,             // The array of columns to return (pass null to get all)
+//                selection,              // The columns for the WHERE clause
+//                selectionArgs,          // The values for the WHERE clause
+//                null,                   // don't group the rows
+//                null,                   // don't filter by row groups
+//                null               // The sort order
+//        );
+//
+//    }
 
     // Query the entire table, return all rows
-    public ArrayList<ExerciseEntry> fetchEntries() {
+    ArrayList<ExerciseEntry> fetchEntries() {
 
         ArrayList<ExerciseEntry> entries = new ArrayList<>();
         db = getReadableDatabase();

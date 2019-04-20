@@ -15,6 +15,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.app.LoaderManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -33,11 +34,15 @@ import android.widget.TimePicker;
 import com.example.myrun3.ListAdapter;
 import com.example.myrun3.MySQLiteHelper;
 import com.example.myrun3.R;
+import com.example.myrun3.fragment.main_history;
 import com.example.myrun3.model.ExerciseEntry;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
 import java.util.Objects;
 
 
@@ -48,11 +53,10 @@ public class Manal_Entry extends AppCompatActivity{
     String[] mOptions = {"Activity","Date","Time","Duration","Distance","Calorie", "Heartbeat","Comment"};
     String[] mResults = {"Manual", "2019-01-01", "10:10", "0 mins", "0 kms", "0 cals", "0 bpm", " "};
     private Calendar mDateTime = Calendar.getInstance();
-    private AsynWriteSQL writesqlhelper = null;
-    private MySQLiteHelper mysqlhelper;
+    //    private MySQLiteHelper mysqlhelper;
     private String parentName;
     private long index;
-    private ListAdapter mAdapter;
+//    private ListAdapter mAdapter;
     ListView mhisView;
     SharedPreferences sharedPreferences;
 
@@ -70,6 +74,15 @@ public class Manal_Entry extends AppCompatActivity{
         parentName = intent.getStringExtra("PARENTNAME");        // get the parent activity name
         String act_name = intent.getStringExtra("ACT");        // get the activity type name
         index = intent.getLongExtra("INDEX", 0);
+
+
+        String date = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
+        mResults[1] = date;
+
+        Calendar tmpcld = Calendar.getInstance();
+        @SuppressLint("SimpleDateFormat") SimpleDateFormat mdformat = new SimpleDateFormat("HH:mm");
+        String strDate = mdformat.format(tmpcld.getTime());
+        mResults[2] = strDate;
 
 
         if(parentName.equals("MAINHISTORY"))      // from mainhistory, to delete
@@ -108,7 +121,7 @@ public class Manal_Entry extends AppCompatActivity{
             mlistView.setAdapter(la_history);
             mlistView.setEnabled(false);
 
-            mysqlhelper = new MySQLiteHelper(getApplication());
+//            mysqlhelper = new MySQLiteHelper(getApplication());
         }
 
         else
@@ -137,7 +150,7 @@ public class Manal_Entry extends AppCompatActivity{
 
 
             final LayoutInflater factory = getLayoutInflater();
-            final View textEntryView = factory.inflate(R.layout.fragment_main_history, null);
+            @SuppressLint("InflateParams") final View textEntryView = factory.inflate(R.layout.fragment_main_history, null);
             mhisView = textEntryView.findViewById(R.id.manual_hislistview);
 
 
@@ -286,14 +299,17 @@ public class Manal_Entry extends AppCompatActivity{
                 {
                     // delete the entry
                     Log.d(TAG, "delete");
-                    mysqlhelper.removeEntry(index);
+                    //mysqlhelper.removeEntry(index);
+
+                    Intent intent = new Intent();
+                    intent.putExtra("DELETEIDX", index);
+                    setResult(RESULT_OK, intent);        // important!!!
                     finish();
                 }
 
                 else
                 {
-//                    ExerciseEntry entryInsert = new ExerciseEntry();
-                    writesqlhelper = new AsynWriteSQL(mhisView);       // execute the asyn task
+                    AsynWriteSQL writesqlhelper = new AsynWriteSQL(mhisView);
                     writesqlhelper.execute();
 
                     finish();
@@ -321,13 +337,6 @@ public class Manal_Entry extends AppCompatActivity{
 
         @Override
         protected Void doInBackground(Void... voids) {
-            // insert
-//            if(mResults[4].contains("miles"))
-//            {
-//                String[] substr = mResults[4].split("\\s+");
-//                mResults[4] = String.valueOf(Double.parseDouble(substr[0])*1.609) + " kms";
-//            }
-
 
             ExerciseEntry entry = new ExerciseEntry(0, "Manual", mResults[0], mResults[1]+" "+mResults[2],
                     mResults[3], mResults[4],null, null, mResults[5], null, mResults[6], mResults[7], null, null);
@@ -339,41 +348,38 @@ public class Manal_Entry extends AppCompatActivity{
 
         @Override
         protected void onPostExecute(Void unused) {
-
-            // update ui
-            // show it???
             Log.d(TAG, "after insert");
 
+            LoaderManager mLoader = main_history.mLoader;
+            if (mLoader != null)
+            {
+                mLoader.destroyLoader(1);
+            }
+            //mLoader.restartLoader(1, null, main_history.lc);
+            mLoader.initLoader(1, null, main_history.lc).forceLoad();
+
+
+
 //            mysqlhelper.deleteAll();
-            final ArrayList<ExerciseEntry> act_entries = mysqlhelper.fetchEntries();
-
-
-//            String[] act_title = new String[act_entries.size()];
-//            String[] act_des = new String[act_entries.size()];
-//            String[] act_datetime = new String[act_entries.size()];
-//            for(int i=0;i<act_entries.size();i++)
-//            {
-//                act_title[i] = act_entries.get(i).getActType();
-//                act_des[i] = act_entries.get(i).getDistance() + ", " + act_entries.get(i).getDuration();
-//                act_datetime[i] = act_entries.get(i).getDateTime();
-//            }
-
-
-
-            Manal_Entry.this.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    mAdapter = new ListAdapter(Manal_Entry.this, 3, act_entries);
-                    mAdapter.clear();
-                    mhistoryView.setAdapter(mAdapter);
-                    mAdapter.addall(act_entries);
-                    mAdapter.notifyDataSetChanged();
-                }
-            });
+//            final ArrayList<ExerciseEntry> act_entries = mysqlhelper.fetchEntries();
+//            Manal_Entry.this.runOnUiThread(new Runnable() {
+//                @Override
+//                public void run() {
+//                    mAdapter = new ListAdapter(Manal_Entry.this, 3, act_entries);
+//                    mAdapter.clear();
+//                    mhistoryView.setAdapter(mAdapter);
+//                    mAdapter.addall(act_entries);
+//                    mAdapter.notifyDataSetChanged();
+//
+//                    LoaderManager mLoader = main_history.mLoader;
+//                    mLoader.restartLoader(1, null, main_history.lc);
+//                }
+//            });
 
         }
 
     }
+
 
 
 }

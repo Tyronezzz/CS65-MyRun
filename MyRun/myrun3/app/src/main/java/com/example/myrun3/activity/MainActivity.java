@@ -72,9 +72,7 @@ public class MainActivity extends AppCompatActivity {
                 mbottom_tab.getMenu().getItem(position).setChecked(true);
                 prevMenuItem = mbottom_tab.getMenu().getItem(position);
             }
-
         });
-
     }
 
 
@@ -135,5 +133,13 @@ public class MainActivity extends AppCompatActivity {
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
     }
 }

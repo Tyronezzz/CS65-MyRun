@@ -7,6 +7,7 @@
 
 package com.example.myrun3.fragment;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -20,14 +21,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
-
 import com.example.myrun3.EntryListLoader;
 import com.example.myrun3.ListAdapter;
 import com.example.myrun3.MySQLiteHelper;
 import com.example.myrun3.R;
 import com.example.myrun3.activity.Manal_Entry;
 import com.example.myrun3.model.ExerciseEntry;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,9 +35,12 @@ public class main_history extends Fragment implements LoaderManager.LoaderCallba
 
     private static final int ALL_EXERCISE_LOADER_ID = 1;
     private static final String TAG = "Mainhistory";
-    private MySQLiteHelper dataSource;
+    private static final int REQUEST_CODE_DELETE = 0;
+//    private MySQLiteHelper dataSource;
     private ListAdapter mAdapter;
     ArrayList<ExerciseEntry> exetry = new ArrayList<>();
+    public static LoaderManager mLoader;
+    public static LoaderManager.LoaderCallbacks lc;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
@@ -46,7 +48,6 @@ public class main_history extends Fragment implements LoaderManager.LoaderCallba
 
         return inflater.inflate(R.layout.fragment_main_history, container, false);     // Inflate the layout for this fragment
     }
-
 
 
     @Override
@@ -58,7 +59,7 @@ public class main_history extends Fragment implements LoaderManager.LoaderCallba
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        dataSource = new MySQLiteHelper(getContext());
+//        dataSource = new MySQLiteHelper(getContext());
         ListView mhisView = getView().findViewById(R.id.manual_hislistview);
 
 
@@ -70,25 +71,49 @@ public class main_history extends Fragment implements LoaderManager.LoaderCallba
         mhisView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-//                Log.d(TAG, String.valueOf(position));
 
                 // start activity
                 Intent k = new Intent(getActivity(), Manal_Entry.class);
                 k.putExtra("PARENTNAME", "MAINHISTORY");
                 k.putExtra("EXENTRY", exetry.get(position));
                 k.putExtra("INDEX", exetry.get(position).getId());
-
-                startActivity(k);
+                startActivityForResult(k, REQUEST_CODE_DELETE);
             }
         });
 
         // start loader in the background thread.
-        LoaderManager mLoader = getLoaderManager();       //  getSupportLoaderManager
+        mLoader = getLoaderManager();       //  getSupportLoaderManager
         mLoader.initLoader(ALL_EXERCISE_LOADER_ID, null, this).forceLoad();
+        lc = this;
 
     }
 
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        if (resultCode != Activity.RESULT_OK)
+        {
+            Log.d(TAG, "GG");
+            return;
+        }
+
+        switch (requestCode) {
+            case REQUEST_CODE_DELETE:    //
+                Log.d(TAG, "after delete");
+                long idx = data.getLongExtra("DELETEIDX", 0);
+                runThread(idx);
+
+                if (mLoader != null)
+                {
+                    mLoader.destroyLoader(1);
+                }
+                mLoader.initLoader(ALL_EXERCISE_LOADER_ID, null, this).forceLoad();
+                lc = this;
+                break;
+
+        }
+    }
 
 
     @NonNull
@@ -118,10 +143,7 @@ public class main_history extends Fragment implements LoaderManager.LoaderCallba
                 mAdapter.addall(exerciseEntries);
                 mAdapter.notifyDataSetChanged();           // force notification -- tell the adapter to display
             }
-
         }
-
-
     }
 
     @Override
@@ -132,7 +154,21 @@ public class main_history extends Fragment implements LoaderManager.LoaderCallba
             mAdapter.clear();
             mAdapter.notifyDataSetChanged();
         }
+    }
 
+
+    private void runThread(final long index) {
+
+        Thread t1 = new Thread(new Runnable() {
+            public void run() {
+                Log.d(TAG, "runThread() Name ");
+
+                MySQLiteHelper mysqlhelper = new MySQLiteHelper(getContext());
+                mysqlhelper.removeEntry(index);
+            }
+        });
+        t1.start();
 
     }
+
 }
