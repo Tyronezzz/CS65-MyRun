@@ -16,6 +16,9 @@ In ListAdapter.java, there are 3 warnings on super(), as I described in Myrun2.
 And there are warnings in the model ExerciseEntry.java. It can be fixed in MyRun4, since there are some parameters not used now, but can be used in the future. 
 
 
+### Question?
+For the current version, if a new user registers, then he can see the entry activities of an old user. To solve this problem, we can create the table and name it with username+table_name, but it needs to make sure that there are not two same username, so in register, it needs to query for the username. This bug can be fixed in the next version. 
+
 
 ### Reference
 [https://www.cs.dartmouth.edu/~campbell/cs65/lecture14/lecture14.html](https://www.cs.dartmouth.edu/~campbell/cs65/lecture14/lecture14.html)
