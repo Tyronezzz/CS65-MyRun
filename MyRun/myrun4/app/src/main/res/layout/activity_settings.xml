@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center_horizontal"
+    tools:context="com.example.myrun3.activity.Settings"
+    android:orientation="vertical">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/manual_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/design_default_color_primary"
+        android:elevation="4dp"
+        android:theme="@style/lightTheme"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Dark" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/appsetting_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/application_settings"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            android:padding="10dp"
+            android:textColor="@color/colorAccent"/>
+
+        <ListView
+            android:id="@+id/app_setting_listview"
+            android:layout_width="match_parent"
+            android:layout_height="97dp" />
+
+        <ListView
+            android:id="@+id/app_setting_listview2"
+            android:layout_width="match_parent"
+            android:layout_height="135dp" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginTop="25dp">
+
+
+        <TextView
+            android:id="@+id/textView3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/account_settings"
+            android:textSize="15sp"
+            android:padding="10dp"
+            android:textStyle="bold"
+            android:textColor="@color/colorAccent"/>
+
+
+        <ListView
+            android:id="@+id/app_setting_listview3"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+    </LinearLayout>
+
+</LinearLayout>
