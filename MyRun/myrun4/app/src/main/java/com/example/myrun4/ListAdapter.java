@@ -4,7 +4,7 @@
  * @since   2019-04-07
  */
 
-package com.example.myrun3;
+package com.example.myrun4;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -19,7 +19,7 @@ import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.TextView;
 
-import com.example.myrun3.model.ExerciseEntry;
+import com.example.myrun4.model.ExerciseEntry;
 
 import java.util.ArrayList;
 import java.util.List;

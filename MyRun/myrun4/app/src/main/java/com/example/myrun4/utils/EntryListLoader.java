@@ -5,7 +5,7 @@
  */
 
 
-package com.example.myrun3.utils;
+package com.example.myrun4.utils;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -13,8 +13,8 @@ import android.support.annotation.Nullable;
 import android.support.v4.content.AsyncTaskLoader;
 import android.util.Log;
 
-import com.example.myrun3.MySQLiteHelper;
-import com.example.myrun3.model.ExerciseEntry;
+import com.example.myrun4.MySQLiteHelper;
+import com.example.myrun4.model.ExerciseEntry;
 
 import java.util.ArrayList;
 import java.util.List;

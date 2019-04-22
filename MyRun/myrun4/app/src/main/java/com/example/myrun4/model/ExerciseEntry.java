@@ -4,7 +4,7 @@
  * @since   2019-04-15
  */
 
-package com.example.myrun3.model;
+package com.example.myrun4.model;
 
 import java.io.Serializable;
 

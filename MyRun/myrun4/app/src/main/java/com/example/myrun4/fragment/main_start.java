@@ -4,7 +4,7 @@
  * @since   2019-04-07
  */
 
-package com.example.myrun3.fragment;
+package com.example.myrun4.fragment;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -20,9 +20,9 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
-import com.example.myrun3.R;
-import com.example.myrun3.activity.Manal_Entry;
-import com.example.myrun3.activity.MapActivity;
+import com.example.myrun4.R;
+import com.example.myrun4.activity.Manal_Entry;
+import com.example.myrun4.activity.MapActivity;
 
 public class main_start extends Fragment {
 

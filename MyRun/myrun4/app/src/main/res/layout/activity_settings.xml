@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center_horizontal"
-    tools:context="com.example.myrun3.activity.Settings"
+    tools:context="com.example.myrun4.activity.Settings"
     android:orientation="vertical">
 
     <android.support.v7.widget.Toolbar

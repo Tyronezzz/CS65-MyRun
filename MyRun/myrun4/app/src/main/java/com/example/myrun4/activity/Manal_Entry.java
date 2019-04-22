@@ -4,7 +4,7 @@
  * @since   2019-04-07
  */
 
-package com.example.myrun3.activity;
+package com.example.myrun4.activity;
 
 import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
@@ -31,11 +31,11 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TimePicker;
 
-import com.example.myrun3.ListAdapter;
-import com.example.myrun3.MySQLiteHelper;
-import com.example.myrun3.R;
-import com.example.myrun3.fragment.main_history;
-import com.example.myrun3.model.ExerciseEntry;
+import com.example.myrun4.ListAdapter;
+import com.example.myrun4.MySQLiteHelper;
+import com.example.myrun4.R;
+import com.example.myrun4.fragment.main_history;
+import com.example.myrun4.model.ExerciseEntry;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;

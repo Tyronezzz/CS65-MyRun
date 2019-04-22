@@ -4,7 +4,7 @@
  * @since   2019-04-03
  */
 
-package com.example.myrun3.activity;
+package com.example.myrun4.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -18,10 +18,10 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.example.myrun3.utils.ActionTabsViewPagerAdapter;
-import com.example.myrun3.R;
-import com.example.myrun3.fragment.main_history;
-import com.example.myrun3.fragment.main_start;
+import com.example.myrun4.utils.ActionTabsViewPagerAdapter;
+import com.example.myrun4.R;
+import com.example.myrun4.fragment.main_history;
+import com.example.myrun4.fragment.main_start;
 
 import java.util.ArrayList;
 

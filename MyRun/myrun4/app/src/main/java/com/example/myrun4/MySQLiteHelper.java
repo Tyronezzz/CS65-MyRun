@@ -4,7 +4,7 @@
  * @since   2019-04-15
  */
 
-package com.example.myrun3;
+package com.example.myrun4;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -13,7 +13,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
-import com.example.myrun3.model.ExerciseEntry;
+import com.example.myrun4.model.ExerciseEntry;
 
 import java.util.ArrayList;
 

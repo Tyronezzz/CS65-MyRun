@@ -4,7 +4,7 @@
  * @since   2019-04-03
  */
 
-package com.example.myrun3.fragment;
+package com.example.myrun4.fragment;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -14,8 +14,8 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 
-import com.example.myrun3.R;
-import com.example.myrun3.activity.RegisterActivity;
+import com.example.myrun4.R;
+import com.example.myrun4.activity.RegisterActivity;
 
 public class MyRunsDialogFragment extends DialogFragment {
 

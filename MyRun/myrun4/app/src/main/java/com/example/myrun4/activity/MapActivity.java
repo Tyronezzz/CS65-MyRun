@@ -4,13 +4,13 @@
  * @since   2019-04-07
  */
 
-package com.example.myrun3.activity;
+package com.example.myrun4.activity;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 
-import com.example.myrun3.R;
+import com.example.myrun4.R;
 
 import java.util.Objects;
 

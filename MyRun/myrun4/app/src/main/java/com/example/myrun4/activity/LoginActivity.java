@@ -4,7 +4,7 @@
  * @since   2019-04-03
  */
 
-package com.example.myrun3.activity;
+package com.example.myrun4.activity;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -25,7 +25,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.example.myrun3.R;
+import com.example.myrun4.R;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -67,12 +67,12 @@ public class LoginActivity extends AppCompatActivity {
             public void onClick(View v) {
                 try {
 
-//                    Intent k = new Intent(LoginActivity.this, MainActivity.class);     //jump to mainactivity
-//                    startActivity(k);
-
-                    Intent k = new Intent(LoginActivity.this, RegisterActivity.class);
-                    k.putExtra("PARENTNAME", "LOGIN");
+                    Intent k = new Intent(LoginActivity.this, MainActivity.class);     //jump to mainactivity
                     startActivity(k);
+
+//                    Intent k = new Intent(LoginActivity.this, RegisterActivity.class);
+//                    k.putExtra("PARENTNAME", "LOGIN");
+//                    startActivity(k);
                 } catch(Exception e) {
                     e.printStackTrace();
                 }
