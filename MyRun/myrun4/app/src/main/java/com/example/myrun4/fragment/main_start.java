@@ -22,7 +22,7 @@ import android.widget.Spinner;
 
 import com.example.myrun4.R;
 import com.example.myrun4.activity.Manal_Entry;
-import com.example.myrun4.activity.MapActivity;
+import com.example.myrun4.activity.MapsActivity;
 
 public class main_start extends Fragment {
 
@@ -146,7 +146,7 @@ public class main_start extends Fragment {
 
                 else                                     // go to Map Activity
                 {
-                    intent = new Intent(getContext(), MapActivity.class);
+                    intent = new Intent(getContext(), MapsActivity.class);
                     startActivity(intent);
                 }
             }

@@ -3,11 +3,17 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.example.myrun4">
 
+
     <uses-feature
         android:name="android.hardware.camera"
         android:required="true" />
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.INTERNET" />
+
+
 
     <application
         android:icon="@mipmap/ic_launcher"
@@ -16,28 +22,47 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar"
         tools:ignore="AllowBackup,GoogleAppIndexingWarning">
-        <activity android:name="com.example.myrun4.activity.MapActivity"
-            android:label="Map"
-            android:parentActivityName="com.example.myrun4.activity.MainActivity">
-        </activity>
-        <!--<activity-->
-            <!--android:name=".ProfileActivity"-->
-            <!--android:label="Profile"-->
-            <!--android:parentActivityName=".MainActivity" />-->
+
+        <!--
+             The API key for Google Maps-based APIs is defined as a string resource.
+             (See the file "res/values/google_maps_api.xml").
+             Note that the API key is linked to the encryption key used to sign the APK.
+             You need a different API key for each encryption key, including the release key that is used to
+             sign the APK for publishing.
+             You can define the keys for the debug and release targets in src/debug/ and src/release/.
+        -->
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyDQ3yhHQSnLrdXe-En-KymCXcKHq_i3CoE" />
+
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
+
         <activity
-            android:name="com.example.myrun4.activity.Settings"
+            android:name=".activity.MapsActivity"
+            android:label="@string/title_activity_maps"
+            android:parentActivityName=".activity.MainActivity" />
+        <activity
+            android:name=".activity.MapActivity"
+            android:label="Map"
+            android:parentActivityName=".activity.MainActivity" /> <!-- <activity -->
+        <!-- android:name=".ProfileActivity" -->
+        <!-- android:label="Profile" -->
+        <!-- android:parentActivityName=".MainActivity" /> -->
+        <activity
+            android:name=".activity.Settings"
             android:label="Settings"
-            android:parentActivityName="com.example.myrun4.activity.MainActivity">
+            android:parentActivityName=".activity.MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.example.myrun4.activity.MainActivity" />
         </activity>
         <activity
-            android:name="com.example.myrun4.activity.MainActivity"
+            android:name=".activity.MainActivity"
             android:label="@string/MainActivity"
-            android:parentActivityName="com.example.myrun4.activity.LoginActivity">
-        </activity>
-        <activity android:name="com.example.myrun4.activity.LoginActivity">
+            android:parentActivityName=".activity.LoginActivity" />
+        <activity android:name=".activity.LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -45,18 +70,18 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.example.myrun4.activity.RegisterActivity"
+            android:name=".activity.RegisterActivity"
             android:label="@string/Register_head"
-            android:parentActivityName="com.example.myrun4.activity.LoginActivity">
+            android:parentActivityName=".activity.LoginActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.example.myrun4.activity.LoginActivity" />
         </activity>
         <activity android:name="com.soundcloud.android.crop.CropImageActivity" />
         <activity
-            android:name="com.example.myrun4.activity.Manal_Entry"
+            android:name=".activity.Manal_Entry"
             android:label="Manual Entry Activity"
-            android:parentActivityName="com.example.myrun4.activity.MainActivity">
+            android:parentActivityName=".activity.MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.example.myrun4.activity.MainActivity" />

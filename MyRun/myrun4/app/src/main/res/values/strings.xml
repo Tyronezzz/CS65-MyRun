@@ -69,6 +69,7 @@
     <string name="input_type">Input Type</string>
     <string name="test">Test</string>
     <string name="save">SAVE</string>
+    <string name="title_activity_maps">Map</string>
 
 
 </resources>
