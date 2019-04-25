@@ -86,6 +86,9 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.example.myrun4.activity.MainActivity" />
         </activity>
+
+
+        <service android:name=".service.trackingService" />
     </application>
 
 </manifest>
