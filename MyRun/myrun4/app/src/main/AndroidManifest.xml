@@ -42,7 +42,8 @@
         <activity
             android:name=".activity.MapsActivity"
             android:label="@string/title_activity_maps"
-            android:parentActivityName=".activity.MainActivity" />
+            android:parentActivityName=".activity.MainActivity"
+            android:launchMode="singleTop"/>
         <activity
             android:name=".activity.MapActivity"
             android:label="Map"

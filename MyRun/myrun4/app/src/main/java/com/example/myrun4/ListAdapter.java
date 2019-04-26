@@ -114,6 +114,15 @@ public class ListAdapter extends ArrayAdapter {
             TextView mOPtionsView = rowView.findViewById(R.id.manual_option);
             TextView mResultsView =  rowView.findViewById(R.id.manual_result);
 
+
+//            if(position == 0)
+//            {
+//                String[] substr = Results[0].split("\\s+");
+//                Results[0] = substr[1];
+//
+//            }
+
+
             //this code sets the values of the objects to values from the arrays
             mOPtionsView.setText(Options[position]);
             mResultsView.setText(Results[position]);
@@ -125,6 +134,8 @@ public class ListAdapter extends ArrayAdapter {
         {
             int REQUEST_PREFERENCE = 1;
             int REQUEST_SIGNOUT = 2;
+            int REQUEST_GPS = 10;
+
             if(request_code == REQUEST_PREFERENCE)              // listview without switch
             {
                 LayoutInflater inflater=context.getLayoutInflater();
@@ -222,7 +233,7 @@ public class ListAdapter extends ArrayAdapter {
                     tmpdis = String.valueOf(Double.parseDouble(substr[0])*0.621) + " kms";
                 }
                 
-                mTitleView.setText( "Manual: " + exetry.get(position).getActType());     //this code sets the values of the objects to values from the arrays
+                mTitleView.setText("Manual: "+ exetry.get(position).getActType());     //this code sets the values of the objects to values from the arrays
                 mDateView.setText(exetry.get(position).getDateTime());
                 mDuration.setText(tmpdis + ", " + exetry.get(position).getDuration());
 

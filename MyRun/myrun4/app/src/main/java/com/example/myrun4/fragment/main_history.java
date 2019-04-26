@@ -41,6 +41,8 @@ public class main_history extends Fragment implements LoaderManager.LoaderCallba
     ArrayList<ExerciseEntry> exetry = new ArrayList<>();
     public static LoaderManager mLoader;
     public static LoaderManager.LoaderCallbacks lc;
+    public  static int adapterChoice = 0;
+    ListView mhisView;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
@@ -59,7 +61,7 @@ public class main_history extends Fragment implements LoaderManager.LoaderCallba
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        ListView mhisView = getView().findViewById(R.id.manual_hislistview);
+        mhisView = getView().findViewById(R.id.manual_hislistview);
 
         exetry = new ArrayList<>();
         mAdapter = new ListAdapter(getActivity(), 3, exetry);
@@ -130,6 +132,20 @@ public class main_history extends Fragment implements LoaderManager.LoaderCallba
         if(loader.getId() == ALL_EXERCISE_LOADER_ID){
 
 //            if(exerciseEntries.size() > 0)
+
+            if(adapterChoice == 1)
+            {
+                mAdapter.clear();
+                mAdapter = new ListAdapter(getActivity(), 10, exetry);
+
+                exetry = new ArrayList<>(exerciseEntries);
+                mhisView.setAdapter(mAdapter);
+                mAdapter.addall(exerciseEntries);
+                mAdapter.notifyDataSetChanged();           // force notification -- tell the adapter to displa
+            }
+
+
+            else
             {
                 exetry = new ArrayList<>(exerciseEntries);
                 mAdapter.addall(exerciseEntries);

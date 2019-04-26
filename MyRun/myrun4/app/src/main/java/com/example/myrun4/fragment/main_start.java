@@ -139,14 +139,18 @@ public class main_start extends Fragment {
                 {
                     intent = new Intent(getContext(), Manal_Entry.class);
                     String text2 = mspinner_act.getSelectedItem().toString();
+                    String text3 = mspinner_input.getSelectedItem().toString();
                     intent.putExtra("ACT", text2);
+                    intent.putExtra("TYPE", text3);
                     intent.putExtra("PARENTNAME", "MAINSTART");
                     startActivity(intent);
                 }
 
                 else                                     // go to Map Activity
                 {
+                    String text2 = mspinner_act.getSelectedItem().toString();
                     intent = new Intent(getContext(), MapsActivity.class);
+                    intent.putExtra("act_type", text2);
                     startActivity(intent);
                 }
             }

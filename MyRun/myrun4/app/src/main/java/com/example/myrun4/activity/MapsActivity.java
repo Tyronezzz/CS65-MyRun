@@ -1,6 +1,7 @@
 package com.example.myrun4.activity;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -9,17 +10,18 @@ import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
-import android.location.LocationManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.os.Messenger;
-import android.os.Parcelable;
 import android.os.RemoteException;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.LoaderManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -29,7 +31,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.example.myrun4.MySQLiteHelper;
 import com.example.myrun4.R;
+import com.example.myrun4.fragment.main_history;
+import com.example.myrun4.model.ExerciseEntry;
 import com.example.myrun4.service.trackingService;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -42,6 +47,11 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 
@@ -57,11 +67,22 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private ServiceConnection mConnection = this;  // as we implement ServiceConnection
     private final Messenger mMessenger = new Messenger(new IncomingMessageHandler());
     private Messenger mServiceMessenger = null;
-    LocationManager locationManager;
-    LatLng prelat;
-    PolylineOptions rectOptions;
-    Polyline polyline;
+//    LocationManager locationManager;
+    private LatLng prelat;
+    private PolylineOptions rectOptions;
+    private Polyline polyline;
+    private MyBroadcastReceiver receiver;
+    private MyBroadcastReceiver receiver2;
 
+
+    private double cur_speed;
+    private double avg_speed;
+    private double climbed;
+    private double calories;
+    private long startTime;
+    private double duration;
+    private double totalDis;
+    private String activity_type;
 
 
     @Override
@@ -83,6 +104,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);   // set up the tool bar
 
 
+        Intent intent = getIntent();
+        activity_type = intent.getStringExtra("act_type");        // get the parent activity name
+
+
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
@@ -94,10 +119,11 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         try {
 
             Intent tracking = new Intent(getApplication(), trackingService.class);
-            tracking.putExtra("locationManager", (Parcelable) locationManager);
+//            tracking.putExtra("locationManager", (Parcelable) locationManager);
+//            tracking.putExtra("context", (Parcelable) getApplication());
 
             startService(tracking);
-//            bindService(tracking, mConnection, Context.BIND_AUTO_CREATE);
+            bindService(tracking, mConnection, Context.BIND_AUTO_CREATE);
 
         }
         catch (Exception e)
@@ -110,7 +136,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
 
 
-        MyBroadcastReceiver receiver = new MyBroadcastReceiver();
+        receiver = new MyBroadcastReceiver();
+        receiver2 = new MyBroadcastReceiver();
         registerReceiver(
                 receiver,
                 new IntentFilter("myrun.CUSTOM_BROADCAST")
@@ -118,10 +145,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
 
         registerReceiver(
-                receiver,
+                receiver2,
                 new IntentFilter("myrun.UPDATE_BROADCAST")
         );
-
 
     }
 
@@ -139,10 +165,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
             case android.R.id.home:
 //                doUnbindService();
-                stopService(new Intent(MapsActivity.this, trackingService.class));
-
-
-
                 finish();
                 return true;
 
@@ -150,6 +172,11 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             case R.id.action_save:
                 // save, insert and finish
 
+
+                duration = (Calendar.getInstance().getTimeInMillis() - startTime) / 6000; // get min
+
+                AsynWriteSQL writesqlhelper = new AsynWriteSQL();
+                writesqlhelper.execute();
 
                 finish();
                 return true;
@@ -185,30 +212,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
 
     private void upDateMap() {
-//        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-//
-//        Criteria criteria = new Criteria();
-//        criteria.setAccuracy(Criteria.ACCURACY_FINE);
-//        // criteria.setAccuracy(Criteria.ACCURACY_COARSE);
-//        criteria.setPowerRequirement(Criteria.POWER_LOW);
-//        criteria.setAltitudeRequired(false);
-//        criteria.setBearingRequired(false);
-//        criteria.setSpeedRequired(false);
-//        criteria.setCostAllowed(true);
-//        String provider = locationManager.getBestProvider(criteria, true);
-//
-//        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-//            return;
-//        }
 
-
-//        Location l = locationManager.getLastKnownLocation(provider);
         LatLng latlng = prelat;
-
-
-//        if(latlng == null)
-            Log.d(TAG, "update here but null " + latlng);
-
         MarkerOptions a = new MarkerOptions().position(latlng).icon(BitmapDescriptorFactory.defaultMarker(
                 BitmapDescriptorFactory.HUE_RED));
         preMarker = mMap.addMarker(a);     // start point
@@ -219,98 +224,40 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         whereAmI = mMap.addMarker(new MarkerOptions().position(latlng).icon(BitmapDescriptorFactory.defaultMarker(
                 BitmapDescriptorFactory.HUE_GREEN)));          //set position and icon for the marker
 
-
-
         mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
         // Zoom in
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latlng, 17)); //17: the desired zoom level, in the range of 2.0 to 21.0
-//        updateWithNewLocation(prel);
-//        // update once every 2 second, min distance 0 therefore not considered
-//        locationManager.requestLocationUpdates(provider, 2000, 0, locationListener);
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
         if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             Log.d(TAG, "permission granted. Let's show the map");
-//            upDateMap();
-        } else {
-//            Log.d(TAG, "permission denied! I am going to close the app");
+        }
+        else {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSION_REQUEST_CODE);
         }
-    }
-
-
-    private LatLng fromLocationToLatLng(Location location) {
-        return new LatLng(location.getLatitude(), location.getLongitude());
     }
 
     private void updateWithNewLocation(LatLng curlatlng) {
 
         if (curlatlng != null) {
-            // Update the map location.
-//            LatLng latlng = fromLocationToLatLng(location);
             mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(curlatlng, 17));
 
             if (whereAmI != null)
             {
-
-                rectOptions.add(whereAmI.getPosition());
-                rectOptions.color(Color.BLACK);
-                polyline = mMap.addPolyline(rectOptions);
                 whereAmI.remove();
-
             }
-
 
             whereAmI = mMap.addMarker(new MarkerOptions().position(curlatlng).icon(BitmapDescriptorFactory.defaultMarker(
                     BitmapDescriptorFactory.HUE_GREEN)).title("Here I Am."));
 
+            rectOptions.add(whereAmI.getPosition());
+            rectOptions.color(Color.BLACK);
+            polyline = mMap.addPolyline(rectOptions);
 
-            Geocoder gc = new Geocoder(this, Locale.getDefault());
-
-//            if (!Geocoder.isPresent())
-//                addressString = "No geocoder available";
-//            else {
-//                try {
-//                    List<Address> addresses = gc.getFromLocation(latitude, longitude, 1);
-//                    StringBuilder sb = new StringBuilder();
-//                    if (addresses.size() > 0) {
-//                        Address address = addresses.get(0);
-//
-//                        for (int i = 0; i < address.getMaxAddressLineIndex(); i++)
-//                            sb.append(address.getAddressLine(i)).append("\n");
-//
-//                        sb.append(address.getLocality()).append("\n");
-//                        sb.append(address.getPostalCode()).append("\n");
-//                        sb.append(address.getCountryName());
-//                    }
-//                    addressString = sb.toString();
-//                } catch (IOException e) {
-//                    Log.d("WHEREAMI", "IO Exception", e);
-//                }
-//            }
         }
     }
-
-//    private final LocationListener locationListener = new LocationListener() {
-//        public void onLocationChanged(Location location) {
-//            Log.d(TAG, "onLocationChanged");
-//            updateWithNewLocation(location);
-//        }
-//
-//        public void onProviderDisabled(String provider) {
-//            Log.d(TAG, "onProviderDisabled");
-//        }
-//
-//        public void onProviderEnabled(String provider) {
-//            Log.d(TAG, "onProviderEnabled");
-//        }
-//
-//        public void onStatusChanged(String provider, int status, Bundle extras) {
-//            Log.d(TAG, "onStatusChanged");
-//        }
-//    };
 
     private boolean checkPermission(){
         int result = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION);
@@ -329,24 +276,15 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             // We use service Messenger to send the msg to the Server
             mServiceMessenger.send(msg);
 
-
-
-
-
         } catch (RemoteException e) {
             Log.e(TAG, "RemoteException", e);
         }
-
-
-
     }
 
     @Override
     public void onServiceDisconnected(ComponentName name) {
         mServiceMessenger = null;
     }
-
-
 
 
     private class IncomingMessageHandler extends Handler {
@@ -404,15 +342,62 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             if(intent.getAction().equals("myrun.CUSTOM_BROADCAST"))
             {
                 prelat = intent.getParcelableExtra("latlng");
+                Location l = intent.getParcelableExtra("loc");
+//                getLocation(l);
                 upDateMap();
+                getEntries(intent);
+
             }
 
             else if(intent.getAction().equals("myrun.UPDATE_BROADCAST"))
             {
                 LatLng curlat = intent.getParcelableExtra("latlngUpdate");
                 updateWithNewLocation(curlat);
+                getEntries(intent);
             }
+        }
+    }
 
+
+
+    private void getEntries(Intent intent) {
+        cur_speed = intent.getDoubleExtra("curSpeed", 0);
+        avg_speed = intent.getDoubleExtra("avgSpeed", 0);
+        climbed = intent.getDoubleExtra("climbed", 0);
+        calories = intent.getDoubleExtra("calorie", 0);
+        totalDis = intent.getDoubleExtra("distance", 0);
+    }
+
+
+    private void getLocation(Location location)
+    {
+        double latitude = location.getLatitude();
+        double longitude = location.getLongitude();
+        Geocoder gc = new Geocoder(this, Locale.getDefault());
+
+        if (!Geocoder.isPresent())
+            Log.d(TAG, "No geocoder available");
+
+
+        else {
+            try {
+                List<Address> addresses = gc.getFromLocation(latitude, longitude, 1);
+                StringBuilder sb = new StringBuilder();
+                if (addresses.size() > 0) {
+                    Address address = addresses.get(0);
+
+                    for (int i = 0; i < address.getMaxAddressLineIndex(); i++)
+                        sb.append(address.getAddressLine(i)).append("\n");
+
+                    sb.append(address.getLocality()).append("\n");
+                    sb.append(address.getPostalCode()).append("\n");
+                    sb.append(address.getCountryName());
+                    Log.d(TAG, "HERE " + sb.toString());
+                }
+
+            } catch (IOException e) {
+                Log.d("WHEREAMI", "IO Exception", e);
+            }
         }
     }
 
@@ -422,8 +407,68 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         super.onDestroy();
         try {
             doUnbindService();
+            stopService(new Intent(MapsActivity.this, trackingService.class));
+            unregisterReceiver(receiver);
+            unregisterReceiver(receiver2);
+
         } catch (Throwable t) {
             Log.e(TAG, "Failed to unbind from the service", t);
         }
+    }
+
+
+
+
+
+    @SuppressLint("StaticFieldLeak")
+    class AsynWriteSQL extends AsyncTask<Void, Void, Void> {
+
+        MySQLiteHelper mysqlhelper;
+
+        AsynWriteSQL()
+        {
+            mysqlhelper = new MySQLiteHelper(getApplication());
+
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+
+//            (long id, String input_type, String activity_type, String date_time, String duration,
+//                    String distance, String avg_page, String avg_speed, String calorie, String climb,
+//                    String heart_rate, String comment, String privacy, String gps){
+//
+//            }
+
+            //
+            Calendar tmpcld = Calendar.getInstance();
+            @SuppressLint("SimpleDateFormat") SimpleDateFormat mdformat = new SimpleDateFormat("HH:mm");     // set the current time
+            String strTime = mdformat.format(tmpcld.getTime());
+            String date = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
+            //
+
+
+            ExerciseEntry entry = new ExerciseEntry(0, "GPS:", activity_type,date + " " + strTime, String.format("%.2f", duration) + " mins",
+                    String.valueOf(totalDis), null, String.valueOf(avg_speed), String.valueOf(calories), String.valueOf(climbed), null, null, null, null);
+            mysqlhelper.insertEntry(entry);                    // insert an entry
+            return null;
+        }
+
+
+        @Override
+        protected void onPostExecute(Void unused) {
+            Log.d(TAG, "after insert");
+
+            LoaderManager mLoader = main_history.mLoader;        // reinit a loader to update the ui
+            if (mLoader != null)
+            {
+                mLoader.destroyLoader(1);
+            }
+//            main_history.adapterChoice = 1;
+            mLoader.initLoader(1, null, main_history.lc).forceLoad();
+
+
+        }
+
     }
 }

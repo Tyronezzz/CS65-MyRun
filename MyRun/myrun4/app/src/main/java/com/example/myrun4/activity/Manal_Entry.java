@@ -51,7 +51,7 @@ public class Manal_Entry extends AppCompatActivity{
     private static final String TAG = "Manual_entry";
     private static final String RESULT_LIST = "result_list";
     String[] mOptions = {"Activity","Date","Time","Duration","Distance","Calorie", "Heartbeat","Comment"};
-    String[] mResults = {"Manual", "2019-01-01", "10:10", "0 mins", "0 kms", "0 cals", "0 bpm", " "};
+    String[] mResults = {"", "2019-01-01", "10:10", "0 mins", "0 kms", "0 cals", "0 bpm", " "};
     private Calendar mDateTime = Calendar.getInstance();
     //    private MySQLiteHelper mysqlhelper;
     private String parentName;
@@ -73,6 +73,7 @@ public class Manal_Entry extends AppCompatActivity{
         Intent intent = getIntent();
         parentName = intent.getStringExtra("PARENTNAME");        // get the parent activity name
         String act_name = intent.getStringExtra("ACT");        // get the activity type name
+        String act_type = intent.getStringExtra("TYPE");
         index = intent.getLongExtra("INDEX", 0);
 
 
@@ -130,6 +131,7 @@ public class Manal_Entry extends AppCompatActivity{
             }
 
             mResults[0] = act_name;
+
 
             sharedPreferences = getSharedPreferences("profile", Context.MODE_PRIVATE);       //store the profile in the sharedpreference
             int km_mile_idx = sharedPreferences.getInt("key_unit_pre", 0);
@@ -354,23 +356,6 @@ public class Manal_Entry extends AppCompatActivity{
             }
             mLoader.initLoader(1, null, main_history.lc).forceLoad();
 
-
-
-//            mysqlhelper.deleteAll();
-//            final ArrayList<ExerciseEntry> act_entries = mysqlhelper.fetchEntries();
-//            Manal_Entry.this.runOnUiThread(new Runnable() {
-//                @Override
-//                public void run() {
-//                    mAdapter = new ListAdapter(Manal_Entry.this, 3, act_entries);
-//                    mAdapter.clear();
-//                    mhistoryView.setAdapter(mAdapter);
-//                    mAdapter.addall(act_entries);
-//                    mAdapter.notifyDataSetChanged();
-//
-//                    LoaderManager mLoader = main_history.mLoader;
-//                    mLoader.restartLoader(1, null, main_history.lc);
-//                }
-//            });
 
         }
 
