@@ -15,7 +15,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.TextView;
 
@@ -169,15 +168,13 @@ public class ListAdapter extends ArrayAdapter {
                 boolean ischecked = sharedPreferences.getBoolean("key_privacy_set", false);
                 myswitch.setChecked(ischecked);
 
-                myswitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                        sharedPreferences = context.getSharedPreferences("profile", Context.MODE_PRIVATE);       //store the profile in the sharedpreference
-                        editor = sharedPreferences.edit();
-                        editor.putBoolean("key_privacy_set", myswitch.isChecked());
-                        editor.apply();
+                myswitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                    sharedPreferences = context.getSharedPreferences("profile", Context.MODE_PRIVATE);       //store the profile in the sharedpreference
+                    editor = sharedPreferences.edit();
+                    editor.putBoolean("key_privacy_set", myswitch.isChecked());
+                    editor.apply();
 
-                        Log.d(TAG, "save " + myswitch.isChecked());
-                    }
+                    Log.d(TAG, "save " + myswitch.isChecked());
                 });
 
                 mOPtionsView.setTextSize(17);

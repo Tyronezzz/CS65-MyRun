@@ -24,7 +24,6 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.tasks.OnSuccessListener;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -41,13 +40,6 @@ public class trackingService extends Service {
     private NotificationManager mNotificationManager;
     private static boolean isRunning = false;
     public static final String CHANNEL_ID = "notification channel";
-//    private final Messenger mMessenger = new Messenger(new IncomingMessageHandler()); // Target we publish for clients to
-    public static final int MSG_REGISTER_CLIENT = 1;
-    public static final int MSG_UNREGISTER_CLIENT = 2;
-
-//    private List<Messenger> mClients = new ArrayList<Messenger>(); // Keeps track
-//    LocationManager locationManager;
-//    private String provider;
     private FusedLocationProviderClient mFusedLocationClient;
     LocationRequest mLocationRequest;
     private double totalDis = 0;
@@ -58,6 +50,12 @@ public class trackingService extends Service {
     private double calories;
     private long startTime;
     private long lastTime;
+//    private final Messenger mMessenger = new Messenger(new IncomingMessageHandler()); // Target we publish for clients to
+//    public static final int MSG_REGISTER_CLIENT = 1;
+//    public static final int MSG_UNREGISTER_CLIENT = 2;
+//    private List<Messenger> mClients = new ArrayList<Messenger>(); // Keeps track
+//    LocationManager locationManager;
+//    private String provider;
 
 
 //    private class IncomingMessageHandler extends Handler {
@@ -165,41 +163,30 @@ public class trackingService extends Service {
             mFusedLocationClient = LocationServices.getFusedLocationProviderClient(getApplication());
         }
 
-       mFusedLocationClient.getLastLocation().addOnSuccessListener(new OnSuccessListener<Location>() {
-           @Override
-           public void onSuccess(Location location)
-            {
-                if(location != null)
-                {
-                    Log.d(TAG, "not null init loc");
-                    LatLng latlng = fromLocationToLatLng(location);
+       mFusedLocationClient.getLastLocation().addOnSuccessListener(location -> {
+           if(location != null)
+           {
+               Log.d(TAG, "not null init loc");
+               LatLng latlng = fromLocationToLatLng(location);
 
-                    // send other fields like speed?
-                    latlngArr.add(latlng);
+               // send other fields like speed?
+               latlngArr.add(latlng);
 
 
-                    Intent intent = new Intent();
-                    intent.putExtra("latlng", latlng);
-                    intent.putExtra("loc", location);
-                    intent.putExtra("curSpeed", cur_speed);
-                    intent.putExtra("avgSpeed", avg_speed);
-                    intent.putExtra("climbed", climbed);
-                    intent.putExtra("calorie", calories);
-                    intent.putExtra("distance", totalDis);
-                    intent.putExtra("StartTime", startTime);
-                    intent.setAction("myrun.CUSTOM_BROADCAST");
-                    sendBroadcast(intent);
-                }
-            }
+               Intent intent = new Intent();
+               intent.putExtra("latlng", latlng);
+               intent.putExtra("loc", location);
+               intent.putExtra("curSpeed", cur_speed);
+               intent.putExtra("avgSpeed", avg_speed);
+               intent.putExtra("climbed", climbed);
+               intent.putExtra("calorie", calories);
+               intent.putExtra("distance", totalDis);
+               intent.putExtra("StartTime", startTime);
+               intent.setAction("myrun.CUSTOM_BROADCAST");
+               sendBroadcast(intent);
+           }
        });
     }
-
-    private void startActivityUpdate()
-    {
-
-
-    }
-
 
 
     private LocationCallback locationCallback = new LocationCallback() {

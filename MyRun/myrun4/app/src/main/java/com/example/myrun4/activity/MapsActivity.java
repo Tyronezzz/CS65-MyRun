@@ -17,6 +17,7 @@ import android.os.IBinder;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.AttributeSet;
@@ -30,7 +31,9 @@ import com.example.myrun4.MySQLiteHelper;
 import com.example.myrun4.R;
 import com.example.myrun4.fragment.main_history;
 import com.example.myrun4.model.ExerciseEntry;
+import com.example.myrun4.service.ActivityDetectionService;
 import com.example.myrun4.service.trackingService;
+import com.google.android.gms.location.DetectedActivity;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -225,6 +228,70 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         LatLng newloc = new LatLng(latitude, longitude);
 
         return newloc;
+    }
+
+
+    // register the RX and start up the ActivityDetectionService service
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Log.d(TAG, "onStart():start ActivityDetectionService");
+        LocalBroadcastManager.getInstance(this).registerReceiver(mActivityBroadcastReceiver,
+                new IntentFilter("AR Activity"));
+
+        startService(new Intent(this, ActivityDetectionService.class));
+    }
+
+    BroadcastReceiver mActivityBroadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            // Log.d(TAG, "onReceive()");
+            if (intent.getAction().equals("AR Activity")) {
+                int type = intent.getIntExtra("type", -1);
+                int confidence = intent.getIntExtra("confidence", 0);
+                handleUserActivity(type, confidence);
+            }
+        }
+    };
+
+
+    private void handleUserActivity(int type, int confidence) {
+        String label = "Unknown";
+        switch (type) {
+            case DetectedActivity.IN_VEHICLE: {
+                label = "In_Vehicle";
+                break;
+            }
+            case DetectedActivity.ON_BICYCLE: {
+                label = "On_Bicycle";
+                break;
+            }
+            case DetectedActivity.ON_FOOT: {
+                label = "On_Foot";
+                break;
+            }
+            case DetectedActivity.RUNNING: {
+                label = "Running";
+                break;
+            }
+            case DetectedActivity.STILL: {
+                label = "Still";
+                break;
+            }
+            case DetectedActivity.TILTING: {
+                label = "Tilting";
+                break;
+            }
+            case DetectedActivity.WALKING: {
+                label = "Walking";
+                break;
+            }
+            case DetectedActivity.UNKNOWN: {
+                break;
+            }
+        }
+
+        Log.d(TAG, "broadcast:onReceive(): Activity is " + label + " and confidence level is: " + confidence);
     }
 
 

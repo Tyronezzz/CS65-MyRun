@@ -10,7 +10,6 @@ import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
@@ -25,11 +24,8 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.TimePicker;
 
 import com.example.myrun4.ListAdapter;
 import com.example.myrun4.MySQLiteHelper;
@@ -73,7 +69,7 @@ public class Manal_Entry extends AppCompatActivity{
         Intent intent = getIntent();
         parentName = intent.getStringExtra("PARENTNAME");        // get the parent activity name
         String act_name = intent.getStringExtra("ACT");        // get the activity type name
-        String act_type = intent.getStringExtra("TYPE");
+//        String act_type = intent.getStringExtra("TYPE");
         index = intent.getLongExtra("INDEX", 0);
 
 
@@ -154,33 +150,30 @@ public class Manal_Entry extends AppCompatActivity{
             mhisView = textEntryView.findViewById(R.id.manual_hislistview);
 
 
-            mlistView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    Log.d(TAG, String.valueOf(position));
+            mlistView.setOnItemClickListener((parent, view, position, id) -> {
+                Log.d(TAG, String.valueOf(position));
 
-                    switch (position){
-                        case 1:
-                            onDateClick(la);          // set the date
-                            break;
+                switch (position){
+                    case 1:
+                        onDateClick(la);          // set the date
+                        break;
 
-                        case 2:
-                            onTimeClick(la);        // set the time
-                            break;
+                    case 2:
+                        onTimeClick(la);        // set the time
+                        break;
 
-                        case 3:
-                        case 4:
-                        case 5:
-                        case 6:
-                        case 7:
-                            showDiaglog(position);      // show the dialog
-                            break;
+                    case 3:
+                    case 4:
+                    case 5:
+                    case 6:
+                    case 7:
+                        showDiaglog(position);      // show the dialog
+                        break;
 
-                        default:
-                            break;
-                    }
-
+                    default:
+                        break;
                 }
+
             });
         }
 
@@ -194,16 +187,13 @@ public class Manal_Entry extends AppCompatActivity{
     }
 
     public void onDateClick(final ListAdapter la) {             // set the date
-        DatePickerDialog.OnDateSetListener mDateListener = new DatePickerDialog.OnDateSetListener() {
-            public void onDateSet(DatePicker view, int year, int month,
-                                  int day) {
-                mDateTime.set(Calendar.YEAR, year);
-                mDateTime.set(Calendar.MONTH, month);
-                mDateTime.set(Calendar.DAY_OF_MONTH, day);
+        DatePickerDialog.OnDateSetListener mDateListener = (view, year, month, day) -> {
+            mDateTime.set(Calendar.YEAR, year);
+            mDateTime.set(Calendar.MONTH, month);
+            mDateTime.set(Calendar.DAY_OF_MONTH, day);
 
-                mResults[1] = String.valueOf(year) + "-" + String.valueOf(month+1) + "-" + String.valueOf(day);
-                la.notifyDataSetChanged();
-            }
+            mResults[1] = String.valueOf(year) + "-" + String.valueOf(month+1) + "-" + String.valueOf(day);
+            la.notifyDataSetChanged();
         };
         new DatePickerDialog(Manal_Entry.this, mDateListener,
                 mDateTime.get(Calendar.YEAR),
@@ -212,13 +202,11 @@ public class Manal_Entry extends AppCompatActivity{
     }
 
     private void onTimeClick(final ListAdapter la) {       // set the time
-        TimePickerDialog.OnTimeSetListener mTimeListener = new TimePickerDialog.OnTimeSetListener() {
-            public void onTimeSet(TimePicker view, int hour, int minute) {
-                mDateTime.set(Calendar.HOUR_OF_DAY, hour);
-                mDateTime.set(Calendar.MINUTE, minute);
-                mResults[2] = String.valueOf(hour) + ":" + String.valueOf(minute);
-                la.notifyDataSetChanged();
-            }
+        TimePickerDialog.OnTimeSetListener mTimeListener = (view, hour, minute) -> {
+            mDateTime.set(Calendar.HOUR_OF_DAY, hour);
+            mDateTime.set(Calendar.MINUTE, minute);
+            mResults[2] = String.valueOf(hour) + ":" + String.valueOf(minute);
+            la.notifyDataSetChanged();
         };
 
         new TimePickerDialog(Manal_Entry.this, mTimeListener,
@@ -242,31 +230,23 @@ public class Manal_Entry extends AppCompatActivity{
 
         builder.setView(viewInflated);
 
-        builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
+        builder.setPositiveButton(android.R.string.ok, (dialog, which) -> {
 
-                String tmp_txt = input.getText().toString();
-                if(position != 7)          //
-                {
-                    String[] arrOfStr = mResults[position].split("\\s+");
-                    mResults[position] = tmp_txt + " " + arrOfStr[1];
-                }
-
-                else
-                {
-                    mResults[position] = tmp_txt;
-                }
-
-                dialog.dismiss();
+            String tmp_txt = input.getText().toString();
+            if(position != 7)          //
+            {
+                String[] arrOfStr = mResults[position].split("\\s+");
+                mResults[position] = tmp_txt + " " + arrOfStr[1];
             }
-        });
-        builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.cancel();
+
+            else
+            {
+                mResults[position] = tmp_txt;
             }
+
+            dialog.dismiss();
         });
+        builder.setNegativeButton(android.R.string.cancel, (dialog, which) -> dialog.cancel());
 
         builder.show();
     }
@@ -298,8 +278,6 @@ public class Manal_Entry extends AppCompatActivity{
                 if(parentName.equals("MAINHISTORY"))
                 {
                     // delete the entry
-                    Log.d(TAG, "delete");
-
                     Intent intent = new Intent();
                     intent.putExtra("DELETEIDX", index);
                     setResult(RESULT_OK, intent);        // important!!!

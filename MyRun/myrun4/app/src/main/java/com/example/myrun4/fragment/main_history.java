@@ -19,16 +19,16 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ListView;
 
-import com.example.myrun4.activity.MapsActivity;
-import com.example.myrun4.utils.EntryListLoader;
 import com.example.myrun4.ListAdapter;
 import com.example.myrun4.MySQLiteHelper;
 import com.example.myrun4.R;
 import com.example.myrun4.activity.Manal_Entry;
+import com.example.myrun4.activity.MapsActivity;
 import com.example.myrun4.model.ExerciseEntry;
+import com.example.myrun4.utils.EntryListLoader;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -69,34 +69,33 @@ public class main_history extends Fragment implements LoaderManager.LoaderCallba
         mAdapter = new ListAdapter(getActivity(), 3, exetry);
         mhisView.setAdapter(mAdapter);
 
-        mhisView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        mhisView.setOnItemClickListener((parent, view1, position, id) -> {
 
-                if(exetry.get(position).getInputType().contains("GPS"))
-                {
-                    // start activity
-                    Intent k = new Intent(getActivity(), MapsActivity.class);
-                    k.putExtra("PARENTNAME", "MAINHISTORY");
-                    k.putExtra("EXENTRY", exetry.get(position));
-//                    Log.d(TAG, "get gps " + exetry.get(position).getGps());
-                    startActivityForResult(k, REQUEST_CODE_DELETE);
-                }
+            if(exetry.get(position).getInputType().contains("GPS"))
+            {
+                // start activity
+                Intent k = new Intent(getActivity(), MapsActivity.class);
+                k.putExtra("PARENTNAME", "MAINHISTORY");
+                k.putExtra("EXENTRY", exetry.get(position));
+                startActivityForResult(k, REQUEST_CODE_DELETE);
+            }
 
-                else if(exetry.get(position).getInputType().contains("Automatic"))
-                {
+            else if(exetry.get(position).getInputType().contains("Automatic"))
+            {
 
-                }
 
-                else
-                {
-                    // start activity
-                    Intent k = new Intent(getActivity(), Manal_Entry.class);
-                    k.putExtra("PARENTNAME", "MAINHISTORY");
-                    k.putExtra("EXENTRY", exetry.get(position));
-                    k.putExtra("INDEX", exetry.get(position).getId());
-                    startActivityForResult(k, REQUEST_CODE_DELETE);
-                }
+
+
+            }
+
+            else
+            {
+                // start activity
+                Intent k = new Intent(getActivity(), Manal_Entry.class);
+                k.putExtra("PARENTNAME", "MAINHISTORY");
+                k.putExtra("EXENTRY", exetry.get(position));
+                k.putExtra("INDEX", exetry.get(position).getId());
+                startActivityForResult(k, REQUEST_CODE_DELETE);
             }
         });
 
@@ -186,11 +185,9 @@ public class main_history extends Fragment implements LoaderManager.LoaderCallba
 
     private void runThread(final long index) {
 
-        Thread t1 = new Thread(new Runnable() {
-            public void run() {
-                MySQLiteHelper mysqlhelper = new MySQLiteHelper(getContext());
-                mysqlhelper.removeEntry(index);
-            }
+        Thread t1 = new Thread(() -> {
+            MySQLiteHelper mysqlhelper = new MySQLiteHelper(getContext());
+            mysqlhelper.removeEntry(index);
         });
         t1.start();
     }

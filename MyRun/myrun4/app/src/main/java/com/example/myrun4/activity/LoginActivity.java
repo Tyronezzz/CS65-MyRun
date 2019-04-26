@@ -19,7 +19,6 @@ import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
@@ -56,26 +55,20 @@ public class LoginActivity extends AppCompatActivity {
         Toolbar mytoolbar = findViewById(R.id.login_toolbar);     // set up the toolbar
         setSupportActionBar(mytoolbar);
 
-        mEmailSignInButton.setOnClickListener(new OnClickListener() {         // log in
-            @Override
-            public void onClick(View view) {
-                attemptLogin();
-            }
-        });
-        mregister_button.setOnClickListener(new OnClickListener() {           // register
-            @Override
-            public void onClick(View v) {
-                try {
+        // log in
+        mEmailSignInButton.setOnClickListener(view -> attemptLogin());
+        // register
+        mregister_button.setOnClickListener(v -> {
+            try {
 
-                    Intent k = new Intent(LoginActivity.this, MainActivity.class);     //jump to mainactivity
-                    startActivity(k);
+                Intent k = new Intent(LoginActivity.this, MainActivity.class);     //jump to mainactivity
+                startActivity(k);
 
 //                    Intent k = new Intent(LoginActivity.this, RegisterActivity.class);
 //                    k.putExtra("PARENTNAME", "LOGIN");
 //                    startActivity(k);
-                } catch(Exception e) {
-                    e.printStackTrace();
-                }
+            } catch(Exception e) {
+                e.printStackTrace();
             }
         });
     }
