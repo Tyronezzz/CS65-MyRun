@@ -99,17 +99,22 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         db = getWritableDatabase();
         ContentValues values = new ContentValues();
 
-//        values.put(MySQLiteHelper.KEY_INPUT_TYPE, entry.getInputType());
+        Log.d(TAG, "input type " + entry.getInputType());
+
+
+        values.put(MySQLiteHelper.KEY_INPUT_TYPE, entry.getInputType());
         values.put(MySQLiteHelper.KEY_ACTIVITY_TYPE, entry.getActType());
         values.put(MySQLiteHelper.KEY_DATE_TIME, entry.getDateTime());
         values.put(MySQLiteHelper.KEY_DURATION, entry.getDuration());
         values.put(MySQLiteHelper.KEY_DISTANCE, entry.getDistance());
-        //values.put(MySQLiteHelper.KEY_AVG_PACE, entry.getAvgPace());
-        //values.put(MySQLiteHelper.KEY_AVG_SPEED, entry.getAvgSpeed());
+        values.put(MySQLiteHelper.KEY_AVG_PACE, entry.getAvgPace());
+        values.put(MySQLiteHelper.KEY_AVG_SPEED, entry.getAvgSpeed());
         values.put(MySQLiteHelper.KEY_CALORIES, entry.getCalorie());
-        //values.put(MySQLiteHelper.KEY_CLIMB, entry.getClimb());
+        values.put(MySQLiteHelper.KEY_CLIMB, entry.getClimb());
         values.put(MySQLiteHelper.KEY_HEARTRATE, entry.getHeartrate());
         values.put(MySQLiteHelper.KEY_COMMENT, entry.getComment());
+        values.put(MySQLiteHelper.KEY_PRIVACY, entry.getPrivacy());
+        values.put(MySQLiteHelper.KEY_GPS_DATA, entry.getGps());
 
 
         long newRowId = db.insert(TABLE_NAME_ENTRIES, null, values);
@@ -136,17 +141,17 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
     }
 
 
-//    public void deleteAll() {
-//        db = getWritableDatabase();
-//
-//        Log.d(TAG, "delete all = ");
-//        db.delete(TABLE_NAME_ENTRIES, null, null);
-//        db.close();
-//        this.close();
-//    }
+    public void deleteAll() {
+        db = getWritableDatabase();
+
+        Log.d(TAG, "delete all = ");
+        db.delete(TABLE_NAME_ENTRIES, null, null);
+        db.close();
+        this.close();
+    }
 
 
-    // Query a specific entry by its index.
+//     Query a specific entry by its index.
 //    public void fetchEntryByIndex(long rowId) {
 //
 //        db = getReadableDatabase();
@@ -187,17 +192,25 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         while (!cursor.isAfterLast()) {     // move cursor to get each column
 
             long id = cursor.getLong(0);
+            String input_type = cursor.getString(1);
             String act_name = cursor.getString(2);
             String date_time = cursor.getString(3);
             String duration = cursor.getString(4);
             String distance = cursor.getString(5);
+            String avg_pace = cursor.getString(6);
+            String avg_speed = cursor.getString(7);
             String cal =cursor.getString(8);
+            String climb =cursor.getString(9);
             String heartrate = cursor.getString(10);
             String comment = cursor.getString(11);
+            String privacy = cursor.getString(12);
+            String gps = cursor.getString(13);
 
-            ExerciseEntry entry = new ExerciseEntry(id,null, act_name, date_time, duration,
-                    distance,null, null, cal, null,
-                   heartrate, comment, null, null);
+            Log.d(TAG, "get gps " + gps);
+
+            ExerciseEntry entry = new ExerciseEntry(id,input_type, act_name, date_time, duration,
+                    distance,avg_pace, avg_speed, cal, climb,
+                   heartrate, comment, privacy, gps);
 
             entries.add(entry);
             cursor.moveToNext();

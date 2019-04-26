@@ -151,6 +151,7 @@ public class main_start extends Fragment {
                     String text2 = mspinner_act.getSelectedItem().toString();
                     intent = new Intent(getContext(), MapsActivity.class);
                     intent.putExtra("act_type", text2);
+                    intent.putExtra("PARENTNAME", "MAINSTART");
                     startActivity(intent);
                 }
             }

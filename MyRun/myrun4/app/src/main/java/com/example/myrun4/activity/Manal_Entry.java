@@ -299,7 +299,6 @@ public class Manal_Entry extends AppCompatActivity{
                 {
                     // delete the entry
                     Log.d(TAG, "delete");
-                    //mysqlhelper.removeEntry(index);
 
                     Intent intent = new Intent();
                     intent.putExtra("DELETEIDX", index);

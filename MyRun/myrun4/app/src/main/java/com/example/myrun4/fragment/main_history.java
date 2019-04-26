@@ -21,6 +21,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
+
+import com.example.myrun4.activity.MapsActivity;
 import com.example.myrun4.utils.EntryListLoader;
 import com.example.myrun4.ListAdapter;
 import com.example.myrun4.MySQLiteHelper;
@@ -71,12 +73,30 @@ public class main_history extends Fragment implements LoaderManager.LoaderCallba
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-                // start activity
-                Intent k = new Intent(getActivity(), Manal_Entry.class);
-                k.putExtra("PARENTNAME", "MAINHISTORY");
-                k.putExtra("EXENTRY", exetry.get(position));
-                k.putExtra("INDEX", exetry.get(position).getId());
-                startActivityForResult(k, REQUEST_CODE_DELETE);
+                if(exetry.get(position).getInputType().contains("GPS"))
+                {
+                    // start activity
+                    Intent k = new Intent(getActivity(), MapsActivity.class);
+                    k.putExtra("PARENTNAME", "MAINHISTORY");
+                    k.putExtra("EXENTRY", exetry.get(position));
+//                    Log.d(TAG, "get gps " + exetry.get(position).getGps());
+                    startActivityForResult(k, REQUEST_CODE_DELETE);
+                }
+
+                else if(exetry.get(position).getInputType().contains("Automatic"))
+                {
+
+                }
+
+                else
+                {
+                    // start activity
+                    Intent k = new Intent(getActivity(), Manal_Entry.class);
+                    k.putExtra("PARENTNAME", "MAINHISTORY");
+                    k.putExtra("EXENTRY", exetry.get(position));
+                    k.putExtra("INDEX", exetry.get(position).getId());
+                    startActivityForResult(k, REQUEST_CODE_DELETE);
+                }
             }
         });
 
@@ -92,7 +112,7 @@ public class main_history extends Fragment implements LoaderManager.LoaderCallba
 
         if (resultCode != Activity.RESULT_OK)
         {
-            Log.d(TAG, "GG");
+            Log.d(TAG, "do nothing");
             return;
         }
 
@@ -108,7 +128,6 @@ public class main_history extends Fragment implements LoaderManager.LoaderCallba
                 mLoader.initLoader(ALL_EXERCISE_LOADER_ID, null, this).forceLoad();
                 lc = this;
                 break;
-
         }
     }
 
@@ -174,6 +193,5 @@ public class main_history extends Fragment implements LoaderManager.LoaderCallba
             }
         });
         t1.start();
-
     }
 }

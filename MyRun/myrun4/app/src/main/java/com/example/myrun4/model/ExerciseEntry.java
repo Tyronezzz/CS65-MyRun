@@ -86,7 +86,7 @@ public class ExerciseEntry implements Serializable {
     }
 
     public String getInputType() {
-        return this.input_type;
+        return input_type;
     }
 
     public String getAvgPace() {
@@ -100,4 +100,13 @@ public class ExerciseEntry implements Serializable {
     public String getClimb() {
         return climb;
     }
+
+    public String getGps() {
+        return gps;
+    }
+
+    public String getPrivacy() {
+        return privacy;
+    }
+
 }

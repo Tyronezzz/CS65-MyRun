@@ -8,18 +8,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
-import android.location.Address;
-import android.location.Geocoder;
-import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.IBinder;
-import android.os.Message;
-import android.os.Messenger;
-import android.os.RemoteException;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.ContextCompat;
@@ -30,6 +24,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 
 import com.example.myrun4.MySQLiteHelper;
 import com.example.myrun4.R;
@@ -47,11 +42,9 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 
@@ -65,15 +58,14 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     boolean mIsBound;
     private ServiceConnection mConnection = this;  // as we implement ServiceConnection
-    private final Messenger mMessenger = new Messenger(new IncomingMessageHandler());
-    private Messenger mServiceMessenger = null;
-//    LocationManager locationManager;
+//    private final Messenger mMessenger = new Messenger(new IncomingMessageHandler());
+//    private Messenger mServiceMessenger = null;
     private LatLng prelat;
     private PolylineOptions rectOptions;
     private Polyline polyline;
     private MyBroadcastReceiver receiver;
     private MyBroadcastReceiver receiver2;
-
+    private SharedPreferences sharedPreferences;
 
     private double cur_speed;
     private double avg_speed;
@@ -83,6 +75,16 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private double duration;
     private double totalDis;
     private String activity_type;
+    private TextView act_type;
+    private TextView mspeed;
+    private TextView mavgSpeed;
+    private TextView mclimbed;
+    private TextView mcalorie;
+    private TextView mdistance;
+    private String gpsStr;
+    private String parentName;
+    private ExerciseEntry oneentry;
+    private long entryID;
 
 
     @Override
@@ -97,7 +99,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
 
-
         Toolbar myToolbar = findViewById(R.id.main_toolbar);
         myToolbar.setTitle("Map");
         setSupportActionBar(myToolbar);
@@ -105,56 +106,139 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
 
         Intent intent = getIntent();
-        activity_type = intent.getStringExtra("act_type");        // get the parent activity name
+        activity_type = intent.getStringExtra("act_type");        // get the activity name: running...
+        parentName = intent.getStringExtra("PARENTNAME");        // get the parent activity name
+
+
+        sharedPreferences = getSharedPreferences("profile", Context.MODE_PRIVATE);
+        gpsStr = "";
+
+        act_type = findViewById(R.id.text_activity_type);
+        mspeed = findViewById(R.id.text_cur_speed);
+        mavgSpeed = findViewById(R.id.text_avg_speed);
+        mclimbed = findViewById(R.id.text_climb);
+        mcalorie = findViewById(R.id.text_calorie);
+        mdistance = findViewById(R.id.text_distance);
 
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.map);
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
 
-
-        // start the service here
-        try {
-
-            Intent tracking = new Intent(getApplication(), trackingService.class);
-//            tracking.putExtra("locationManager", (Parcelable) locationManager);
-//            tracking.putExtra("context", (Parcelable) getApplication());
-
-            startService(tracking);
-            bindService(tracking, mConnection, Context.BIND_AUTO_CREATE);
-
-        }
-        catch (Exception e)
+        if(parentName.equals("MAINHISTORY"))
         {
-            Log.d(TAG, "error binding");
+            oneentry = (ExerciseEntry) getIntent().getSerializableExtra("EXENTRY");
+            entryID = oneentry.getId();
+
         }
 
-        mIsBound = true;
+
+        else
+        {
+            // start the service here
+            try {
+                Intent tracking = new Intent(getApplication(), trackingService.class);
+                startService(tracking);
+                bindService(tracking, mConnection, Context.BIND_AUTO_CREATE);
+
+            }
+            catch (Exception e)
+            {
+                Log.d(TAG, "error binding");
+            }
+
+            mIsBound = true;
+
+
+            receiver = new MyBroadcastReceiver();
+            receiver2 = new MyBroadcastReceiver();
+            registerReceiver(
+                    receiver,
+                    new IntentFilter("myrun.CUSTOM_BROADCAST")
+            );
+
+
+            registerReceiver(
+                    receiver2,
+                    new IntentFilter("myrun.UPDATE_BROADCAST")
+            );
+        }
+    }
+
+    private void setUpMap(ExerciseEntry entry) {
+
+
+        act_type.setText("Activity: " +entry.getActType());
+        mcalorie.setText("Calorie: " + entry.getCalorie());
 
 
 
+        int km_mile_idx = sharedPreferences.getInt("key_unit_pre", 0);
+//        if(km_mile_idx == 1)
+//        {
+//            mspeed.setText("Speed: " + String.format("%.2f", cur_speed) + " mile/s");             // m mile
+//            mavgSpeed.setText("Avg Speed: " + String.format("%.2f", avg_speed) + " mile/s");
+//            mclimbed.setText("Climbed: " + climbed + " mile");
+//            mdistance.setText("Distance: " + String.format("%.2f", totalDis) + " mile");   // m
+//        }
 
-        receiver = new MyBroadcastReceiver();
-        receiver2 = new MyBroadcastReceiver();
-        registerReceiver(
-                receiver,
-                new IntentFilter("myrun.CUSTOM_BROADCAST")
-        );
+
+        mspeed.setText("Speed: 0.00 m/s");             // m mile
+        mavgSpeed.setText("Avg Speed: " + entry.getAvgSpeed() + " m/s");
+        mclimbed.setText("Climbed: " + entry.getClimb() + " m");
+        mdistance.setText("Distance: " + entry.getDistance() + " m");   // m
+
+        String gpsData = entry.getGps();
+        String[] arrOfStr = gpsData.split(";");
+        LatLng newloc = str2latlng(arrOfStr[0]);
+
+        MarkerOptions a = new MarkerOptions().position(newloc).icon(BitmapDescriptorFactory.defaultMarker(
+                BitmapDescriptorFactory.HUE_RED));
+        preMarker = mMap.addMarker(a);     // start point
+
+        rectOptions = new PolylineOptions().add(preMarker.getPosition());
 
 
-        registerReceiver(
-                receiver2,
-                new IntentFilter("myrun.UPDATE_BROADCAST")
-        );
+        for(int i=1;i<arrOfStr.length;i++)
+        {
+            // draw lines here
+            LatLng loc = str2latlng(arrOfStr[i]);
+            rectOptions.add(loc);
+            rectOptions.color(Color.BLACK);
+            polyline = mMap.addPolyline(rectOptions);
+        }
+
+        LatLng lastloc = str2latlng(arrOfStr[arrOfStr.length-1]);
+        whereAmI = mMap.addMarker(new MarkerOptions().position(lastloc).icon(BitmapDescriptorFactory.defaultMarker(
+                BitmapDescriptorFactory.HUE_GREEN)));          //set position and icon for the marker
+
+        mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(newloc, 17)); //17: the desired zoom level, in the range of 2.0 to 21.0
 
     }
+
+    private LatLng str2latlng(String s) {
+        String[] latlong =  s.split(",");
+        double latitude = Double.parseDouble(latlong[0]);
+        double longitude = Double.parseDouble(latlong[1]);
+        LatLng newloc = new LatLng(latitude, longitude);
+
+        return newloc;
+    }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.manual_menu, menu);     // Inflate the menu
-        MenuItem item = menu.findItem(R.id.action_save);
+
+        if(parentName.equals("MAINHISTORY"))
+        {
+            MenuItem item = menu.findItem(R.id.action_save);
+            item.setTitle("DELETE");
+        }
+
+
         return true;
     }
 
@@ -164,19 +248,27 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         switch (item.getItemId()) {
 
             case android.R.id.home:
-//                doUnbindService();
                 finish();
                 return true;
-
 
             case R.id.action_save:
                 // save, insert and finish
 
+                if(parentName.equals("MAINHISTORY"))       // delete in the history
+                {
+                    Intent intent = new Intent();
+                    intent.putExtra("DELETEIDX", entryID);
+                    setResult(RESULT_OK, intent);        // important!!!
 
-                duration = (Calendar.getInstance().getTimeInMillis() - startTime) / 6000; // get min
+                }
 
-                AsynWriteSQL writesqlhelper = new AsynWriteSQL();
-                writesqlhelper.execute();
+                else      // save the map para
+                {
+                    duration = (Calendar.getInstance().getTimeInMillis() - startTime) / 6000; // get min
+                    AsynWriteSQL writesqlhelper = new AsynWriteSQL();
+                    writesqlhelper.execute();
+
+                }
 
                 finish();
                 return true;
@@ -186,17 +278,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
 
-
-
-    /**
-     * Manipulates the map once available.
-     * This callback is triggered when the map is ready to be used.
-     * This is where we can add markers or lines, add listeners or move the camera. In this case,
-     * we just add a marker near Sydney, Australia.
-     * If Google Play services is not installed on the device, the user will be prompted to install
-     * it inside the SupportMapFragment. This method will only be triggered once the user has
-     * installed Google Play services and returned to the app.
-     */
     @Override
     public void onMapReady(GoogleMap googleMap) {
 
@@ -204,10 +285,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         if (!checkPermission())
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSION_REQUEST_CODE);
-//        else
-//            upDateMap();
 
-
+        if(parentName.equals("MAINHISTORY"))
+            setUpMap(oneentry);
     }
 
 
@@ -242,7 +322,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private void updateWithNewLocation(LatLng curlatlng) {
 
         if (curlatlng != null) {
-            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(curlatlng, 17));
+//            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(curlatlng, 17));
 
             if (whereAmI != null)
             {
@@ -255,6 +335,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             rectOptions.add(whereAmI.getPosition());
             rectOptions.color(Color.BLACK);
             polyline = mMap.addPolyline(rectOptions);
+            Log.d(TAG, "draw the line");
 
         }
     }
@@ -267,68 +348,67 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     @Override
     public void onServiceConnected(ComponentName name, IBinder service) {
-        mServiceMessenger = new Messenger(service);
+//        mServiceMessenger = new Messenger(service);
 
-        try {
-            Message msg = Message.obtain(null, trackingService.MSG_REGISTER_CLIENT);
-            msg.replyTo = mMessenger;
-            Log.d(TAG, "C: TX MSG_REGISTER_CLIENT");
-            // We use service Messenger to send the msg to the Server
-            mServiceMessenger.send(msg);
-
-        } catch (RemoteException e) {
-            Log.e(TAG, "RemoteException", e);
-        }
+//        try {
+//            Message msg = Message.obtain(null, trackingService.MSG_REGISTER_CLIENT);
+//            msg.replyTo = mMessenger;
+//            Log.d(TAG, "C: TX MSG_REGISTER_CLIENT");
+//            // We use service Messenger to send the msg to the Server
+//            mServiceMessenger.send(msg);
+//
+//        } catch (RemoteException e) {
+//            Log.e(TAG, "RemoteException", e);
+//        }
     }
 
     @Override
     public void onServiceDisconnected(ComponentName name) {
-        mServiceMessenger = null;
+//        mServiceMessenger = null;
     }
 
 
-    private class IncomingMessageHandler extends Handler {
-        @Override
-        public void handleMessage(Message msg) {
-            Log.d(TAG, "C:IncomingHandler:handleMessage " + msg.replyTo);
-            switch (msg.what) {
-//                case MyService.MSG_SET_INT_VALUE:
-//                    Log.d(TAG, "C: RX MSG_SET_INT_VALUE");
-//                    // msg.arg1 here as only arg1 was used to store data in the server class.
-//                    textIntValue.setText("Int Message: " + msg.arg1);
-//                    break;
-//                case MyService.MSG_SET_STRING_VALUE:
-//                    // getString(key) -> str1 is the key of the key value pair we used in the server side.
-//                    String str1 = msg.getData().getString("str1");
-//                    Log.d(TAG, "C:RX MSG_SET_STRING_VALUE");
-//                    textStrValue.setText("Str Message: " + str1);
-//                    break;
-                default:
-                    super.handleMessage(msg);
-            }
-        }
-    }
+//    private class IncomingMessageHandler extends Handler {
+//        @Override
+//        public void handleMessage(Message msg) {
+//            Log.d(TAG, "C:IncomingHandler:handleMessage " + msg.replyTo);
+//            switch (msg.what) {
+////                case MyService.MSG_SET_INT_VALUE:
+////                    Log.d(TAG, "C: RX MSG_SET_INT_VALUE");
+////                    // msg.arg1 here as only arg1 was used to store data in the server class.
+////                    textIntValue.setText("Int Message: " + msg.arg1);
+////                    break;
+////                case MyService.MSG_SET_STRING_VALUE:
+////                    // getString(key) -> str1 is the key of the key value pair we used in the server side.
+////                    String str1 = msg.getData().getString("str1");
+////                    Log.d(TAG, "C:RX MSG_SET_STRING_VALUE");
+////                    textStrValue.setText("Str Message: " + str1);
+////                    break;
+//                default:
+//                    super.handleMessage(msg);
+//            }
+//        }
+//    }
 
 
 
     private void doUnbindService() {
         Log.d(TAG, "C:doUnBindService()");
         if (mIsBound) {
-            // If we have received the service, and hence registered with it,
-            // then now is the time to unregister.
-            if (mServiceMessenger != null) {
-                try {
-                    Message msg = Message.obtain(null, trackingService.MSG_UNREGISTER_CLIENT);//  obtain (Handler h, int what) - 'what' is the tag of the message, which will be used in line 72 in MyService.java. Returns a new Message from the global message pool. More efficient than creating and allocating new instances.
-                    //Log.d(TAG, "C: TX MSG_UNREGISTER_CLIENT");
-                    msg.replyTo = mMessenger;
-                    mServiceMessenger.send(msg);// need to use the server messenger to send the message to the server
-                } catch (RemoteException e) {
-                    // There is nothing special we need to do if the service has
-                    // crashed.
-                }
-            }
-            // Detach our existing connection.
-            unbindService(mConnection);
+
+//            if (mServiceMessenger != null) {
+//                try {
+//                    Message msg = Message.obtain(null, trackingService.MSG_UNREGISTER_CLIENT);
+//
+//                    msg.replyTo = mMessenger;
+//                    mServiceMessenger.send(msg);// need to use the server messenger to send the message to the server
+//                } catch (RemoteException e) {
+//                    // There is nothing special we need to do if the service has
+//                    // crashed.
+//                }
+//            }
+
+            unbindService(mConnection);      // Detach our existing connection.
             mIsBound = false;
         }
     }
@@ -342,8 +422,11 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             if(intent.getAction().equals("myrun.CUSTOM_BROADCAST"))
             {
                 prelat = intent.getParcelableExtra("latlng");
-                Location l = intent.getParcelableExtra("loc");
-//                getLocation(l);
+                startTime = intent.getLongExtra("StartTime", 0);
+                String newlatlng = String.valueOf(prelat.latitude) + "," + String.valueOf(prelat.longitude) + ";";
+//                Log.d(TAG, "pos " + newlatlng);
+                gpsStr += newlatlng;
+
                 upDateMap();
                 getEntries(intent);
 
@@ -352,8 +435,50 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             else if(intent.getAction().equals("myrun.UPDATE_BROADCAST"))
             {
                 LatLng curlat = intent.getParcelableExtra("latlngUpdate");
+                String newlatlng = String.valueOf(curlat.latitude) + "," + String.valueOf(curlat.longitude) + ";";
+                gpsStr += newlatlng;
+
                 updateWithNewLocation(curlat);
                 getEntries(intent);
+            }
+
+            int km_mile_idx = sharedPreferences.getInt("key_unit_pre", 0);
+
+            if(km_mile_idx == 1)   // to mile
+            {
+                cur_speed *= 0.00062;
+                avg_speed *= 0.00062;
+                climbed *= 0.00062;
+                totalDis *= 0.00062;
+            }
+
+            if(totalDis < 0.001)
+                totalDis = 0.0;
+
+            if(cur_speed < 0.001)
+                cur_speed = 0.00;
+
+            if(avg_speed < 0.001)
+                avg_speed = 0.00;
+
+
+            act_type.setText("Activity: " + activity_type);
+            mcalorie.setText("Calorie: " + calories + " cal");
+
+            if(km_mile_idx == 1)
+            {
+                mspeed.setText("Speed: " + String.format("%.2f", cur_speed) + " mile/s");             // m mile
+                mavgSpeed.setText("Avg Speed: " + String.format("%.2f", avg_speed) + " mile/s");
+                mclimbed.setText("Climbed: " + climbed + " mile");
+                mdistance.setText("Distance: " + String.format("%.2f", totalDis) + " mile");   // m
+            }
+
+            else
+            {
+                mspeed.setText("Speed: " + String.format("%.2f", cur_speed) + " m/s");             // m mile
+                mavgSpeed.setText("Avg Speed: " + String.format("%.2f", avg_speed) + " m/s");
+                mclimbed.setText("Climbed: " + climbed + " m");
+                mdistance.setText("Distance: " + String.format("%.2f", totalDis) + " m");   // m
             }
         }
     }
@@ -369,54 +494,28 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
 
-    private void getLocation(Location location)
-    {
-        double latitude = location.getLatitude();
-        double longitude = location.getLongitude();
-        Geocoder gc = new Geocoder(this, Locale.getDefault());
-
-        if (!Geocoder.isPresent())
-            Log.d(TAG, "No geocoder available");
-
-
-        else {
-            try {
-                List<Address> addresses = gc.getFromLocation(latitude, longitude, 1);
-                StringBuilder sb = new StringBuilder();
-                if (addresses.size() > 0) {
-                    Address address = addresses.get(0);
-
-                    for (int i = 0; i < address.getMaxAddressLineIndex(); i++)
-                        sb.append(address.getAddressLine(i)).append("\n");
-
-                    sb.append(address.getLocality()).append("\n");
-                    sb.append(address.getPostalCode()).append("\n");
-                    sb.append(address.getCountryName());
-                    Log.d(TAG, "HERE " + sb.toString());
-                }
-
-            } catch (IOException e) {
-                Log.d("WHEREAMI", "IO Exception", e);
-            }
-        }
-    }
-
-
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        try {
-            doUnbindService();
-            stopService(new Intent(MapsActivity.this, trackingService.class));
-            unregisterReceiver(receiver);
-            unregisterReceiver(receiver2);
 
-        } catch (Throwable t) {
-            Log.e(TAG, "Failed to unbind from the service", t);
+        if(parentName.equals("MAINHISTORY"))
+        {
+            Log.d(TAG, "leave");
+        }
+
+        else
+        {
+            try {
+                doUnbindService();
+                stopService(new Intent(MapsActivity.this, trackingService.class));
+                unregisterReceiver(receiver);
+                unregisterReceiver(receiver2);
+
+            } catch (Throwable t) {
+                Log.e(TAG, "Failed to unbind from the service", t);
+            }
         }
     }
-
-
 
 
 
@@ -434,22 +533,13 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         @Override
         protected Void doInBackground(Void... voids) {
 
-//            (long id, String input_type, String activity_type, String date_time, String duration,
-//                    String distance, String avg_page, String avg_speed, String calorie, String climb,
-//                    String heart_rate, String comment, String privacy, String gps){
-//
-//            }
-
-            //
             Calendar tmpcld = Calendar.getInstance();
             @SuppressLint("SimpleDateFormat") SimpleDateFormat mdformat = new SimpleDateFormat("HH:mm");     // set the current time
             String strTime = mdformat.format(tmpcld.getTime());
             String date = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
-            //
 
-
-            ExerciseEntry entry = new ExerciseEntry(0, "GPS:", activity_type,date + " " + strTime, String.format("%.2f", duration) + " mins",
-                    String.valueOf(totalDis), null, String.valueOf(avg_speed), String.valueOf(calories), String.valueOf(climbed), null, null, null, null);
+            ExerciseEntry entry = new ExerciseEntry(0, "GPS: ", activity_type,date + " " + strTime, String.format("%.2f", duration) + " mins",
+                    String.valueOf(totalDis), null, String.valueOf(avg_speed), String.valueOf(calories) + " cal", String.valueOf(climbed), null, null, null, gpsStr);
             mysqlhelper.insertEntry(entry);                    // insert an entry
             return null;
         }
@@ -466,9 +556,40 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
 //            main_history.adapterChoice = 1;
             mLoader.initLoader(1, null, main_history.lc).forceLoad();
-
-
         }
-
     }
+
+
+
+//    private void getLocation(Location location)
+//    {
+//        double latitude = location.getLatitude();
+//        double longitude = location.getLongitude();
+//        Geocoder gc = new Geocoder(this, Locale.getDefault());
+//
+//        if (!Geocoder.isPresent())
+//            Log.d(TAG, "No geocoder available");
+//
+//
+//        else {
+//            try {
+//                List<Address> addresses = gc.getFromLocation(latitude, longitude, 1);
+//                StringBuilder sb = new StringBuilder();
+//                if (addresses.size() > 0) {
+//                    Address address = addresses.get(0);
+//
+//                    for (int i = 0; i < address.getMaxAddressLineIndex(); i++)
+//                        sb.append(address.getAddressLine(i)).append("\n");
+//
+//                    sb.append(address.getLocality()).append("\n");
+//                    sb.append(address.getPostalCode()).append("\n");
+//                    sb.append(address.getCountryName());
+//                    Log.d(TAG, "HERE " + sb.toString());
+//                }
+//
+//            } catch (IOException e) {
+//                Log.d("WHEREAMI", "IO Exception", e);
+//            }
+//        }
+//    }
 }
