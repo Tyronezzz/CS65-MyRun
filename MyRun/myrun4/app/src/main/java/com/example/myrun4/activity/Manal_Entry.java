@@ -103,12 +103,12 @@ public class Manal_Entry extends AppCompatActivity{
             String tmpdis = mResults[4];
             if(km_mile_idx == 1 && tmpdis.contains("kms"))
             {
-                tmpdis = String.valueOf(Double.parseDouble(substr[0])*1.609) + " miles";
+                tmpdis = String.valueOf(Double.parseDouble(substr[0])*0.621) + " miles";
             }
 
             else if(km_mile_idx == 0 && tmpdis.contains("mile"))
             {
-                tmpdis = String.valueOf(Double.parseDouble(substr[0])*0.621) + " kms";
+                tmpdis = String.valueOf(Double.parseDouble(substr[0])*1.609) + " kms";
             }
 
             mResults[4] = tmpdis;

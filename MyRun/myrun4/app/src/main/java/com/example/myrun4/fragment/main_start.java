@@ -129,31 +129,39 @@ public class main_start extends Fragment {
         });
 
 
-        mfab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        mfab.setOnClickListener(v -> {
 
-                String text = mspinner_input.getSelectedItem().toString();
-                Intent intent;
-                if(text.equals("Manual"))                            // go to Manual Entry Activity
-                {
-                    intent = new Intent(getContext(), Manal_Entry.class);
-                    String text2 = mspinner_act.getSelectedItem().toString();
-                    String text3 = mspinner_input.getSelectedItem().toString();
-                    intent.putExtra("ACT", text2);
-                    intent.putExtra("TYPE", text3);
-                    intent.putExtra("PARENTNAME", "MAINSTART");
-                    startActivity(intent);
-                }
+            String text = mspinner_input.getSelectedItem().toString();
+            Intent intent;
+            if(text.equals("Manual"))                            // go to Manual Entry Activity
+            {
+                intent = new Intent(getContext(), Manal_Entry.class);
+                String text2 = mspinner_act.getSelectedItem().toString();
+                String text3 = mspinner_input.getSelectedItem().toString();
+                intent.putExtra("ACT", text2);
+                intent.putExtra("TYPE", text3);
+                intent.putExtra("PARENTNAME", "MAINSTART");
+                startActivity(intent);
+            }
 
-                else                                     // go to Map Activity
-                {
-                    String text2 = mspinner_act.getSelectedItem().toString();
-                    intent = new Intent(getContext(), MapsActivity.class);
-                    intent.putExtra("act_type", text2);
-                    intent.putExtra("PARENTNAME", "MAINSTART");
-                    startActivity(intent);
-                }
+            else if(text.equals("GPS"))                                     // go to Map Activity
+            {
+                String text2 = mspinner_act.getSelectedItem().toString();
+                intent = new Intent(getContext(), MapsActivity.class);
+                intent.putExtra("act_type", text2);
+                intent.putExtra("PARENTNAME", "MAINSTART");
+                startActivity(intent);
+            }
+
+            else
+            {
+                String text2 = mspinner_act.getSelectedItem().toString();
+                String text3 = mspinner_input.getSelectedItem().toString();
+                intent = new Intent(getContext(), MapsActivity.class);
+                intent.putExtra("TYPE", text3);
+                intent.putExtra("act_type", text2);
+                intent.putExtra("PARENTNAME", "MAINSTART");
+                startActivity(intent);
             }
         });
     }

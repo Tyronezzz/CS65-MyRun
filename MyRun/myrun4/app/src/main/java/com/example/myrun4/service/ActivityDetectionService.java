@@ -16,7 +16,7 @@ import androidx.annotation.Nullable;
 
 public class ActivityDetectionService  extends Service {
 
-    private final String TAG = "AR service";
+    private static final String TAG = ActivityDetectionService.class.getSimpleName();
     private PendingIntent mPendingIntent;
     private ActivityRecognitionClient mActivityRecognitionClient;
 
@@ -41,8 +41,6 @@ public class ActivityDetectionService  extends Service {
         Log.d(TAG, "onStartCommand()");
         mActivityRecognitionClient = new ActivityRecognitionClient(this);
         Intent mIntentService = new Intent(this, DetectedActivityIntentService.class);
-
-
 
         // FLAG_UPDATE_CURRENT indicates that if the described PendingIntent already exists,
         // then keep it but replace its extra data with what is in this new Intent.

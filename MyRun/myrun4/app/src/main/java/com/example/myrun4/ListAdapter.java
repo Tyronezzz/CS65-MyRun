@@ -221,13 +221,13 @@ public class ListAdapter extends ArrayAdapter {
                 if(km_mile_idx == 1 && tmpdis.contains("kms"))
                 {
                     String[] substr = exetry.get(position).getDistance().split("\\s+");
-                    tmpdis = String.valueOf(Double.parseDouble(substr[0])*1.609) + " miles";
+                    tmpdis = String.valueOf(Double.parseDouble(substr[0])*0.621) + " miles";
                 }
 
                 else if(km_mile_idx == 0 && tmpdis.contains("mile"))
                 {
                     String[] substr = exetry.get(position).getDistance().split("\\s+");
-                    tmpdis = String.valueOf(Double.parseDouble(substr[0])*0.621) + " kms";
+                    tmpdis = String.valueOf(Double.parseDouble(substr[0])*1.609) + " kms";
                 }
                 
                 mTitleView.setText("Manual: "+ exetry.get(position).getActType());     //this code sets the values of the objects to values from the arrays

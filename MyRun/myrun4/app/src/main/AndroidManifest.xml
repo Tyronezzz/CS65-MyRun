@@ -89,6 +89,7 @@
 
         <service android:name=".service.trackingService" />
         <service android:name=".service.ActivityDetectionService" />
+        <service android:name=".service.DetectedActivityIntentService" />
     </application>
 
 </manifest>

@@ -38,7 +38,6 @@ public class trackingService extends Service {
 
     private static final String TAG = "tracking";
     private NotificationManager mNotificationManager;
-    private static boolean isRunning = false;
     public static final String CHANNEL_ID = "notification channel";
     private FusedLocationProviderClient mFusedLocationClient;
     LocationRequest mLocationRequest;
@@ -110,7 +109,6 @@ public class trackingService extends Service {
         Log.d(TAG, "start service");
 //        mTimer.scheduleAtFixedRate(new MyTask(), 0, 1000L);
 
-        isRunning = true;
         latlngArr = new ArrayList<>();
     }
 
@@ -198,8 +196,6 @@ public class trackingService extends Service {
                 Log.d(TAG, "moving...");
 
                 LatLng latlng = fromLocationToLatLng(location);
-
-
 
 
                 // send other fields like speed?
@@ -290,7 +286,6 @@ public class trackingService extends Service {
         super.onDestroy();
 
         mNotificationManager.cancelAll(); // Cancel the persistent notification.
-        isRunning = false;
     }
 
 }

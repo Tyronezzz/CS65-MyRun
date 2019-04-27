@@ -49,13 +49,10 @@ public class MyRunsDialogFragment extends DialogFragment {
             case DIALOG_ID_PHOTO_PICKER_REGISTER:        // take picture from camera in register
                 builder = new AlertDialog.Builder(parent);
                 builder.setTitle("Profile Picture Picker");
-                dlistener = new DialogInterface.OnClickListener(){
-                    public void onClick(DialogInterface dialog, int item)
-                    {
-                        assert parent != null;
-                        ((RegisterActivity) parent)
-                                .onPhotoPickerItemSelected(item);
-                    }
+                dlistener = (dialog, item) -> {
+                    assert parent != null;
+                    ((RegisterActivity) parent)
+                            .onPhotoPickerItemSelected(item);
                 };
 
                 builder.setItems(R.array.ui_profile_photo_picker_items, dlistener);

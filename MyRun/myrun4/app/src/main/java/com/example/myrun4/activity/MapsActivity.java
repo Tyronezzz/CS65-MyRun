@@ -88,6 +88,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private String parentName;
     private ExerciseEntry oneentry;
     private long entryID;
+    private String input_type;
 
 
     @Override
@@ -109,6 +110,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
 
         Intent intent = getIntent();
+        input_type = intent.getStringExtra("TYPE");
         activity_type = intent.getStringExtra("act_type");        // get the activity name: running...
         parentName = intent.getStringExtra("PARENTNAME");        // get the parent activity name
 
@@ -170,27 +172,54 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     private void setUpMap(ExerciseEntry entry) {
-
-
         act_type.setText("Activity: " +entry.getActType());
         mcalorie.setText("Calorie: " + entry.getCalorie());
 
-
-
         int km_mile_idx = sharedPreferences.getInt("key_unit_pre", 0);
-//        if(km_mile_idx == 1)
-//        {
-//            mspeed.setText("Speed: " + String.format("%.2f", cur_speed) + " mile/s");             // m mile
-//            mavgSpeed.setText("Avg Speed: " + String.format("%.2f", avg_speed) + " mile/s");
-//            mclimbed.setText("Climbed: " + climbed + " mile");
-//            mdistance.setText("Distance: " + String.format("%.2f", totalDis) + " mile");   // m
-//        }
+
+        if(km_mile_idx == 1 &&  entry.getAvgSpeed().contains("m/s"))     // to mile
+        {
+            String[] substr = entry.getAvgSpeed().split("\\s+");
+            String[] substr2 = entry.getClimb().split("\\s+");
+            String[] substr3 = entry.getDistance().split("\\s+");
+
+            double tmpavgSpeed = Double.parseDouble(substr[0])*0.00062<0.01? 0.0 : Double.parseDouble(substr[0])*0.00062;
+            double tmpclimb = Double.parseDouble(substr2[0])*0.00062<0.01? 0.0 : Double.parseDouble(substr[0])*0.00062;
+            double tmpdis = Double.parseDouble(substr3[0])*0.00062<0.01? 0.0 : Double.parseDouble(substr[0])*0.00062;
+
+            mavgSpeed.setText("Avg Speed: " + String.format("%.2f", tmpavgSpeed) +" miles/s");
+            mclimbed.setText("Climbed: " + String.format("%.2f", tmpclimb) + " miles");
+            mdistance.setText("Distance: " + String.format("%.2f", tmpdis) + " miles");
+        }
+
+        else if(km_mile_idx == 0 && entry.getAvgSpeed().contains("mile"))
+        {
+
+            String[] substr = entry.getAvgSpeed().split("\\s+");
+            String[] substr2 = entry.getClimb().split("\\s+");
+            String[] substr3 = entry.getDistance().split("\\s+");
+
+            double tmpavgSpeed = Double.parseDouble(substr[0])*1609.34<0.01? 0.0 : Double.parseDouble(substr[0])*1609.34;
+            double tmpclimb = Double.parseDouble(substr2[0])*1609.34<0.01? 0.0 : Double.parseDouble(substr[0])*1609.34;
+            double tmpdis = Double.parseDouble(substr3[0])*1609.34<0.01? 0.0 : Double.parseDouble(substr[0])*1609.34;
+
+            mavgSpeed.setText("Avg Speed: " + String.format("%.2f", tmpavgSpeed) + " m/s");
+            mclimbed.setText("Climbed: " + String.format("%.2f", tmpclimb) + " m");
+            mdistance.setText("Distance: " + String.format("%.2f", tmpdis) + " m");
+        }
+
+        else
+        {
+            mavgSpeed.setText("Avg Speed: " + entry.getAvgSpeed());
+            mclimbed.setText("Climbed: " + entry.getClimb());
+            mdistance.setText("Distance: " + entry.getDistance());
+        }
 
 
-        mspeed.setText("Speed: 0.00 m/s");             // m mile
-        mavgSpeed.setText("Avg Speed: " + entry.getAvgSpeed() + " m/s");
-        mclimbed.setText("Climbed: " + entry.getClimb() + " m");
-        mdistance.setText("Distance: " + entry.getDistance() + " m");   // m
+        if(km_mile_idx == 0)
+            mspeed.setText("Speed: 0.00 m/s");             // m
+        else
+            mspeed.setText("Speed: 0.00 mile/s");             // mile
 
         String gpsData = entry.getGps();
         String[] arrOfStr = gpsData.split(";");
@@ -235,11 +264,16 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     protected void onStart() {
         super.onStart();
-        Log.d(TAG, "onStart():start ActivityDetectionService");
-        LocalBroadcastManager.getInstance(this).registerReceiver(mActivityBroadcastReceiver,
-                new IntentFilter("AR Activity"));
 
-        startService(new Intent(this, ActivityDetectionService.class));
+        if(input_type.equals("Automatic"))
+        {
+            Log.d(TAG, "onStart():start ActivityDetectionService");
+            LocalBroadcastManager.getInstance(this).registerReceiver(mActivityBroadcastReceiver,
+                    new IntentFilter("AR Activity"));
+
+            startService(new Intent(this, ActivityDetectionService.class));
+        }
+
     }
 
     BroadcastReceiver mActivityBroadcastReceiver = new BroadcastReceiver() {
@@ -332,6 +366,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 else      // save the map para
                 {
                     duration = (Calendar.getInstance().getTimeInMillis() - startTime) / 6000; // get min
+
+                    if(duration < 0.001)
+                        duration = 0.0;
+
                     AsynWriteSQL writesqlhelper = new AsynWriteSQL();
                     writesqlhelper.execute();
 
@@ -402,7 +440,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             rectOptions.add(whereAmI.getPosition());
             rectOptions.color(Color.BLACK);
             polyline = mMap.addPolyline(rectOptions);
-            Log.d(TAG, "draw the line");
+//            Log.d(TAG, "draw the line");
 
         }
     }
@@ -605,8 +643,26 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             String strTime = mdformat.format(tmpcld.getTime());
             String date = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
 
-            ExerciseEntry entry = new ExerciseEntry(0, "GPS: ", activity_type,date + " " + strTime, String.format("%.2f", duration) + " mins",
-                    String.valueOf(totalDis), null, String.valueOf(avg_speed), String.valueOf(calories) + " cal", String.valueOf(climbed), null, null, null, gpsStr);
+
+            ExerciseEntry entry;
+            int km_mile_idx = sharedPreferences.getInt("key_unit_pre", 0);
+            if(km_mile_idx == 0)     // km
+            {
+                entry = new ExerciseEntry(0, "GPS: ", activity_type,date + " " + strTime, String.format("%.2f", duration) + " mins",
+                        String.format("%.2f", totalDis) + " m", null, String.format("%.2f", avg_speed) + " m/s",
+                        String.valueOf(calories) + " cal", String.format("%.2f", climbed) + " m", null, null, null, gpsStr);
+
+            }
+
+            else     // mile
+            {
+                entry = new ExerciseEntry(0, "GPS: ", activity_type,date + " " + strTime, String.format("%.2f", duration) + " mins",
+                        String.format("%.2f", totalDis) + " mile", null, String.format("%.2f", avg_speed) + " mile/s",
+                        String.valueOf(calories) + " cal", String.format("%.2f", climbed) + " mile", null, null, null, gpsStr);
+
+            }
+
+
             mysqlhelper.insertEntry(entry);                    // insert an entry
             return null;
         }
