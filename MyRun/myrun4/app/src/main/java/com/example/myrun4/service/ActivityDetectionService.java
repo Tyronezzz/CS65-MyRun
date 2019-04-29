@@ -1,3 +1,9 @@
+/*
+ * @author  Tao Hou
+ * @version 1.0
+ * @since   2019-04-21
+ */
+
 package com.example.myrun4.service;
 
 import android.app.PendingIntent;
@@ -41,47 +47,42 @@ public class ActivityDetectionService  extends Service {
 
         mPendingIntent = PendingIntent.getService(this,
                 1, mIntentService, PendingIntent.FLAG_UPDATE_CURRENT);
-        requestActivityUpdatesHandler();
+        requestUpdatesHandler();
 
         return START_STICKY;
     }
 
-    // request updates and set up callbacks for success or failure
-    public void requestActivityUpdatesHandler() {
-        Log.d(TAG, "requestActivityUpdatesHandler()");
-        if(mActivityRecognitionClient != null){
-            Task<Void> task = mActivityRecognitionClient.requestActivityUpdates(
-                    2000,
-                    mPendingIntent);
 
-            // Adds a listener that is called if the Task completes successfully.
+    public void requestUpdatesHandler() {    // request updates
+
+        if(mActivityRecognitionClient != null){
+            Task<Void> task = mActivityRecognitionClient.requestActivityUpdates(2000, mPendingIntent);
+
+            // Adds a listener if the Task completes successfully.
             task.addOnSuccessListener(result -> Log.d(TAG, "Successfully requested activity updates"));
-            // Adds a listener that is called if the Task fails.
+            // Adds a listener if the Task fails.
             task.addOnFailureListener(e -> Log.e(TAG, "Requesting activity updates failed to start"));
         }
-
     }
 
-    // remove the activity requested updates from Google play.
+
     @Override
     public void onDestroy() {
         super.onDestroy();
-        // need to remove the request to Google play services. Brings down the connection.
-        removeActivityUpdatesHandler();
+        removeUpdatesHandler();      // remove the activity requested update
     }
 
-    // remove updates and set up callbacks for success or failure
-    public void removeActivityUpdatesHandler() {
+
+    public void removeUpdatesHandler() {       // remove updates
         if(mActivityRecognitionClient != null){
             Task<Void> task = mActivityRecognitionClient.removeActivityUpdates(
                     mPendingIntent);
-            // Adds a listener that is called if the Task completes successfully.
+            // Adds a listener if the Task completes successfully.
             task.addOnSuccessListener(result -> Log.d(TAG, "Removed activity updates successfully!"));
-            // Adds a listener that is called if the Task fails.
+            // Adds a listener if the Task fails.
             task.addOnFailureListener(e -> Log.e(TAG, "Failed to remove activity updates!"));
         }
     }
-
 
 
 }

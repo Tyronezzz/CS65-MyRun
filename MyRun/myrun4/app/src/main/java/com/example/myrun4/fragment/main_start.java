@@ -39,16 +39,6 @@ public class main_start extends Fragment {
         // Required empty public constructor
     }
 
-
-//    public static main_start newInstance(String param1, String param2) {
-//        main_start fragment = new main_start();
-//        Bundle args = new Bundle();
-//        args.putString(ARG_PARAM1, param1);
-//        args.putString(ARG_PARAM2, param2);
-//        fragment.setArguments(args);
-//        return fragment;
-//    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -133,37 +123,34 @@ public class main_start extends Fragment {
 
             String text = mspinner_input.getSelectedItem().toString();
             Intent intent;
-            if(text.equals("Manual"))                            // go to Manual Entry Activity
-            {
-                intent = new Intent(getContext(), Manal_Entry.class);
-                String text2 = mspinner_act.getSelectedItem().toString();
-                String text3 = mspinner_input.getSelectedItem().toString();
-                intent.putExtra("ACT", text2);
-                intent.putExtra("TYPE", text3);
-                intent.putExtra("PARENTNAME", "MAINSTART");
-                startActivity(intent);
-            }
 
-            else if(text.equals("GPS"))                                     // go to Map Activity
-            {
-                String text2 = mspinner_act.getSelectedItem().toString();
-                String text3 = mspinner_input.getSelectedItem().toString();
-                intent = new Intent(getContext(), MapsActivity.class);
-                intent.putExtra("TYPE", text3);
-                intent.putExtra("act_type", text2);
-                intent.putExtra("PARENTNAME", "MAINSTART");
-                startActivity(intent);
-            }
+            String text2 = mspinner_act.getSelectedItem().toString();
+            String text3 = mspinner_input.getSelectedItem().toString();
 
-            else
-            {
-                String text2 = mspinner_act.getSelectedItem().toString();
-                String text3 = mspinner_input.getSelectedItem().toString();
-                intent = new Intent(getContext(), MapsActivity.class);
-                intent.putExtra("TYPE", text3);
-                intent.putExtra("act_type", text2);
-                intent.putExtra("PARENTNAME", "MAINSTART");
-                startActivity(intent);
+            switch (text) {
+                case "Manual":      // go to Manual Entry Activity
+                    intent = new Intent(getContext(), Manal_Entry.class);
+                    intent.putExtra("ACT", text2);
+                    intent.putExtra("TYPE", text3);
+                    intent.putExtra("PARENTNAME", "MAINSTART");
+                    startActivity(intent);
+                    break;
+
+                case "GPS":         // go to Map Activity
+                    intent = new Intent(getContext(), MapsActivity.class);
+                    intent.putExtra("TYPE", text3);
+                    intent.putExtra("act_type", text2);
+                    intent.putExtra("PARENTNAME", "MAINSTART");
+                    startActivity(intent);
+                    break;
+
+                case "Automatic":         // go to Automatic
+                    intent = new Intent(getContext(), MapsActivity.class);
+                    intent.putExtra("TYPE", text3);
+                    intent.putExtra("act_type", text2);
+                    intent.putExtra("PARENTNAME", "MAINSTART");
+                    startActivity(intent);
+                    break;
             }
         });
     }
@@ -175,14 +162,11 @@ public class main_start extends Fragment {
         act_idx = mspinner_act.getSelectedItemPosition();
         outState.putInt(ACT_IDX, act_idx);
         outState.putBoolean(ISFIRST, isFirst);
-//        Log.d(TAG, "called"+act_idx);
-
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-//        Log.d(TAG, "req" + requestCode);
     }
 
     @Override
@@ -191,10 +175,5 @@ public class main_start extends Fragment {
         return inflater.inflate(R.layout.fragment_main_start, container, false);      // Inflate the layout for this fragment
     }
 
-//
-//    @Override
-//    public void onDetach() {
-//        super.onDetach();
-//    }
-//
+
 }

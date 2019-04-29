@@ -97,7 +97,7 @@ public class ListAdapter extends ArrayAdapter {
     }
 
 
-    @SuppressLint("SetTextI18n")
+    @SuppressLint({"SetTextI18n", "DefaultLocale"})
     @NonNull
     @Override
     public View getView(int position,View view, @NonNull ViewGroup parent) {
@@ -112,7 +112,6 @@ public class ListAdapter extends ArrayAdapter {
             //this code gets references to objects in the listview_row.xml file
             TextView mOPtionsView = rowView.findViewById(R.id.manual_option);
             TextView mResultsView =  rowView.findViewById(R.id.manual_result);
-
 
 //            if(position == 0)
 //            {
@@ -133,7 +132,6 @@ public class ListAdapter extends ArrayAdapter {
         {
             int REQUEST_PREFERENCE = 1;
             int REQUEST_SIGNOUT = 2;
-            int REQUEST_GPS = 10;
 
             if(request_code == REQUEST_PREFERENCE)              // listview without switch
             {
@@ -231,15 +229,25 @@ public class ListAdapter extends ArrayAdapter {
                 }
 
 
-                if(km_mile_idx == 0 && !exetry.get(position).getInputType().equals("Manual"))
+                if(!exetry.get(position).getInputType().equals("Manual"))       // gps & automatic
                 {
                     String[] substr = exetry.get(position).getDistance().split("\\s+");
-                    tmpdis = String.format("%.2f", Double.parseDouble(substr[0])/1000 < 0.01? 0: Double.parseDouble(substr[0])/1000) + " kms";
+                    if(km_mile_idx == 0 && substr[1].equals("m"))  // m km
+                        tmpdis = String.format("%.2f", Double.parseDouble(substr[0])/1000 < 0.01? 0: Double.parseDouble(substr[0])/1000) + " kms";
+
+
+                    else if(km_mile_idx == 1 && substr[1].equals("m"))  // m mile
+                        tmpdis = String.format("%.2f", Double.parseDouble(substr[0])*0.00062 < 0.01? 0: Double.parseDouble(substr[0])*0.00062) + " miles";
+
+                    else if(km_mile_idx == 0 && substr[1].equals("miles"))  // mile km
+                        tmpdis = String.format("%.2f", Double.parseDouble(substr[0])*1.609 < 0.01? 0: Double.parseDouble(substr[0])*1.609) + " kms";
+
+
+                    else if(km_mile_idx == 1 && substr[1].equals("kms"))  // mile km
+                        tmpdis = String.format("%.2f", Double.parseDouble(substr[0])*0.62 < 0.01? 0: Double.parseDouble(substr[0])*0.62) + " kms";
+
 
                 }
-
-                // m to mile???
-
                 
                 mTitleView.setText(exetry.get(position).getInputType() +": "+ exetry.get(position).getActType());     //this code sets the values of the objects to values from the arrays
                 mDateView.setText(exetry.get(position).getDateTime());

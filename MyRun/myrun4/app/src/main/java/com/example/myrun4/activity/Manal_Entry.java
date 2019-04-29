@@ -49,10 +49,10 @@ public class Manal_Entry extends AppCompatActivity{
     String[] mOptions = {"Activity","Date","Time","Duration","Distance","Calorie", "Heartbeat","Comment"};
     String[] mResults = {"", "2019-01-01", "10:10", "0 mins", "0 kms", "0 cals", "0 bpm", " "};
     private Calendar mDateTime = Calendar.getInstance();
-    //    private MySQLiteHelper mysqlhelper;
     private String parentName;
     private long index;
 //    private ListAdapter mAdapter;
+//    private MySQLiteHelper mysqlhelper;
     ListView mhisView;
     SharedPreferences sharedPreferences;
 

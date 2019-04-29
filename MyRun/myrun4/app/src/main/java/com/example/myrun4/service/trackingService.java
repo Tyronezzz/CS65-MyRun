@@ -30,6 +30,7 @@ import java.util.Calendar;
 
 import androidx.annotation.Nullable;
 
+import static java.lang.Math.abs;
 import static java.lang.Math.asin;
 import static java.lang.Math.cos;
 import static java.lang.Math.sqrt;
@@ -45,41 +46,11 @@ public class trackingService extends Service {
     private ArrayList<LatLng> latlngArr;
     private double cur_speed;
     private double avg_speed;
+    private double last_climbed;
     private double climbed;
     private double calories;
     private long startTime;
     private long lastTime;
-//    private final Messenger mMessenger = new Messenger(new IncomingMessageHandler()); // Target we publish for clients to
-//    public static final int MSG_REGISTER_CLIENT = 1;
-//    public static final int MSG_UNREGISTER_CLIENT = 2;
-//    private List<Messenger> mClients = new ArrayList<Messenger>(); // Keeps track
-//    LocationManager locationManager;
-//    private String provider;
-
-
-//    private class IncomingMessageHandler extends Handler {
-//
-//        @Override
-//        public void handleMessage(Message msg) {
-//            Log.d(TAG, "S:handleMessage: " + msg.what + msg.replyTo);
-////            switch (msg.what) {
-////                case MSG_REGISTER_CLIENT:
-////                    Log.d(TAG, "S: RX MSG_REGISTER_CLIENT:mClients.add(msg.replyTo) ");
-////                    mClients.add(msg.replyTo);//replyTo is the Messanger, that carrys the Message over.
-////                    break;
-////                case MSG_UNREGISTER_CLIENT:
-////                    Log.d(TAG, "S: RX MSG_REGISTER_CLIENT:mClients.remove(msg.replyTo) ");
-////                    mClients.remove(msg.replyTo);// each client has a dedicated Messanger to communicae with ther server.
-////                    break;
-//////                case MSG_SET_INT_VALUE:
-//////                    incrementBy = msg.arg1;
-//////                    break;
-////                default:
-//                    super.handleMessage(msg);
-////            }
-//        }
-//    }
-
 
     @Nullable
     @Override
@@ -90,7 +61,6 @@ public class trackingService extends Service {
         }
 
         Log.d(TAG, "Bind!!!");
-//        locationManager.requestLocationUpdates(provider, 0, 0, locationListener);
 
         if(mFusedLocationClient == null) {
             mFusedLocationClient = LocationServices.getFusedLocationProviderClient(getApplication());
@@ -107,8 +77,6 @@ public class trackingService extends Service {
         super.onCreate();
 
         Log.d(TAG, "start service");
-//        mTimer.scheduleAtFixedRate(new MyTask(), 0, 1000L);
-
         latlngArr = new ArrayList<>();
     }
 
@@ -118,13 +86,11 @@ public class trackingService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.d(TAG, "S:onStartCommand(): Received start id " + startId + ": " + intent);
 
+        showNotification();     // display notification
+        initExerciseEntry();      // init the activity entry
+        startLocationUpdate();      // get location from service
 
-        //set up the inital location
-        showNotification();
-        initExerciseEntry();
-        startLocationUpdate();
-
-        return START_STICKY; // Run until explicitly stopped.
+        return START_STICKY;       // Run until explicitly stopped.
     }
 
     private LatLng fromLocationToLatLng(Location location) {
@@ -149,7 +115,7 @@ public class trackingService extends Service {
     {
         mLocationRequest = LocationRequest.create()
                 .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
-                .setInterval(100) ;     // 1 seconds, in milliseconds
+                .setInterval(2000) ;     // 2 seconds, in milliseconds
 
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -169,6 +135,7 @@ public class trackingService extends Service {
                latlngArr.add(latlng);
 
                Log.d(TAG, " loc al " + location.getAltitude());
+               last_climbed = location.getAltitude();
 
                Intent intent = new Intent();
                intent.putExtra("latlng", latlng);
@@ -188,7 +155,7 @@ public class trackingService extends Service {
 
     private LocationCallback locationCallback = new LocationCallback() {
         @Override
-        public void onLocationResult(LocationResult locationResult) {
+        public void onLocationResult(LocationResult locationResult) {      // callback of update latlng
             super.onLocationResult(locationResult);
             Location location = locationResult.getLastLocation();
             if (location != null) {
@@ -196,25 +163,24 @@ public class trackingService extends Service {
 
                 LatLng latlng = fromLocationToLatLng(location);
 
-
-                // send other fields like speed?
                 double lastmove = getSingleDis(latlng, latlngArr.get(latlngArr.size()-1));
                 totalDis += lastmove;
                 latlngArr.add(latlng);
-//                Log.d(TAG, "total dis " + totalDis);       // km
                 cur_speed = lastmove / (Calendar.getInstance().getTimeInMillis() - lastTime) * 1000000.0;
                 avg_speed = totalDis / (Calendar.getInstance().getTimeInMillis() - startTime)* 1000000.0;
                 lastTime = Calendar.getInstance().getTimeInMillis();
-                climbed = 2;   //????
+
+                climbed += abs(location.getAltitude() - last_climbed);
+                last_climbed = location.getAltitude();
                 calories = 1;
 
-                Intent intent = new Intent();
+                Intent intent = new Intent();           // broadcast the paras to maps
                 intent.putExtra("latlngUpdate", latlng);
                 intent.putExtra("curSpeed", cur_speed);
                 intent.putExtra("avgSpeed", avg_speed);
-                intent.putExtra("climbed", climbed);
+                intent.putExtra("climbed", climbed);       // send m
                 intent.putExtra("calorie", calories);
-                intent.putExtra("distance", totalDis * 1000.0);
+                intent.putExtra("distance", totalDis * 1000.0);    // send m
 
                 intent.setAction("myrun.UPDATE_BROADCAST");
                 sendBroadcast(intent);
@@ -225,7 +191,7 @@ public class trackingService extends Service {
     };
 
     @TargetApi(Build.VERSION_CODES.O)
-    private void showNotification() {
+    private void showNotification() {         // display the notification
         NotificationChannel notificationChannel = new NotificationChannel(CHANNEL_ID, "channel name", NotificationManager.IMPORTANCE_HIGH);
 
         Intent resultIntent = new Intent(this, MapsActivity.class);
@@ -251,7 +217,7 @@ public class trackingService extends Service {
     }
 
 
-    public double getSingleDis(LatLng l1, LatLng l2)
+    public double getSingleDis(LatLng l1, LatLng l2)      // calculate distance between l1 and l2, return kms
     {
         double lat1 = l1.latitude;
         double lng1 = l1.longitude;
@@ -269,10 +235,9 @@ public class trackingService extends Service {
     public boolean onUnbind(Intent intent) {
 
         if (mFusedLocationClient != null) {
-            mFusedLocationClient.removeLocationUpdates(locationCallback);
+            mFusedLocationClient.removeLocationUpdates(locationCallback);       // remove the callback listener
         }
 
-//        locationManager.removeUpdates(locationListener);
         return super.onUnbind(intent);
     }
 
@@ -284,5 +249,4 @@ public class trackingService extends Service {
 
         mNotificationManager.cancelAll(); // Cancel the persistent notification.
     }
-
 }

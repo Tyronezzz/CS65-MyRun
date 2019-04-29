@@ -87,7 +87,7 @@ public class main_history extends Fragment implements LoaderManager.LoaderCallba
                 startActivityForResult(k, REQUEST_CODE_DELETE);
             }
 
-            else
+            else         // Manual
             {
                 // start activity
                 Intent k = new Intent(getActivity(), Manal_Entry.class);
@@ -149,17 +149,6 @@ public class main_history extends Fragment implements LoaderManager.LoaderCallba
         if(loader.getId() == ALL_EXERCISE_LOADER_ID){
 
 //            if(exerciseEntries.size() > 0)
-
-//            if(adapterChoice == 1)
-//            {
-//                mAdapter.clear();
-//                mAdapter = new ListAdapter(getActivity(), 10, exetry);
-//
-//                exetry = new ArrayList<>(exerciseEntries);
-//                mhisView.setAdapter(mAdapter);
-//                mAdapter.addall(exerciseEntries);
-//                mAdapter.notifyDataSetChanged();           // force notification -- tell the adapter to displa
-//            }
             {
                 exetry = new ArrayList<>(exerciseEntries);
                 mAdapter.addall(exerciseEntries);
@@ -179,7 +168,7 @@ public class main_history extends Fragment implements LoaderManager.LoaderCallba
     }
 
 
-    private void runThread(final long index) {
+    private void runThread(final long index) {      // delete the acti
 
         Thread t1 = new Thread(() -> {
             MySQLiteHelper mysqlhelper = new MySQLiteHelper(getContext());

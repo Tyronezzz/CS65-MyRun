@@ -1,3 +1,9 @@
+/*
+ * @author  Tao Hou
+ * @version 1.0
+ * @since   2019-04-21
+ */
+
 package com.example.myrun4.service;
 
 import android.app.IntentService;
@@ -31,33 +37,29 @@ public class DetectedActivityIntentService extends IntentService {
     @Override
     protected void onHandleIntent(@Nullable Intent intent) {
         ActivityRecognitionResult result = ActivityRecognitionResult.extractResult(intent);
+        List<DetectedActivity> detectedActivities = result.getProbableActivities();  // Get the list of the probable activities
 
-        // Get the list of the probable activities associated with the current state of the
-        // device. Each activity is associated with a confidence level, which is an int between
-        // 0 and 100.
-
-        List<DetectedActivity> detectedActivities = result.getProbableActivities();
-
-
-        DetectedActivity activity_tmp = null;
-
-        if(detectedActivities.size()>0)
-        {
-            activity_tmp = detectedActivities.get(0);
-        }
-
-        for (DetectedActivity activity : detectedActivities) {            // choose the most likely one
+        for (DetectedActivity activity : detectedActivities) {            // choose the most likely one  >= 70%
             Log.d(TAG, "Detected activity: " + activity.getType() + ", " + activity.getConfidence());
-
-            if(activity.getConfidence() >activity_tmp.getConfidence())
-                activity_tmp = activity;
+            if(activity.getConfidence() >= 70)
+            {
+                broadcastActivity(activity);
+                return;
+            }
         }
-        broadcastActivity(activity_tmp);
 
+        broadcastUnknownActivity();
+    }
+
+    private void broadcastUnknownActivity() {
+        Intent intent = new Intent("AR Activity");
+        intent.putExtra("type", DetectedActivity.UNKNOWN);
+        intent.putExtra("confidence", 100);
+        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
     }
 
 
-    private void broadcastActivity(DetectedActivity activity) {
+    private void broadcastActivity(DetectedActivity activity) {        // send the activity and confidence
         Log.d(TAG,TAG+ " broadcastActivity()");
         Intent intent = new Intent("AR Activity");
         intent.putExtra("type", activity.getType());

@@ -1,3 +1,10 @@
+/*
+ * @author  Tao Hou
+ * @version 1.0
+ * @since   2019-04-21
+ */
+
+
 package com.example.myrun4.activity;
 
 import android.Manifest;
@@ -14,6 +21,7 @@ import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.ContextCompat;
@@ -53,7 +61,8 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
-import java.util.PriorityQueue;
+
+import static com.example.myrun4.fragment.main_history.*;
 
 public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback, ServiceConnection {
 
@@ -69,7 +78,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 //    private Messenger mServiceMessenger = null;
     private LatLng prelat;
     private PolylineOptions rectOptions;
-    private Polyline polyline;
+    Polyline polyline;
     private MyBroadcastReceiver receiver;
     private MyBroadcastReceiver receiver2;
     private SharedPreferences sharedPreferences;
@@ -94,8 +103,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private long entryID;
     private String input_type;
     private HashMap<String, Integer> act_table;
-    private PriorityQueue<DetectedActivity> act_pq;
-
 
     @Override
     public View onCreateView(View parent, String name, Context context, AttributeSet attrs) {
@@ -136,7 +143,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         mapFragment.getMapAsync(this);
 
         act_table = new HashMap<>();
-//        act_pq = new PriorityQueue<>(10, new act_Comparator());
 
         if(parentName.equals("MAINHISTORY"))
         {
@@ -175,18 +181,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             );
         }
     }
-
-//    class act_Comparator implements Comparator<DetectedActivity> {
-//        public int compare(DetectedActivity act1, DetectedActivity act2)
-//        {
-//            if (s1.cgpa < s2.cgpa)
-//                return 1;
-//
-//            if(act1.get)
-//
-//        }
-//
-//    }
 
     private void setUpMap(ExerciseEntry entry) {
         act_type.setText("Activity: " +entry.getActType());
@@ -271,9 +265,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         String[] latlong =  s.split(",");
         double latitude = Double.parseDouble(latlong[0]);
         double longitude = Double.parseDouble(latlong[1]);
-        LatLng newloc = new LatLng(latitude, longitude);
 
-        return newloc;
+        return new LatLng(latitude, longitude);
     }
 
 
@@ -338,7 +331,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 break;
             }
             case DetectedActivity.UNKNOWN: {
-                label = "Walking";
+                label = "Unknown";
                 break;
             }
         }
@@ -349,7 +342,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             act_table.put(label, 1);
         else
             act_table.put(label, act_table.get(label)+1);
-
 
         Log.d(TAG, "broadcast:onReceive(): Activity is " + label + " and confidence level is: " + confidence);
     }
@@ -365,7 +357,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             item.setTitle("DELETE");
         }
 
-
         return true;
     }
 
@@ -376,7 +367,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         int maxValueInMap=(Collections.max(act_table.values()));  // This will return max value in the Hashmap
         for (Map.Entry<String, Integer> entry : act_table.entrySet()) {  // Itrate through hashmap
             if (entry.getValue() == maxValueInMap) {
-                //System.out.println(entry.getKey());     // Print the key with max value
                 activity_type = entry.getKey();
 
             }
@@ -394,8 +384,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 return true;
 
             case R.id.action_save:
-                // save, insert and finish
-
                 if(parentName.equals("MAINHISTORY"))       // delete in the history
                 {
                     Intent intent = new Intent();
@@ -414,12 +402,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     AsynWriteSQL writesqlhelper = new AsynWriteSQL();
                     writesqlhelper.execute();
                 }
-
-//                if(input_type.equals("Automatic"))
-//                {
-//
-//                }
-
                 finish();
                 return true;
 
@@ -460,7 +442,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[], @NonNull int[] grantResults) {
         if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             Log.d(TAG, "permission granted. Let's show the map");
         }
@@ -485,8 +467,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             rectOptions.add(whereAmI.getPosition());
             rectOptions.color(Color.BLACK);
             polyline = mMap.addPolyline(rectOptions);
-//            Log.d(TAG, "draw the line");
-
         }
     }
 
@@ -516,29 +496,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     public void onServiceDisconnected(ComponentName name) {
 //        mServiceMessenger = null;
     }
-
-
-//    private class IncomingMessageHandler extends Handler {
-//        @Override
-//        public void handleMessage(Message msg) {
-//            Log.d(TAG, "C:IncomingHandler:handleMessage " + msg.replyTo);
-//            switch (msg.what) {
-////                case MyService.MSG_SET_INT_VALUE:
-////                    Log.d(TAG, "C: RX MSG_SET_INT_VALUE");
-////                    // msg.arg1 here as only arg1 was used to store data in the server class.
-////                    textIntValue.setText("Int Message: " + msg.arg1);
-////                    break;
-////                case MyService.MSG_SET_STRING_VALUE:
-////                    // getString(key) -> str1 is the key of the key value pair we used in the server side.
-////                    String str1 = msg.getData().getString("str1");
-////                    Log.d(TAG, "C:RX MSG_SET_STRING_VALUE");
-////                    textStrValue.setText("Str Message: " + str1);
-////                    break;
-//                default:
-//                    super.handleMessage(msg);
-//            }
-//        }
-//    }
 
 
 
@@ -600,13 +557,16 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 totalDis *= 0.00062;
             }
 
-            if(totalDis < 0.001)
+            if(totalDis < 0.01)
                 totalDis = 0.0;
 
-            if(cur_speed < 0.001)
+            if(climbed < 0.01)
+                climbed = 0.0;
+
+            if(cur_speed < 0.01)
                 cur_speed = 0.00;
 
-            if(avg_speed < 0.001)
+            if(avg_speed < 0.01)
                 avg_speed = 0.00;
 
             if(input_type != null && !input_type.equals("Automatic"))
@@ -618,17 +578,17 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
             if(km_mile_idx == 1)
             {
-                mspeed.setText("Speed: " + String.format("%.2f", cur_speed) + " mile/s");             // m mile
+                mspeed.setText("Speed: " + String.format("%.2f", cur_speed) + " mile/s");             // mile
                 mavgSpeed.setText("Avg Speed: " + String.format("%.2f", avg_speed) + " mile/s");
-                mclimbed.setText("Climbed: " + climbed + " mile");
+                mclimbed.setText("Climbed: " + String.format("%.2f", climbed) + " mile");
                 mdistance.setText("Distance: " + String.format("%.2f", totalDis) + " mile");   // m
             }
 
             else
             {
-                mspeed.setText("Speed: " + String.format("%.2f", cur_speed) + " m/s");             // m mile
+                mspeed.setText("Speed: " + String.format("%.2f", cur_speed) + " m/s");             // m
                 mavgSpeed.setText("Avg Speed: " + String.format("%.2f", avg_speed) + " m/s");
-                mclimbed.setText("Climbed: " + climbed + " m");
+                mclimbed.setText("Climbed: " + String.format("%.2f", climbed) + " m");
                 mdistance.setText("Distance: " + String.format("%.2f", totalDis) + " m");   // m
             }
         }
@@ -735,11 +695,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             {
                 mLoader.destroyLoader(1);
             }
-            mLoader.initLoader(1, null, main_history.lc).forceLoad();
+            mLoader.initLoader(1, null, lc).forceLoad();
         }
     }
-
-
 
 //    private void getLocation(Location location)
 //    {
