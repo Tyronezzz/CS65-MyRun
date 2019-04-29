@@ -4,12 +4,9 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
-import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.google.android.gms.location.ActivityRecognitionClient;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 
 import androidx.annotation.Nullable;
@@ -42,8 +39,6 @@ public class ActivityDetectionService  extends Service {
         mActivityRecognitionClient = new ActivityRecognitionClient(this);
         Intent mIntentService = new Intent(this, DetectedActivityIntentService.class);
 
-        // FLAG_UPDATE_CURRENT indicates that if the described PendingIntent already exists,
-        // then keep it but replace its extra data with what is in this new Intent.
         mPendingIntent = PendingIntent.getService(this,
                 1, mIntentService, PendingIntent.FLAG_UPDATE_CURRENT);
         requestActivityUpdatesHandler();
@@ -60,19 +55,9 @@ public class ActivityDetectionService  extends Service {
                     mPendingIntent);
 
             // Adds a listener that is called if the Task completes successfully.
-            task.addOnSuccessListener(new OnSuccessListener<Void>() {
-                @Override
-                public void onSuccess(Void result) {
-                    Log.d(TAG, "Successfully requested activity updates");
-                }
-            });
+            task.addOnSuccessListener(result -> Log.d(TAG, "Successfully requested activity updates"));
             // Adds a listener that is called if the Task fails.
-            task.addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    Log.e(TAG, "Requesting activity updates failed to start");
-                }
-            });
+            task.addOnFailureListener(e -> Log.e(TAG, "Requesting activity updates failed to start"));
         }
 
     }
@@ -91,19 +76,9 @@ public class ActivityDetectionService  extends Service {
             Task<Void> task = mActivityRecognitionClient.removeActivityUpdates(
                     mPendingIntent);
             // Adds a listener that is called if the Task completes successfully.
-            task.addOnSuccessListener(new OnSuccessListener<Void>() {
-                @Override
-                public void onSuccess(Void result) {
-                    Log.d(TAG, "Removed activity updates successfully!");
-                }
-            });
+            task.addOnSuccessListener(result -> Log.d(TAG, "Removed activity updates successfully!"));
             // Adds a listener that is called if the Task fails.
-            task.addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    Log.e(TAG, "Failed to remove activity updates!");
-                }
-            });
+            task.addOnFailureListener(e -> Log.e(TAG, "Failed to remove activity updates!"));
         }
     }
 

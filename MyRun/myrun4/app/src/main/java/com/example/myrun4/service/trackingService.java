@@ -166,10 +166,9 @@ public class trackingService extends Service {
            {
                Log.d(TAG, "not null init loc");
                LatLng latlng = fromLocationToLatLng(location);
-
-               // send other fields like speed?
                latlngArr.add(latlng);
 
+               Log.d(TAG, " loc al " + location.getAltitude());
 
                Intent intent = new Intent();
                intent.putExtra("latlng", latlng);
@@ -205,6 +204,7 @@ public class trackingService extends Service {
 //                Log.d(TAG, "total dis " + totalDis);       // km
                 cur_speed = lastmove / (Calendar.getInstance().getTimeInMillis() - lastTime) * 1000000.0;
                 avg_speed = totalDis / (Calendar.getInstance().getTimeInMillis() - startTime)* 1000000.0;
+                lastTime = Calendar.getInstance().getTimeInMillis();
                 climbed = 2;   //????
                 calories = 1;
 
@@ -226,7 +226,7 @@ public class trackingService extends Service {
 
     @TargetApi(Build.VERSION_CODES.O)
     private void showNotification() {
-        NotificationChannel notificationChannel = new NotificationChannel(CHANNEL_ID, "channel name", NotificationManager.IMPORTANCE_DEFAULT);
+        NotificationChannel notificationChannel = new NotificationChannel(CHANNEL_ID, "channel name", NotificationManager.IMPORTANCE_HIGH);
 
         Intent resultIntent = new Intent(this, MapsActivity.class);
         resultIntent.setAction(Intent.ACTION_MAIN);
@@ -240,17 +240,14 @@ public class trackingService extends Service {
                         .setSmallIcon(R.drawable.common_full_open_on_phone)
                         .setContentIntent(pendingIntent);
 
+        mBuilder.setPriority(NotificationManager.IMPORTANCE_HIGH).setCategory(NotificationCompat.CATEGORY_MESSAGE);
+
         mNotificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         mNotificationManager.createNotificationChannel(notificationChannel);
 
         Notification notification = mBuilder.build();
         startForeground(1, notification);
 //        mNotificationManager.notify(0, notification);
-
-
-
-
-
     }
 
 

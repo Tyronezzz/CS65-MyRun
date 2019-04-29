@@ -43,7 +43,6 @@ public class main_history extends Fragment implements LoaderManager.LoaderCallba
     ArrayList<ExerciseEntry> exetry = new ArrayList<>();
     public static LoaderManager mLoader;
     public static LoaderManager.LoaderCallbacks lc;
-    public  static int adapterChoice = 0;
     ListView mhisView;
 
     @Override
@@ -82,10 +81,10 @@ public class main_history extends Fragment implements LoaderManager.LoaderCallba
 
             else if(exetry.get(position).getInputType().contains("Automatic"))
             {
-
-
-
-
+                Intent k = new Intent(getActivity(), MapsActivity.class);
+                k.putExtra("PARENTNAME", "MAINHISTORY");
+                k.putExtra("EXENTRY", exetry.get(position));
+                startActivityForResult(k, REQUEST_CODE_DELETE);
             }
 
             else
@@ -151,19 +150,16 @@ public class main_history extends Fragment implements LoaderManager.LoaderCallba
 
 //            if(exerciseEntries.size() > 0)
 
-            if(adapterChoice == 1)
-            {
-                mAdapter.clear();
-                mAdapter = new ListAdapter(getActivity(), 10, exetry);
-
-                exetry = new ArrayList<>(exerciseEntries);
-                mhisView.setAdapter(mAdapter);
-                mAdapter.addall(exerciseEntries);
-                mAdapter.notifyDataSetChanged();           // force notification -- tell the adapter to displa
-            }
-
-
-            else
+//            if(adapterChoice == 1)
+//            {
+//                mAdapter.clear();
+//                mAdapter = new ListAdapter(getActivity(), 10, exetry);
+//
+//                exetry = new ArrayList<>(exerciseEntries);
+//                mhisView.setAdapter(mAdapter);
+//                mAdapter.addall(exerciseEntries);
+//                mAdapter.notifyDataSetChanged();           // force notification -- tell the adapter to displa
+//            }
             {
                 exetry = new ArrayList<>(exerciseEntries);
                 mAdapter.addall(exerciseEntries);

@@ -38,10 +38,22 @@ public class DetectedActivityIntentService extends IntentService {
 
         List<DetectedActivity> detectedActivities = result.getProbableActivities();
 
-        for (DetectedActivity activity : detectedActivities) {
-            Log.d(TAG, "Detected activity: " + activity.getType() + ", " + activity.getConfidence());
-            broadcastActivity(activity);
+
+        DetectedActivity activity_tmp = null;
+
+        if(detectedActivities.size()>0)
+        {
+            activity_tmp = detectedActivities.get(0);
         }
+
+        for (DetectedActivity activity : detectedActivities) {            // choose the most likely one
+            Log.d(TAG, "Detected activity: " + activity.getType() + ", " + activity.getConfidence());
+
+            if(activity.getConfidence() >activity_tmp.getConfidence())
+                activity_tmp = activity;
+        }
+        broadcastActivity(activity_tmp);
+
     }
 
 

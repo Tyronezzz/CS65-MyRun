@@ -47,9 +47,13 @@ import com.google.android.gms.maps.model.PolylineOptions;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Objects;
+import java.util.PriorityQueue;
 
 public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback, ServiceConnection {
 
@@ -89,13 +93,14 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private ExerciseEntry oneentry;
     private long entryID;
     private String input_type;
+    private HashMap<String, Integer> act_table;
+    private PriorityQueue<DetectedActivity> act_pq;
 
 
     @Override
     public View onCreateView(View parent, String name, Context context, AttributeSet attrs) {
         return super.onCreateView(parent, name, context, attrs);
     }
-
 
 
     @Override
@@ -130,14 +135,14 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
+        act_table = new HashMap<>();
+//        act_pq = new PriorityQueue<>(10, new act_Comparator());
 
         if(parentName.equals("MAINHISTORY"))
         {
             oneentry = (ExerciseEntry) getIntent().getSerializableExtra("EXENTRY");
             entryID = oneentry.getId();
-
         }
-
 
         else
         {
@@ -170,6 +175,18 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             );
         }
     }
+
+//    class act_Comparator implements Comparator<DetectedActivity> {
+//        public int compare(DetectedActivity act1, DetectedActivity act2)
+//        {
+//            if (s1.cgpa < s2.cgpa)
+//                return 1;
+//
+//            if(act1.get)
+//
+//        }
+//
+//    }
 
     private void setUpMap(ExerciseEntry entry) {
         act_type.setText("Activity: " +entry.getActType());
@@ -265,7 +282,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     protected void onStart() {
         super.onStart();
 
-        if(input_type.equals("Automatic"))
+        if(input_type != null &&input_type.equals("Automatic"))
         {
             Log.d(TAG, "onStart():start ActivityDetectionService");
             LocalBroadcastManager.getInstance(this).registerReceiver(mActivityBroadcastReceiver,
@@ -321,9 +338,18 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 break;
             }
             case DetectedActivity.UNKNOWN: {
+                label = "Walking";
                 break;
             }
         }
+
+        act_type.setText("Activity: " + label);
+
+        if(act_table.get(label) == null)
+            act_table.put(label, 1);
+        else
+            act_table.put(label, act_table.get(label)+1);
+
 
         Log.d(TAG, "broadcast:onReceive(): Activity is " + label + " and confidence level is: " + confidence);
     }
@@ -341,6 +367,21 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
 
         return true;
+    }
+
+
+    private void findLikelyAct()
+    {
+
+        int maxValueInMap=(Collections.max(act_table.values()));  // This will return max value in the Hashmap
+        for (Map.Entry<String, Integer> entry : act_table.entrySet()) {  // Itrate through hashmap
+            if (entry.getValue() == maxValueInMap) {
+                //System.out.println(entry.getKey());     // Print the key with max value
+                activity_type = entry.getKey();
+
+            }
+        }
+
     }
 
 
@@ -365,15 +406,19 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                 else      // save the map para
                 {
-                    duration = (Calendar.getInstance().getTimeInMillis() - startTime) / 6000; // get min
 
+                    duration = (Calendar.getInstance().getTimeInMillis() - startTime) / 60000.0; // get min
                     if(duration < 0.001)
                         duration = 0.0;
 
                     AsynWriteSQL writesqlhelper = new AsynWriteSQL();
                     writesqlhelper.execute();
-
                 }
+
+//                if(input_type.equals("Automatic"))
+//                {
+//
+//                }
 
                 finish();
                 return true;
@@ -518,7 +563,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
 
-
     public class MyBroadcastReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent){
@@ -528,13 +572,12 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             {
                 prelat = intent.getParcelableExtra("latlng");
                 startTime = intent.getLongExtra("StartTime", 0);
+                Log.d(TAG, "start time " + startTime);
                 String newlatlng = String.valueOf(prelat.latitude) + "," + String.valueOf(prelat.longitude) + ";";
-//                Log.d(TAG, "pos " + newlatlng);
                 gpsStr += newlatlng;
 
                 upDateMap();
                 getEntries(intent);
-
             }
 
             else if(intent.getAction().equals("myrun.UPDATE_BROADCAST"))
@@ -566,8 +609,11 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             if(avg_speed < 0.001)
                 avg_speed = 0.00;
 
+            if(input_type != null && !input_type.equals("Automatic"))
+            {
+                act_type.setText("Activity: " + activity_type);
+            }
 
-            act_type.setText("Activity: " + activity_type);
             mcalorie.setText("Calorie: " + calories + " cal");
 
             if(km_mile_idx == 1)
@@ -587,7 +633,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
         }
     }
-
 
 
     private void getEntries(Intent intent) {
@@ -620,6 +665,12 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 Log.e(TAG, "Failed to unbind from the service", t);
             }
         }
+
+        if(input_type != null && input_type.equals("Automatic"))
+        {
+            stopService(new Intent(this, ActivityDetectionService.class));
+            LocalBroadcastManager.getInstance(this).unregisterReceiver(mActivityBroadcastReceiver);
+        }
     }
 
 
@@ -644,11 +695,19 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             String date = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
 
 
+            String tmp_input = "GPS";
+            if(input_type != null &&input_type.equals("Automatic"))
+            {
+                findLikelyAct();
+                tmp_input = "Automatic";
+            }
+
+
             ExerciseEntry entry;
             int km_mile_idx = sharedPreferences.getInt("key_unit_pre", 0);
             if(km_mile_idx == 0)     // km
             {
-                entry = new ExerciseEntry(0, "GPS: ", activity_type,date + " " + strTime, String.format("%.2f", duration) + " mins",
+                entry = new ExerciseEntry(0, tmp_input, activity_type,date + " " + strTime, String.format("%.2f", duration) + " mins",
                         String.format("%.2f", totalDis) + " m", null, String.format("%.2f", avg_speed) + " m/s",
                         String.valueOf(calories) + " cal", String.format("%.2f", climbed) + " m", null, null, null, gpsStr);
 
@@ -656,10 +715,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
             else     // mile
             {
-                entry = new ExerciseEntry(0, "GPS: ", activity_type,date + " " + strTime, String.format("%.2f", duration) + " mins",
+                entry = new ExerciseEntry(0, "GPS", activity_type,date + " " + strTime, String.format("%.2f", duration) + " mins",
                         String.format("%.2f", totalDis) + " mile", null, String.format("%.2f", avg_speed) + " mile/s",
                         String.valueOf(calories) + " cal", String.format("%.2f", climbed) + " mile", null, null, null, gpsStr);
-
             }
 
 
@@ -677,7 +735,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             {
                 mLoader.destroyLoader(1);
             }
-//            main_history.adapterChoice = 1;
             mLoader.initLoader(1, null, main_history.lc).forceLoad();
         }
     }

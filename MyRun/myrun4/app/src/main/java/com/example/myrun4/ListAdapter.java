@@ -229,10 +229,21 @@ public class ListAdapter extends ArrayAdapter {
                     String[] substr = exetry.get(position).getDistance().split("\\s+");
                     tmpdis = String.valueOf(Double.parseDouble(substr[0])*1.609) + " kms";
                 }
+
+
+                if(km_mile_idx == 0 && !exetry.get(position).getInputType().equals("Manual"))
+                {
+                    String[] substr = exetry.get(position).getDistance().split("\\s+");
+                    tmpdis = String.format("%.2f", Double.parseDouble(substr[0])/1000 < 0.01? 0: Double.parseDouble(substr[0])/1000) + " kms";
+
+                }
+
+                // m to mile???
+
                 
-                mTitleView.setText("Manual: "+ exetry.get(position).getActType());     //this code sets the values of the objects to values from the arrays
+                mTitleView.setText(exetry.get(position).getInputType() +": "+ exetry.get(position).getActType());     //this code sets the values of the objects to values from the arrays
                 mDateView.setText(exetry.get(position).getDateTime());
-                mDuration.setText(tmpdis + ", " + exetry.get(position).getDuration());
+                mDuration.setText( tmpdis + ", " + exetry.get(position).getDuration());
 
                 return rowView;
             }

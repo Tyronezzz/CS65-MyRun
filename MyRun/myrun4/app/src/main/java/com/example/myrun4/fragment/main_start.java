@@ -147,7 +147,9 @@ public class main_start extends Fragment {
             else if(text.equals("GPS"))                                     // go to Map Activity
             {
                 String text2 = mspinner_act.getSelectedItem().toString();
+                String text3 = mspinner_input.getSelectedItem().toString();
                 intent = new Intent(getContext(), MapsActivity.class);
+                intent.putExtra("TYPE", text3);
                 intent.putExtra("act_type", text2);
                 intent.putExtra("PARENTNAME", "MAINSTART");
                 startActivity(intent);
