@@ -19,8 +19,6 @@ import java.util.List;
 import androidx.annotation.Nullable;
 
 public class DetectedActivityIntentService extends IntentService {
-
-
     private static final String TAG = DetectedActivityIntentService.class.getSimpleName();
 
     public DetectedActivityIntentService() {
@@ -51,13 +49,12 @@ public class DetectedActivityIntentService extends IntentService {
         broadcastUnknownActivity();
     }
 
-    private void broadcastUnknownActivity() {
+    private void broadcastUnknownActivity() {                      // all acti below 70%, then send unknown
         Intent intent = new Intent("AR Activity");
         intent.putExtra("type", DetectedActivity.UNKNOWN);
         intent.putExtra("confidence", 100);
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
     }
-
 
     private void broadcastActivity(DetectedActivity activity) {        // send the activity and confidence
         Log.d(TAG,TAG+ " broadcastActivity()");
@@ -66,5 +63,4 @@ public class DetectedActivityIntentService extends IntentService {
         intent.putExtra("confidence", activity.getConfidence());
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
     }
-
 }

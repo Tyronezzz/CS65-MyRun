@@ -43,10 +43,7 @@
             android:label="@string/title_activity_maps"
             android:parentActivityName=".activity.MainActivity"
             android:launchMode="singleTop"/>
-        <activity
-            android:name=".activity.MapActivity"
-            android:label="Map"
-            android:parentActivityName=".activity.MainActivity" /> <!-- <activity -->
+
         <!-- android:name=".ProfileActivity" -->
         <!-- android:label="Profile" -->
         <!-- android:parentActivityName=".MainActivity" /> -->

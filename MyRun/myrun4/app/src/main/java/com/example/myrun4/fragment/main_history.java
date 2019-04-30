@@ -38,7 +38,6 @@ public class main_history extends Fragment implements LoaderManager.LoaderCallba
     private static final int ALL_EXERCISE_LOADER_ID = 1;
     private static final String TAG = "Mainhistory";
     private static final int REQUEST_CODE_DELETE = 0;
-//    private MySQLiteHelper dataSource;
     private ListAdapter mAdapter;
     ArrayList<ExerciseEntry> exetry = new ArrayList<>();
     public static LoaderManager mLoader;
@@ -70,16 +69,15 @@ public class main_history extends Fragment implements LoaderManager.LoaderCallba
 
         mhisView.setOnItemClickListener((parent, view1, position, id) -> {
 
-            if(exetry.get(position).getInputType().contains("GPS"))
+            if(exetry.get(position).getInputType().contains("GPS"))      // GPS
             {
-                // start activity
-                Intent k = new Intent(getActivity(), MapsActivity.class);
+                Intent k = new Intent(getActivity(), MapsActivity.class);     // start activity
                 k.putExtra("PARENTNAME", "MAINHISTORY");
                 k.putExtra("EXENTRY", exetry.get(position));
                 startActivityForResult(k, REQUEST_CODE_DELETE);
             }
 
-            else if(exetry.get(position).getInputType().contains("Automatic"))
+            else if(exetry.get(position).getInputType().contains("Automatic"))     // Automatic
             {
                 Intent k = new Intent(getActivity(), MapsActivity.class);
                 k.putExtra("PARENTNAME", "MAINHISTORY");

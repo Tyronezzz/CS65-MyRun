@@ -1,3 +1,10 @@
+/*
+ * @author  Tao Hou
+ * @version 1.0
+ * @since   2019-04-21
+ */
+
+
 package com.example.myrun4.service;
 
 import android.Manifest;
@@ -51,6 +58,7 @@ public class trackingService extends Service {
     private double calories;
     private long startTime;
     private long lastTime;
+    private String input_type;
 
     @Nullable
     @Override
@@ -68,9 +76,8 @@ public class trackingService extends Service {
 
         mFusedLocationClient.requestLocationUpdates(mLocationRequest, locationCallback,null);
         return null;
-
-//        return mMessenger.getBinder();
     }
+
 
     @Override
     public void onCreate() {
@@ -86,7 +93,14 @@ public class trackingService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.d(TAG, "S:onStartCommand(): Received start id " + startId + ": " + intent);
 
-        showNotification();     // display notification
+
+        input_type = intent.getStringExtra("activity_input_name");
+        if(input_type.equals("GPS"))
+            showNotification();     // display notification
+
+        else
+            showHeadUpNotificatoin();
+
         initExerciseEntry();      // init the activity entry
         startLocationUpdate();      // get location from service
 
@@ -123,21 +137,18 @@ public class trackingService extends Service {
         }
 
 
-        if(mFusedLocationClient == null) {
+        if(mFusedLocationClient == null) {            // init the fusedclient
             mFusedLocationClient = LocationServices.getFusedLocationProviderClient(getApplication());
         }
 
-       mFusedLocationClient.getLastLocation().addOnSuccessListener(location -> {
+        mFusedLocationClient.getLastLocation().addOnSuccessListener(location -> {
            if(location != null)
            {
-               Log.d(TAG, "not null init loc");
                LatLng latlng = fromLocationToLatLng(location);
                latlngArr.add(latlng);
-
-               Log.d(TAG, " loc al " + location.getAltitude());
                last_climbed = location.getAltitude();
 
-               Intent intent = new Intent();
+               Intent intent = new Intent();                 // broadcast the para for the first time
                intent.putExtra("latlng", latlng);
                intent.putExtra("loc", location);
                intent.putExtra("curSpeed", cur_speed);
@@ -172,9 +183,9 @@ public class trackingService extends Service {
 
                 climbed += abs(location.getAltitude() - last_climbed);
                 last_climbed = location.getAltitude();
-                calories = 1;
+                calories = totalDis * 0.2 * 1000;
 
-                Intent intent = new Intent();           // broadcast the paras to maps
+                Intent intent = new Intent();           // broadcast the paras to maps for update
                 intent.putExtra("latlngUpdate", latlng);
                 intent.putExtra("curSpeed", cur_speed);
                 intent.putExtra("avgSpeed", avg_speed);
@@ -186,14 +197,12 @@ public class trackingService extends Service {
                 sendBroadcast(intent);
             }
         }
-
-
     };
 
     @TargetApi(Build.VERSION_CODES.O)
     private void showNotification() {         // display the notification
-        NotificationChannel notificationChannel = new NotificationChannel(CHANNEL_ID, "channel name", NotificationManager.IMPORTANCE_HIGH);
 
+        NotificationChannel notificationChannel = new NotificationChannel(CHANNEL_ID, "channel name", NotificationManager.IMPORTANCE_DEFAULT);
         Intent resultIntent = new Intent(this, MapsActivity.class);
         resultIntent.setAction(Intent.ACTION_MAIN);
         resultIntent.addCategory(Intent.CATEGORY_LAUNCHER);
@@ -204,16 +213,48 @@ public class trackingService extends Service {
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this, CHANNEL_ID)
                         .setContentTitle("Tap me to go back")
                         .setSmallIcon(R.drawable.common_full_open_on_phone)
-                        .setContentIntent(pendingIntent);
-
-        mBuilder.setPriority(NotificationManager.IMPORTANCE_HIGH).setCategory(NotificationCompat.CATEGORY_MESSAGE);
+                        .setContentIntent(pendingIntent)
+                        .setDefaults(Notification.DEFAULT_ALL)
+                        .setPriority(NotificationCompat.PRIORITY_HIGH);
 
         mNotificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         mNotificationManager.createNotificationChannel(notificationChannel);
 
         Notification notification = mBuilder.build();
+
         startForeground(1, notification);
 //        mNotificationManager.notify(0, notification);
+    }
+
+
+    @TargetApi(Build.VERSION_CODES.O)
+    private void showHeadUpNotificatoin(){
+        NotificationChannel notificationChannel;
+        String CHANNEL_ID2 = "headup noti";
+
+        notificationChannel = new NotificationChannel(CHANNEL_ID2, "channel name2", NotificationManager.IMPORTANCE_HIGH);
+
+        Intent resultIntent = new Intent(this, MapsActivity.class);
+        resultIntent.setAction(Intent.ACTION_MAIN);
+        resultIntent.addCategory(Intent.CATEGORY_LAUNCHER);
+
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0,
+                resultIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this, CHANNEL_ID2)
+                .setContentTitle("Activity Recognition")
+                .setContentText("Activity tracker started.")
+                .setSmallIcon(R.drawable.common_full_open_on_phone)
+                .setContentIntent(pendingIntent)
+                .setDefaults(Notification.DEFAULT_ALL)
+                .setPriority(NotificationCompat.PRIORITY_HIGH);
+
+        mNotificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        mNotificationManager.createNotificationChannel(notificationChannel);
+
+        Notification notification = mBuilder.build();
+
+        startForeground(1, notification);
     }
 
 

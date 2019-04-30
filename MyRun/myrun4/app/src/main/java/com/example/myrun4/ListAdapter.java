@@ -203,7 +203,6 @@ public class ListAdapter extends ArrayAdapter {
 
             else
             {
-
 //                Log.d(TAG, "update history");
                 LayoutInflater inflater=context.getLayoutInflater();
                 @SuppressLint("InflateParams") View rowView = inflater.inflate(R.layout.listview_history, null,true);
@@ -231,6 +230,8 @@ public class ListAdapter extends ArrayAdapter {
 
                 if(!exetry.get(position).getInputType().equals("Manual"))       // gps & automatic
                 {
+
+                    Log.d(TAG, "string is " + exetry.get(position).getDistance());
                     String[] substr = exetry.get(position).getDistance().split("\\s+");
                     if(km_mile_idx == 0 && substr[1].equals("m"))  // m km
                         tmpdis = String.format("%.2f", Double.parseDouble(substr[0])/1000 < 0.01? 0: Double.parseDouble(substr[0])/1000) + " kms";
@@ -239,19 +240,20 @@ public class ListAdapter extends ArrayAdapter {
                     else if(km_mile_idx == 1 && substr[1].equals("m"))  // m mile
                         tmpdis = String.format("%.2f", Double.parseDouble(substr[0])*0.00062 < 0.01? 0: Double.parseDouble(substr[0])*0.00062) + " miles";
 
-                    else if(km_mile_idx == 0 && substr[1].equals("miles"))  // mile km
+                    else if(km_mile_idx == 0 && substr[1].equals("mile"))  // mile km
                         tmpdis = String.format("%.2f", Double.parseDouble(substr[0])*1.609 < 0.01? 0: Double.parseDouble(substr[0])*1.609) + " kms";
 
 
-                    else if(km_mile_idx == 1 && substr[1].equals("kms"))  // mile km
+                    else if(km_mile_idx == 1 && substr[1].equals("kms"))  // km mile
                         tmpdis = String.format("%.2f", Double.parseDouble(substr[0])*0.62 < 0.01? 0: Double.parseDouble(substr[0])*0.62) + " kms";
 
-
+//                    Log.d(TAG, substr[0] + " here " + tmpdis);
                 }
+
                 
                 mTitleView.setText(exetry.get(position).getInputType() +": "+ exetry.get(position).getActType());     //this code sets the values of the objects to values from the arrays
                 mDateView.setText(exetry.get(position).getDateTime());
-                mDuration.setText( tmpdis + ", " + exetry.get(position).getDuration());
+                mDuration.setText(tmpdis + ", " + exetry.get(position).getDuration());
 
                 return rowView;
             }

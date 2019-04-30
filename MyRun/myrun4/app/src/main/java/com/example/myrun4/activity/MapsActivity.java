@@ -68,17 +68,15 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     private GoogleMap mMap;
     private static final String TAG = "MapsActivity";
-    public Marker whereAmI;
+    public Marker curMarker;
     private static final int PERMISSION_REQUEST_CODE = 1;
     private Marker preMarker;
 
     boolean mIsBound;
     private ServiceConnection mConnection = this;  // as we implement ServiceConnection
-//    private final Messenger mMessenger = new Messenger(new IncomingMessageHandler());
-//    private Messenger mServiceMessenger = null;
     private LatLng prelat;
     private PolylineOptions rectOptions;
-    Polyline polyline;
+    public Polyline polyline;
     private MyBroadcastReceiver receiver;
     private MyBroadcastReceiver receiver2;
     private SharedPreferences sharedPreferences;
@@ -103,6 +101,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private long entryID;
     private String input_type;
     private HashMap<String, Integer> act_table;
+    private double factorm2mile = 0.00062;
 
     @Override
     public View onCreateView(View parent, String name, Context context, AttributeSet attrs) {
@@ -138,26 +137,26 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         mdistance = findViewById(R.id.text_distance);
 
 
-        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
+        // Obtain the SupportMapFragment
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
         act_table = new HashMap<>();
 
-        if(parentName.equals("MAINHISTORY"))
+        if(parentName.equals("MAINHISTORY"))         // history
         {
             oneentry = (ExerciseEntry) getIntent().getSerializableExtra("EXENTRY");
             entryID = oneentry.getId();
         }
 
-        else
+        else          // automatic and gps
         {
             // start the service here
             try {
                 Intent tracking = new Intent(getApplication(), trackingService.class);
+                tracking.putExtra("activity_input_name", input_type);
                 startService(tracking);
                 bindService(tracking, mConnection, Context.BIND_AUTO_CREATE);
-
             }
             catch (Exception e)
             {
@@ -166,14 +165,12 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
             mIsBound = true;
 
-
-            receiver = new MyBroadcastReceiver();
+            receiver = new MyBroadcastReceiver();     // two broadcast receiver
             receiver2 = new MyBroadcastReceiver();
             registerReceiver(
                     receiver,
                     new IntentFilter("myrun.CUSTOM_BROADCAST")
             );
-
 
             registerReceiver(
                     receiver2,
@@ -182,28 +179,29 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
 
-    private void setUpMap(ExerciseEntry entry) {
+    @SuppressLint({"SetTextI18n", "DefaultLocale"})
+    private void setUpMap(ExerciseEntry entry) {    // rendering the map for history
         act_type.setText("Activity: " +entry.getActType());
         mcalorie.setText("Calorie: " + entry.getCalorie());
 
         int km_mile_idx = sharedPreferences.getInt("key_unit_pre", 0);
 
-        if(km_mile_idx == 1 &&  entry.getAvgSpeed().contains("m/s"))     // to mile
+        if(km_mile_idx == 1 &&  entry.getAvgSpeed().contains("m/s"))     //m to mile
         {
             String[] substr = entry.getAvgSpeed().split("\\s+");
             String[] substr2 = entry.getClimb().split("\\s+");
             String[] substr3 = entry.getDistance().split("\\s+");
 
-            double tmpavgSpeed = Double.parseDouble(substr[0])*0.00062<0.01? 0.0 : Double.parseDouble(substr[0])*0.00062;
-            double tmpclimb = Double.parseDouble(substr2[0])*0.00062<0.01? 0.0 : Double.parseDouble(substr[0])*0.00062;
-            double tmpdis = Double.parseDouble(substr3[0])*0.00062<0.01? 0.0 : Double.parseDouble(substr[0])*0.00062;
+            double tmpavgSpeed = Double.parseDouble(substr[0])*factorm2mile<0.01? 0.0 : Double.parseDouble(substr[0])*factorm2mile;
+            double tmpclimb = Double.parseDouble(substr2[0])*factorm2mile<0.01? 0.0 : Double.parseDouble(substr2[0])*factorm2mile;
+            double tmpdis = Double.parseDouble(substr3[0])*factorm2mile<0.01? 0.0 : Double.parseDouble(substr3[0])*factorm2mile;
 
             mavgSpeed.setText("Avg Speed: " + String.format("%.2f", tmpavgSpeed) +" miles/s");
             mclimbed.setText("Climbed: " + String.format("%.2f", tmpclimb) + " miles");
             mdistance.setText("Distance: " + String.format("%.2f", tmpdis) + " miles");
         }
 
-        else if(km_mile_idx == 0 && entry.getAvgSpeed().contains("mile"))
+        else if(km_mile_idx == 0 && entry.getAvgSpeed().contains("mile"))      // mile to m
         {
 
             String[] substr = entry.getAvgSpeed().split("\\s+");
@@ -211,8 +209,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             String[] substr3 = entry.getDistance().split("\\s+");
 
             double tmpavgSpeed = Double.parseDouble(substr[0])*1609.34<0.01? 0.0 : Double.parseDouble(substr[0])*1609.34;
-            double tmpclimb = Double.parseDouble(substr2[0])*1609.34<0.01? 0.0 : Double.parseDouble(substr[0])*1609.34;
-            double tmpdis = Double.parseDouble(substr3[0])*1609.34<0.01? 0.0 : Double.parseDouble(substr[0])*1609.34;
+            double tmpclimb = Double.parseDouble(substr2[0])*1609.34<0.01? 0.0 : Double.parseDouble(substr2[0])*1609.34;
+            double tmpdis = Double.parseDouble(substr3[0])*1609.34<0.01? 0.0 : Double.parseDouble(substr3[0])*1609.34;
 
             mavgSpeed.setText("Avg Speed: " + String.format("%.2f", tmpavgSpeed) + " m/s");
             mclimbed.setText("Climbed: " + String.format("%.2f", tmpclimb) + " m");
@@ -239,13 +237,11 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         MarkerOptions a = new MarkerOptions().position(newloc).icon(BitmapDescriptorFactory.defaultMarker(
                 BitmapDescriptorFactory.HUE_RED));
         preMarker = mMap.addMarker(a);     // start point
-
         rectOptions = new PolylineOptions().add(preMarker.getPosition());
 
-
-        for(int i=1;i<arrOfStr.length;i++)
+        for(int i=1;i<arrOfStr.length;i++)      // draw lines here
         {
-            // draw lines here
+
             LatLng loc = str2latlng(arrOfStr[i]);
             rectOptions.add(loc);
             rectOptions.color(Color.BLACK);
@@ -253,7 +249,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
 
         LatLng lastloc = str2latlng(arrOfStr[arrOfStr.length-1]);
-        whereAmI = mMap.addMarker(new MarkerOptions().position(lastloc).icon(BitmapDescriptorFactory.defaultMarker(
+        curMarker = mMap.addMarker(new MarkerOptions().position(lastloc).icon(BitmapDescriptorFactory.defaultMarker(
                 BitmapDescriptorFactory.HUE_GREEN)));          //set position and icon for the marker
 
         mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
@@ -261,7 +257,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     }
 
-    private LatLng str2latlng(String s) {
+    private LatLng str2latlng(String s) {           // convert String to latlng
         String[] latlong =  s.split(",");
         double latitude = Double.parseDouble(latlong[0]);
         double longitude = Double.parseDouble(latlong[1]);
@@ -270,18 +266,18 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
 
-    // register the RX and start up the ActivityDetectionService service
+
     @Override
     protected void onStart() {
         super.onStart();
 
         if(input_type != null &&input_type.equals("Automatic"))
         {
-            Log.d(TAG, "onStart():start ActivityDetectionService");
+            Log.d(TAG, "onStart()");
             LocalBroadcastManager.getInstance(this).registerReceiver(mActivityBroadcastReceiver,
                     new IntentFilter("AR Activity"));
 
-            startService(new Intent(this, ActivityDetectionService.class));
+            startService(new Intent(this, ActivityDetectionService.class));      // register the RX and start up the ActivityDetectionService service
         }
 
     }
@@ -289,7 +285,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     BroadcastReceiver mActivityBroadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            // Log.d(TAG, "onReceive()");
+             Log.d(TAG, "onReceive()");
             if (intent.getAction().equals("AR Activity")) {
                 int type = intent.getIntExtra("type", -1);
                 int confidence = intent.getIntExtra("confidence", 0);
@@ -299,6 +295,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     };
 
 
+    @SuppressLint("SetTextI18n")
     private void handleUserActivity(int type, int confidence) {
         String label = "Unknown";
         switch (type) {
@@ -338,7 +335,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         act_type.setText("Activity: " + label);
 
-        if(act_table.get(label) == null)
+        if(act_table.get(label) == null)        // update hashtable
             act_table.put(label, 1);
         else
             act_table.put(label, act_table.get(label)+1);
@@ -365,10 +362,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     {
 
         int maxValueInMap=(Collections.max(act_table.values()));  // This will return max value in the Hashmap
-        for (Map.Entry<String, Integer> entry : act_table.entrySet()) {  // Itrate through hashmap
+        for (Map.Entry<String, Integer> entry : act_table.entrySet()) {  // Itrate hashmap
             if (entry.getValue() == maxValueInMap) {
                 activity_type = entry.getKey();
-
+                return;
             }
         }
 
@@ -396,7 +393,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 {
 
                     duration = (Calendar.getInstance().getTimeInMillis() - startTime) / 60000.0; // get min
-                    if(duration < 0.001)
+                    if(duration < 0.01)
                         duration = 0.0;
 
                     AsynWriteSQL writesqlhelper = new AsynWriteSQL();
@@ -415,7 +412,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         mMap = googleMap;
 
-        if (!checkPermission())
+        if (!checkPermission())     //  checkPermission
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSION_REQUEST_CODE);
 
         if(parentName.equals("MAINHISTORY"))
@@ -433,7 +430,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         rectOptions = new PolylineOptions().add(preMarker.getPosition());
 
 
-        whereAmI = mMap.addMarker(new MarkerOptions().position(latlng).icon(BitmapDescriptorFactory.defaultMarker(
+        curMarker = mMap.addMarker(new MarkerOptions().position(latlng).icon(BitmapDescriptorFactory.defaultMarker(
                 BitmapDescriptorFactory.HUE_GREEN)));          //set position and icon for the marker
 
         mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
@@ -456,15 +453,15 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         if (curlatlng != null) {
 //            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(curlatlng, 17));
 
-            if (whereAmI != null)
+            if (curMarker != null)
             {
-                whereAmI.remove();
+                curMarker.remove();
             }
 
-            whereAmI = mMap.addMarker(new MarkerOptions().position(curlatlng).icon(BitmapDescriptorFactory.defaultMarker(
-                    BitmapDescriptorFactory.HUE_GREEN)).title("Here I Am."));
+            curMarker = mMap.addMarker(new MarkerOptions().position(curlatlng).icon(BitmapDescriptorFactory.defaultMarker(
+                    BitmapDescriptorFactory.HUE_GREEN)));
 
-            rectOptions.add(whereAmI.getPosition());
+            rectOptions.add(curMarker.getPosition());
             rectOptions.color(Color.BLACK);
             polyline = mMap.addPolyline(rectOptions);
         }
@@ -478,6 +475,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     @Override
     public void onServiceConnected(ComponentName name, IBinder service) {
+
 //        mServiceMessenger = new Messenger(service);
 
 //        try {
@@ -521,6 +519,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     public class MyBroadcastReceiver extends BroadcastReceiver {
+        @SuppressLint({"SetTextI18n", "DefaultLocale"})
         @Override
         public void onReceive(Context context, Intent intent){
             Log.d(TAG, "get receiver " + intent.getAction());
@@ -551,10 +550,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
             if(km_mile_idx == 1)   // to mile
             {
-                cur_speed *= 0.00062;
-                avg_speed *= 0.00062;
-                climbed *= 0.00062;
-                totalDis *= 0.00062;
+                cur_speed *= factorm2mile;
+                avg_speed *= factorm2mile;
+                climbed *= factorm2mile;
+                totalDis *= factorm2mile;
             }
 
             if(totalDis < 0.01)
@@ -569,12 +568,15 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             if(avg_speed < 0.01)
                 avg_speed = 0.00;
 
+            if(calories < 0.01)
+                calories = 0.0;
+
             if(input_type != null && !input_type.equals("Automatic"))
             {
                 act_type.setText("Activity: " + activity_type);
             }
 
-            mcalorie.setText("Calorie: " + calories + " cal");
+            mcalorie.setText("Calorie: " + String.format("%.2f", calories) + " cal");
 
             if(km_mile_idx == 1)
             {
@@ -646,6 +648,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         }
 
+        @SuppressLint("DefaultLocale")
         @Override
         protected Void doInBackground(Void... voids) {
 
@@ -669,7 +672,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             {
                 entry = new ExerciseEntry(0, tmp_input, activity_type,date + " " + strTime, String.format("%.2f", duration) + " mins",
                         String.format("%.2f", totalDis) + " m", null, String.format("%.2f", avg_speed) + " m/s",
-                        String.valueOf(calories) + " cal", String.format("%.2f", climbed) + " m", null, null, null, gpsStr);
+                        String.format("%.2f", calories) + " cal", String.format("%.2f", climbed) + " m", null, null, null, gpsStr);
 
             }
 
@@ -677,7 +680,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             {
                 entry = new ExerciseEntry(0, "GPS", activity_type,date + " " + strTime, String.format("%.2f", duration) + " mins",
                         String.format("%.2f", totalDis) + " mile", null, String.format("%.2f", avg_speed) + " mile/s",
-                        String.valueOf(calories) + " cal", String.format("%.2f", climbed) + " mile", null, null, null, gpsStr);
+                        String.format("%.2f", calories) + " cal", String.format("%.2f", climbed) + " mile", null, null, null, gpsStr);
             }
 
 
@@ -699,35 +702,4 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
 
-//    private void getLocation(Location location)
-//    {
-//        double latitude = location.getLatitude();
-//        double longitude = location.getLongitude();
-//        Geocoder gc = new Geocoder(this, Locale.getDefault());
-//
-//        if (!Geocoder.isPresent())
-//            Log.d(TAG, "No geocoder available");
-//
-//
-//        else {
-//            try {
-//                List<Address> addresses = gc.getFromLocation(latitude, longitude, 1);
-//                StringBuilder sb = new StringBuilder();
-//                if (addresses.size() > 0) {
-//                    Address address = addresses.get(0);
-//
-//                    for (int i = 0; i < address.getMaxAddressLineIndex(); i++)
-//                        sb.append(address.getAddressLine(i)).append("\n");
-//
-//                    sb.append(address.getLocality()).append("\n");
-//                    sb.append(address.getPostalCode()).append("\n");
-//                    sb.append(address.getCountryName());
-//                    Log.d(TAG, "HERE " + sb.toString());
-//                }
-//
-//            } catch (IOException e) {
-//                Log.d("WHEREAMI", "IO Exception", e);
-//            }
-//        }
-//    }
 }
