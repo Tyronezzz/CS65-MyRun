@@ -58,7 +58,6 @@ public class trackingService extends Service {
     private double calories;
     private long startTime;
     private long lastTime;
-    private String input_type;
 
     @Nullable
     @Override
@@ -94,7 +93,7 @@ public class trackingService extends Service {
         Log.d(TAG, "S:onStartCommand(): Received start id " + startId + ": " + intent);
 
 
-        input_type = intent.getStringExtra("activity_input_name");
+        String input_type = intent.getStringExtra("activity_input_name");
         if(input_type.equals("GPS"))
             showNotification();     // display notification
 

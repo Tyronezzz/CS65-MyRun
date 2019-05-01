@@ -9,11 +9,11 @@ package com.example.myrun5.activity;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.SuppressLint;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
@@ -25,6 +25,16 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.myrun5.R;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
+import java.util.concurrent.Executor;
+
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -38,6 +48,10 @@ public class LoginActivity extends AppCompatActivity {
     Button mregister_button;
     Button mEmailSignInButton;
     SharedPreferences sharedPreferences;
+    private FirebaseAuth mAuth;
+    private FirebaseDatabase mDatabase;
+    private DatabaseReference myRef;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,6 +69,14 @@ public class LoginActivity extends AppCompatActivity {
         Toolbar mytoolbar = findViewById(R.id.login_toolbar);     // set up the toolbar
         setSupportActionBar(mytoolbar);
 
+        mAuth = FirebaseAuth.getInstance();
+
+        // Write a message to the database
+        mDatabase = FirebaseDatabase.getInstance();
+        myRef = mDatabase.getReference("message");
+
+
+
         // log in
         mEmailSignInButton.setOnClickListener(view -> attemptLogin());
         // register
@@ -69,6 +91,39 @@ public class LoginActivity extends AppCompatActivity {
 //                    Intent k = new Intent(LoginActivity.this, RegisterActivity.class);
 //                    k.putExtra("PARENTNAME", "LOGIN");
 //                    startActivity(k);
+
+
+//                mAuth.createUserWithEmailAndPassword(mEmailView.getText().toString(), mPasswordView.getText().toString())
+//                        .addOnCompleteListener(LoginActivity.this, new OnCompleteListener<AuthResult>() {
+//                            @Override
+//                            public void onComplete(@NonNull Task<AuthResult> task) {
+//                                if (task.isSuccessful()) {
+//                                    // Sign in success, update UI with the signed-in user's information
+//                                    Log.d(TAG, "createUserWithEmail:success");
+//                                    FirebaseUser user = mAuth.getCurrentUser();
+////                                    Log.d(TAG, "createUserWithEmail:failure", task.getException());
+//                                    Toast.makeText(LoginActivity.this, "Authentication worked.",
+//                                            Toast.LENGTH_LONG).show();
+//                                    //updateUI(user);
+//                                    //
+//                                    myRef.setValue("Hello, World!");
+//
+//                                } else {
+//                                    // If sign in fails, display a message to the user.
+//                                    Log.w(TAG, "createUserWithEmail:failure", task.getException());
+//                                    Toast.makeText(LoginActivity.this, "Authentication failed: "
+//                                                    + task.getException().getMessage(),
+//                                            Toast.LENGTH_LONG).show();
+//                                    //updateUI(null);
+//                                }
+//
+//
+//                            }
+//                        });
+
+
+
+
             } catch(Exception e) {
                 e.printStackTrace();
             }
@@ -179,17 +234,74 @@ public class LoginActivity extends AppCompatActivity {
                 return false;
             }
 
+
+            final boolean[] loginSuc = {false};
+
+            Task<AuthResult> authResultTask = mAuth.signInWithEmailAndPassword(mEmail, mPassword)
+                    .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                        @Override
+                        public void onComplete(@NonNull Task<AuthResult> task) {
+                            if (task.isSuccessful()) {
+                                // Sign in success, update UI with the signed-in user's information
+                                Log.d(TAG, "signInWithEmail:success");
+//                        FirebaseUser user = mAuth.getCurrentUser();
+                                loginSuc[0] = true;
+
+                            } else {
+                                // If sign in fails, display a message to the user.
+                                Log.d(TAG, "signInWithEmail:failure", task.getException());
+                                Toast.makeText(LoginActivity.this, "Authentication failed.",
+                                        Toast.LENGTH_SHORT).show();
+
+                                loginSuc[0] = false;
+                            }
+                        }
+                    });
+
+
+
+
+            mAuth.signInWithEmailAndPassword(mEmail, mPassword).addOnCompleteListener(this, new OnCompleteListener<AuthResult>()
+            {
+                @Override
+                public void onComplete(@NonNull Task<AuthResult> task)
+                {
+                    if (task.isSuccessful())
+                    {
+                        Log.d(TAG, "signInWithEmail:success");
+                        FirebaseUser user = mAuth.getCurrentUser();
+//                        updateUI(user);
+                    }
+
+                    else
+                    {
+                        Log.w(TAG, "signInWithEmail:failure", task.getException());
+                        Toast.makeText(LoginActivity.this, "Authentication failed.", Toast.LENGTH_SHORT).show();
+//                        updateUI(null);
+                    }
+//                    if (!task.isSuccessful())
+//                    {
+//                        mStatusTextView.setText(R.string.auth_failed);
+//                    }
+
+                }
+            });
+
+
+
+            return loginSuc[0];
+
+
             // check whether email and password is match
-            sharedPreferences = getSharedPreferences("profile", Context.MODE_PRIVATE);
-            String old_email= sharedPreferences.getString("key_email", "");
-            String old_pwd = sharedPreferences.getString("key_password", "");
-
-//            Log.d(TAG, old_email + " " + old_pwd);
-
-            // not match
-            if(old_email == null || old_pwd == null)
-                return false;
-            return old_email.equals(mEmail) && old_pwd.equals(mPassword);
+//            sharedPreferences = getSharedPreferences("profile", Context.MODE_PRIVATE);
+//            String old_email= sharedPreferences.getString("key_email", "");
+//            String old_pwd = sharedPreferences.getString("key_password", "");
+//
+//
+//            // not match
+//            if(old_email == null || old_pwd == null)
+//                return false;
+//            return old_email.equals(mEmail) && old_pwd.equals(mPassword);
         }
 
         @Override

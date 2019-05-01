@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "207525035854",
+    "firebase_url": "https://myrun5.firebaseio.com",
+    "project_id": "myrun5",
+    "storage_bucket": "myrun5.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:207525035854:android:a0836648b8633c1e",
+        "android_client_info": {
+          "package_name": "com.example.myrun5"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "207525035854-tlnom9h3m4p4scjmjaroem8r2plf9pk5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCYAZ-Eojg4vmGrLaSCO8gcUlkdi_9i4nE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "207525035854-tlnom9h3m4p4scjmjaroem8r2plf9pk5.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

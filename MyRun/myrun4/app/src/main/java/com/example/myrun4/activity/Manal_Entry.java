@@ -41,6 +41,8 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.Objects;
 
+import static com.example.myrun4.fragment.main_history.lc;
+
 
 public class Manal_Entry extends AppCompatActivity{
 
@@ -331,7 +333,7 @@ public class Manal_Entry extends AppCompatActivity{
             {
                 mLoader.destroyLoader(1);
             }
-            mLoader.initLoader(1, null, main_history.lc).forceLoad();
+            mLoader.initLoader(1, null, lc).forceLoad();
 
 
         }
