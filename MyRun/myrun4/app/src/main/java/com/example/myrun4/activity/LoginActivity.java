@@ -61,12 +61,14 @@ public class LoginActivity extends AppCompatActivity {
         mregister_button.setOnClickListener(v -> {
             try {
 
-                Intent k = new Intent(LoginActivity.this, MainActivity.class);     //jump to mainactivity
-                startActivity(k);
+//                Intent k = new Intent(LoginActivity.this, MainActivity.class);     //jump to mainactivity
+//                startActivity(k);
 
-//                    Intent k = new Intent(LoginActivity.this, RegisterActivity.class);
-//                    k.putExtra("PARENTNAME", "LOGIN");
-//                    startActivity(k);
+
+
+                    Intent k = new Intent(LoginActivity.this, RegisterActivity.class);
+                    k.putExtra("PARENTNAME", "LOGIN");
+                    startActivity(k);
             } catch(Exception e) {
                 e.printStackTrace();
             }
@@ -181,6 +183,8 @@ public class LoginActivity extends AppCompatActivity {
             sharedPreferences = getSharedPreferences("profile", Context.MODE_PRIVATE);
             String old_email= sharedPreferences.getString("key_email", "");
             String old_pwd = sharedPreferences.getString("key_password", "");
+
+//            Log.d(TAG, old_email + " " + old_pwd);
 
             // not match
             if(old_email == null || old_pwd == null)

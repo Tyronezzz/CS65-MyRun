@@ -112,7 +112,7 @@ public class trackingService extends Service {
     }
 
 
-    private void initExerciseEntry()
+    private void initExerciseEntry()        // init the entry
     {
         cur_speed = 0;
         avg_speed = 0;
@@ -129,7 +129,7 @@ public class trackingService extends Service {
     {
         mLocationRequest = LocationRequest.create()
                 .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
-                .setInterval(2000) ;     // 2 seconds, in milliseconds
+                .setInterval(1500) ;     //1.5 seconds, in milliseconds
 
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
