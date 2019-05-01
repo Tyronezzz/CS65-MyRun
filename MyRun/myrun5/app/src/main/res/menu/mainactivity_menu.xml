@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".activity.MainActivity">
+
+    <group>
+        <item
+            android:id="@+id/action_settings"
+            android:title="@string/settings"
+            app:showAsAction="never" />
+
+        <item
+            android:id="@+id/action_edit_profile"
+            android:title="@string/edit_profile"
+            app:showAsAction="never" />
+    </group>
+
+
+    <!--android:icon="@drawable/crop__ic_done"-->
+
+</menu>
