@@ -32,7 +32,15 @@ import com.example.myrun5.MySQLiteHelper;
 import com.example.myrun5.R;
 import com.example.myrun5.fragment.main_history;
 import com.example.myrun5.model.ExerciseEntry;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -51,8 +59,12 @@ public class Manal_Entry extends AppCompatActivity{
     private Calendar mDateTime = Calendar.getInstance();
     private String parentName;
     private long index;
+    private FirebaseAuth mFirebaseAuth;
+    private FirebaseUser mFirebaseUser;
+    private DatabaseReference mDatabase;
+    private String mUserId;
 //    private ListAdapter mAdapter;
-//    private MySQLiteHelper mysqlhelper;
+
     ListView mhisView;
     SharedPreferences sharedPreferences;
 
@@ -71,6 +83,15 @@ public class Manal_Entry extends AppCompatActivity{
         String act_name = intent.getStringExtra("ACT");        // get the activity type name
 //        String act_type = intent.getStringExtra("TYPE");
         index = intent.getLongExtra("INDEX", 0);
+
+
+        // Initialize Firebase Auth and Database Reference
+        mFirebaseAuth = FirebaseAuth.getInstance();
+        mFirebaseUser = mFirebaseAuth.getCurrentUser();
+        mDatabase = FirebaseDatabase.getInstance().getReference();
+        mDatabase = FirebaseDatabase.getInstance().getReference();
+
+
 
 
         String date = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());  // set the current date
@@ -316,8 +337,30 @@ public class Manal_Entry extends AppCompatActivity{
 
             ExerciseEntry entry = new ExerciseEntry(0, "Manual", mResults[0], mResults[1]+" "+mResults[2],
                     mResults[3], mResults[4],null, null, mResults[5], null, mResults[6], mResults[7], null, null);
+//            mysqlhelper.insertEntry(entry);                    // insert an entry
 
-            mysqlhelper.insertEntry(entry);                    // insert an entry
+
+
+
+            String email = "ty@d.com";
+            try {
+                mDatabase.child("user_" +  SHA1(email)).child("exercise_entries").child(String.valueOf(entry.getId())).setValue(entry)
+                        .addOnCompleteListener(Manal_Entry.this, task -> {
+                            if(task.isSuccessful()){
+                                // Insert is done!
+                                Log.d(TAG, "Insert suc");
+                            }else{
+                                // Failed
+                                if(task.getException() != null)
+                                    Log.w(TAG, task.getException().getMessage());
+                            }
+                        });
+            } catch (NoSuchAlgorithmException e) {
+                e.printStackTrace();
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+
             return null;
         }
 
@@ -336,6 +379,30 @@ public class Manal_Entry extends AppCompatActivity{
 
         }
 
+    }
+
+
+
+
+    private static String convertToHex(byte[] data) {
+        StringBuilder buf = new StringBuilder();
+        for (byte b : data) {
+            int halfbyte = (b >>> 4) & 0x0F;
+            int two_halfs = 0;
+            do {
+                buf.append((0 <= halfbyte) && (halfbyte <= 9) ? (char) ('0' + halfbyte) : (char) ('a' + (halfbyte - 10)));
+                halfbyte = b & 0x0F;
+            } while (two_halfs++ < 1);
+        }
+        return buf.toString();
+    }
+
+    public static String SHA1(String text) throws NoSuchAlgorithmException, UnsupportedEncodingException {
+        MessageDigest md = MessageDigest.getInstance("SHA-1");
+        byte[] textBytes = text.getBytes(StandardCharsets.ISO_8859_1);
+        md.update(textBytes, 0, textBytes.length);
+        byte[] sha1hash = md.digest();
+        return convertToHex(sha1hash);
     }
 
 

@@ -106,8 +106,6 @@ public class RegisterActivity extends AppCompatActivity {
         mGender = findViewById(R.id.register_gender);
 
 
-
-
         StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
         StrictMode.setVmPolicy(builder.build());
 
@@ -155,6 +153,12 @@ public class RegisterActivity extends AppCompatActivity {
         }
 
 
+        else
+        {
+
+        }
+
+
         if(isFirst)            // ask for permissions for the first time
         {
             checkPermissions();
@@ -188,6 +192,13 @@ public class RegisterActivity extends AppCompatActivity {
 
             case R.id.action_register:
                 checkValid();
+
+
+
+
+
+
+
                 return true;
 
             default:

@@ -10,6 +10,7 @@ package com.example.myrun5.utils;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+
 import java.util.ArrayList;
 
 public class ActionTabsViewPagerAdapter extends FragmentPagerAdapter {
@@ -17,8 +18,10 @@ public class ActionTabsViewPagerAdapter extends FragmentPagerAdapter {
     private ArrayList<Fragment> fragments;
     private static final int START = 0;
     private static final int HISTORY = 1;
+    private static final int BOARD = 2;
     private static final String UI_TAB_START = "START";
     private static final String UI_TAB_HISTORY = "HISTORY";
+    private static final String UI_TAB_BOARD = "BOARD";
 
     public ActionTabsViewPagerAdapter(FragmentManager fm, ArrayList<Fragment> fragments){
         super(fm);
@@ -32,6 +35,7 @@ public class ActionTabsViewPagerAdapter extends FragmentPagerAdapter {
 
     // Return the number of views available
     public int getCount(){
+//        Log.d("PAGEADAPTER", " size " + fragments.size());
         return fragments.size();
     }
 
@@ -44,6 +48,9 @@ public class ActionTabsViewPagerAdapter extends FragmentPagerAdapter {
 
             case HISTORY:
                 return UI_TAB_HISTORY;
+
+            case BOARD:
+                return UI_TAB_BOARD;
 
             default:
                 break;

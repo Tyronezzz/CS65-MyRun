@@ -5,6 +5,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".activity.MainActivity">
 
+    <item
+        android:id="@+id/action_refresh"
+        android:icon="@android:drawable/ic_menu_rotate"
+        android:title=""
+        app:showAsAction="always"
+        tools:ignore="AlwaysShowAction" />
+
     <group>
         <item
             android:id="@+id/action_settings"
@@ -16,8 +23,5 @@
             android:title="@string/edit_profile"
             app:showAsAction="never" />
     </group>
-
-
-    <!--android:icon="@drawable/crop__ic_done"-->
 
 </menu>

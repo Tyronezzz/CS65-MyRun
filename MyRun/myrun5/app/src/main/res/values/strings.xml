@@ -70,6 +70,7 @@
     <string name="test">Test</string>
     <string name="save">SAVE</string>
     <string name="title_activity_maps">Map</string>
+    <string name="board">Board</string>
 
 
 </resources>

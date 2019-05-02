@@ -26,6 +26,9 @@ public class ExerciseEntry implements Serializable {
     private String climb;
     private String privacy;
     private String gps;
+    private boolean deleted = false;
+    private boolean synced = false;
+    private boolean boarded = false;
 
 
     public ExerciseEntry(long id, String input_type, String activity_type, String date_time, String duration,
@@ -109,4 +112,27 @@ public class ExerciseEntry implements Serializable {
         return privacy;
     }
 
+    public boolean getDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
+    }
+
+    public boolean getSynced() {
+        return synced;
+    }
+
+    public void setSynced(boolean synced) {
+        this.synced = synced;
+    }
+
+    public boolean getBoarded() {
+        return boarded;
+    }
+
+    public void setBoarded(boolean boarded) {
+        this.boarded = boarded;
+    }
 }

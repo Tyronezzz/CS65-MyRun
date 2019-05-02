@@ -13,4 +13,10 @@
         android:title="@string/history"
         android:iconTint="@color/design_default_color_primary_dark"/>
 
+    <item
+        android:id="@+id/navigation_board"
+        android:icon="@android:drawable/ic_menu_today"
+        android:title="@string/board"
+        android:iconTint="@color/design_default_color_primary_dark"/>
+
 </menu>

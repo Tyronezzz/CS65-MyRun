@@ -18,6 +18,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.example.myrun5.fragment.main_board;
 import com.example.myrun5.utils.ActionTabsViewPagerAdapter;
 import com.example.myrun5.R;
 import com.example.myrun5.fragment.main_history;
@@ -40,10 +41,12 @@ public class MainActivity extends AppCompatActivity {
         Toolbar myToolbar = findViewById(R.id.main_toolbar);
         setSupportActionBar(myToolbar);
 
+
         ArrayList<Fragment> fragments = new ArrayList<>();     // add fragments to the mainactivity
         main_start ms = new main_start();
         fragments.add(ms);
         fragments.add(new main_history());
+        fragments.add(new main_board());
 
         viewPager = findViewById(R.id.viewpager);
         ActionTabsViewPagerAdapter myViewPageAdapter = new ActionTabsViewPagerAdapter(this.getSupportFragmentManager(), fragments);
@@ -89,18 +92,33 @@ public class MainActivity extends AppCompatActivity {
         Fragment fragment;
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+
+            Toolbar myToolbar = findViewById(R.id.main_toolbar);
+            Menu nav_Menu = myToolbar.getMenu();
+
+
             switch (item.getItemId()) {
                 case R.id.navigation_start:            // click "start" and start fragment
                     fragment = new main_start();
                     idx=0;
                     viewPager.setCurrentItem(0);
+                    nav_Menu.findItem(R.id.action_refresh).setVisible(false);
                     return true;
 
                 case R.id.navigation_history:        // click "history" and start fragment
                     fragment = new main_history();
                     idx=1;
                     viewPager.setCurrentItem(1);
+                    nav_Menu.findItem(R.id.action_refresh).setVisible(true);
                     return true;
+
+                case R.id.navigation_board:           // click "board" and start fragment
+                    fragment = new main_history();
+                    idx=2;
+                    viewPager.setCurrentItem(2);
+                    nav_Menu.findItem(R.id.action_refresh).setVisible(true);
+                    return true;
+
             }
             return false;
         }
@@ -111,6 +129,11 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {            // Inflate the menu
         getMenuInflater().inflate(R.menu.mainactivity_menu, menu);
+
+        Toolbar myToolbar = findViewById(R.id.main_toolbar);
+        Menu nav_Menu = myToolbar.getMenu();
+        nav_Menu.findItem(R.id.action_refresh).setVisible(false);
+
         return true;
     }
 
@@ -128,6 +151,11 @@ public class MainActivity extends AppCompatActivity {
                 intent = new Intent(MainActivity.this, RegisterActivity.class);
                 intent.putExtra("PARENTNAME", "MAIN");
                 startActivity(intent);
+                return true;
+
+            case R.id.action_refresh:
+                // get the data from firebase
+
                 return true;
 
             default:

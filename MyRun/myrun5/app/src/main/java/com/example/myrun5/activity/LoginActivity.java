@@ -266,6 +266,7 @@ public class LoginActivity extends AppCompatActivity {
                         } catch(Exception e) {
                             e.printStackTrace();
                         }
+                        myRef.setValue("Hello, World!");
 
                     }
 
