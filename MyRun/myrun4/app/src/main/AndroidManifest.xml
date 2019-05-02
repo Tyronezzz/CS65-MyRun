@@ -42,11 +42,9 @@
             android:name=".activity.MapsActivity"
             android:label="@string/title_activity_maps"
             android:parentActivityName=".activity.MainActivity"
-            android:launchMode="singleTop"/>
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"/>
 
-        <!-- android:name=".ProfileActivity" -->
-        <!-- android:label="Profile" -->
-        <!-- android:parentActivityName=".MainActivity" /> -->
         <activity
             android:name=".activity.Settings"
             android:label="Settings"
