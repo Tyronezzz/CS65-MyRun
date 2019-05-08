@@ -76,6 +76,10 @@ public class ListAdapter extends ArrayAdapter {
         exetry = new ArrayList<>(items);
     }
 
+    public void appendEntry(ExerciseEntry items) {
+        exetry.add(items);
+    }
+
 
 
     @Override

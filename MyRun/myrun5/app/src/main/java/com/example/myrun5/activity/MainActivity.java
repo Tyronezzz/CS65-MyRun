@@ -156,11 +156,12 @@ public class MainActivity extends AppCompatActivity {
             case R.id.action_refresh:
                 // get the data from firebase
 
-                return true;
+                return false;
 
-            default:
-                return super.onOptionsItemSelected(item);
+//            default:
+//                return super.onOptionsItemSelected(item);
         }
+        return false;
     }
 
     @Override

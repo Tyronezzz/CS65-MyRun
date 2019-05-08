@@ -672,7 +672,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             {
                 entry = new ExerciseEntry(0, tmp_input, activity_type,date + " " + strTime, String.format("%.2f", duration) + " mins",
                         String.format("%.2f", totalDis) + " m", null, String.format("%.2f", avg_speed) + " m/s",
-                        String.format("%.2f", calories) + " cal", String.format("%.2f", climbed) + " m", null, null, null, gpsStr);
+                        String.format("%.2f", calories) + " cal", String.format("%.2f", climbed) + " m", null, null, null, gpsStr,
+                        "false", "false","false");
 
             }
 
@@ -680,7 +681,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             {
                 entry = new ExerciseEntry(0, "GPS", activity_type,date + " " + strTime, String.format("%.2f", duration) + " mins",
                         String.format("%.2f", totalDis) + " mile", null, String.format("%.2f", avg_speed) + " mile/s",
-                        String.format("%.2f", calories) + " cal", String.format("%.2f", climbed) + " mile", null, null, null, gpsStr);
+                        String.format("%.2f", calories) + " cal", String.format("%.2f", climbed) + " mile", null, null, null, gpsStr,
+                        "false", "false","false");
             }
 
 

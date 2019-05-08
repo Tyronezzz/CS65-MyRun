@@ -37,10 +37,6 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-import java.io.UnsupportedEncodingException;
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -89,7 +85,7 @@ public class Manal_Entry extends AppCompatActivity{
         mFirebaseAuth = FirebaseAuth.getInstance();
         mFirebaseUser = mFirebaseAuth.getCurrentUser();
         mDatabase = FirebaseDatabase.getInstance().getReference();
-        mDatabase = FirebaseDatabase.getInstance().getReference();
+//        mDatabase = FirebaseDatabase.getInstance().getReference();
 
 
 
@@ -314,6 +310,7 @@ public class Manal_Entry extends AppCompatActivity{
                 }
                 return true;
 
+
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -336,30 +333,9 @@ public class Manal_Entry extends AppCompatActivity{
         protected Void doInBackground(Void... voids) {
 
             ExerciseEntry entry = new ExerciseEntry(0, "Manual", mResults[0], mResults[1]+" "+mResults[2],
-                    mResults[3], mResults[4],null, null, mResults[5], null, mResults[6], mResults[7], null, null);
-//            mysqlhelper.insertEntry(entry);                    // insert an entry
-
-
-
-
-            String email = "ty@d.com";
-            try {
-                mDatabase.child("user_" +  SHA1(email)).child("exercise_entries").child(String.valueOf(entry.getId())).setValue(entry)
-                        .addOnCompleteListener(Manal_Entry.this, task -> {
-                            if(task.isSuccessful()){
-                                // Insert is done!
-                                Log.d(TAG, "Insert suc");
-                            }else{
-                                // Failed
-                                if(task.getException() != null)
-                                    Log.w(TAG, task.getException().getMessage());
-                            }
-                        });
-            } catch (NoSuchAlgorithmException e) {
-                e.printStackTrace();
-            } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
-            }
+                    mResults[3], mResults[4],null, null, mResults[5], null, mResults[6], mResults[7], null, null,
+                    "false", "false","false");
+            long rowId = mysqlhelper.insertEntry(entry);                    // insert an entry
 
             return null;
         }
@@ -384,26 +360,7 @@ public class Manal_Entry extends AppCompatActivity{
 
 
 
-    private static String convertToHex(byte[] data) {
-        StringBuilder buf = new StringBuilder();
-        for (byte b : data) {
-            int halfbyte = (b >>> 4) & 0x0F;
-            int two_halfs = 0;
-            do {
-                buf.append((0 <= halfbyte) && (halfbyte <= 9) ? (char) ('0' + halfbyte) : (char) ('a' + (halfbyte - 10)));
-                halfbyte = b & 0x0F;
-            } while (two_halfs++ < 1);
-        }
-        return buf.toString();
-    }
 
-    public static String SHA1(String text) throws NoSuchAlgorithmException, UnsupportedEncodingException {
-        MessageDigest md = MessageDigest.getInstance("SHA-1");
-        byte[] textBytes = text.getBytes(StandardCharsets.ISO_8859_1);
-        md.update(textBytes, 0, textBytes.length);
-        byte[] sha1hash = md.digest();
-        return convertToHex(sha1hash);
-    }
 
 
 }

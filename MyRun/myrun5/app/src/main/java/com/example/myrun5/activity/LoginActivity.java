@@ -29,6 +29,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -79,15 +80,15 @@ public class LoginActivity extends AppCompatActivity {
         // register
         mregister_button.setOnClickListener(v -> {
             try {
+//
+//                Intent k = new Intent(LoginActivity.this, MainActivity.class);     //jump to mainactivity
+//                startActivity(k);
 
-                Intent k = new Intent(LoginActivity.this, MainActivity.class);     //jump to mainactivity
-                startActivity(k);
 
 
-
-//                    Intent k = new Intent(LoginActivity.this, RegisterActivity.class);
-//                    k.putExtra("PARENTNAME", "LOGIN");
-//                    startActivity(k);
+                    Intent k = new Intent(LoginActivity.this, RegisterActivity.class);
+                    k.putExtra("PARENTNAME", "LOGIN");
+                    startActivity(k);
 
 
 //                mAuth.createUserWithEmailAndPassword(mEmailView.getText().toString(), mPasswordView.getText().toString())
@@ -258,7 +259,8 @@ public class LoginActivity extends AppCompatActivity {
                 {
                     if (task.isSuccessful())
                     {
-//                        FirebaseUser user = getCurrentUser();
+                        FirebaseUser user = mAuth.getCurrentUser();
+                        Log.d(TAG, user.getEmail() + " "+ user.getUid());
                         finish();
                         try {
                             Intent k = new Intent(LoginActivity.this, MainActivity.class);     //jump to mainactivity

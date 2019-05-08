@@ -69,8 +69,9 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
             + KEY_PRIVACY
             + " TEXT, "
             + KEY_GPS_DATA
-            + " BLOB "
-            + ");";
+            + " BLOB, "
+            + "synced TEXT, deleted TEXT, boarded TEXT " +
+            ");";
     private static final String TAG = "mysqlitehelper";
 
 
@@ -94,13 +95,12 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
 
 
     // Insert a item given each column value
-    public void insertEntry(ExerciseEntry entry) {
+    public long insertEntry(ExerciseEntry entry) {
 
         db = getWritableDatabase();
         ContentValues values = new ContentValues();
 
         Log.d(TAG, "input type " + entry.getInputType());
-
 
         values.put(MySQLiteHelper.KEY_INPUT_TYPE, entry.getInputType());
         values.put(MySQLiteHelper.KEY_ACTIVITY_TYPE, entry.getActType());
@@ -116,6 +116,9 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         values.put(MySQLiteHelper.KEY_PRIVACY, entry.getPrivacy());
         values.put(MySQLiteHelper.KEY_GPS_DATA, entry.getGps());
 
+        values.put("synced", "false");
+        values.put("deleted", "false");
+        values.put("boarded", "false");
 
         long newRowId = db.insert(TABLE_NAME_ENTRIES, null, values);
         if(newRowId == -1)
@@ -127,7 +130,20 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         db.close();
         this.close();
 
+        return newRowId;
+
     }
+
+    public void updateSyn()
+    {
+        db = getWritableDatabase();
+        ContentValues values = new ContentValues();
+
+        values.put("synced", "true");
+        db.update(TABLE_NAME_ENTRIES, values, "synced = ?",new String[] { "false" });
+    }
+
+
 
 
     // Remove an entry by giving its index
@@ -141,35 +157,68 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
     }
 
 
-//    public void deleteAll() {
-//        db = getWritableDatabase();
-//
-//        Log.d(TAG, "delete all = ");
-//        db.delete(TABLE_NAME_ENTRIES, null, null);
-//        db.close();
-//        this.close();
-//    }
 
 
-//     Query a specific entry by its index.
-//    public void fetchEntryByIndex(long rowId) {
-//
-//        db = getReadableDatabase();
-////        String sortOrder = FeedEntry.COLUMN_NAME_SUBTITLE + " DESC";
-//        String selection = KEY_ROWID + " LIKE ?";
-//        String[] selectionArgs = { String.valueOf(rowId) };
-//
-//        Cursor cursor = db.query(
-//                TABLE_NAME_ENTRIES,   // The table to query
-//                null,             // The array of columns to return (pass null to get all)
-//                selection,              // The columns for the WHERE clause
-//                selectionArgs,          // The values for the WHERE clause
-//                null,                   // don't group the rows
-//                null,                   // don't filter by row groups
-//                null               // The sort order
-//        );
-//
-//    }
+    // Query the entire table, return false rows
+    public ArrayList<ExerciseEntry> fetchSynFalseEntries() {
+        ArrayList<ExerciseEntry> entries = new ArrayList<>();
+        db = getReadableDatabase();
+        String sortOrder = null;      //KEY_DATE_TIME + " ASC";
+
+        String selection = "synced LIKE ?";
+        String[] selectionArgs = { String.valueOf(false) };
+
+
+        Cursor cursor = db.query(
+                TABLE_NAME_ENTRIES,   // The table to query
+                null,             // The array of columns to return (pass null to get all)
+                selection,              // The columns for the WHERE clause
+                selectionArgs,          // The values for the WHERE clause
+                null,                   // don't group the rows
+                null,                   // don't filter by row groups
+                sortOrder               // The sort order
+        );
+
+        cursor.moveToFirst();
+        while (!cursor.isAfterLast()) {     // move cursor to get each column
+
+            long id = cursor.getLong(0);
+            String input_type = cursor.getString(1);
+            String act_name = cursor.getString(2);
+            String date_time = cursor.getString(3);
+            String duration = cursor.getString(4);
+            String distance = cursor.getString(5);
+            String avg_pace = cursor.getString(6);
+            String avg_speed = cursor.getString(7);
+            String cal =cursor.getString(8);
+            String climb =cursor.getString(9);
+            String heartrate = cursor.getString(10);
+            String comment = cursor.getString(11);
+            String privacy = cursor.getString(12);
+            String gps = cursor.getString(13);
+
+            String syn = cursor.getString(14);
+            String deleted = cursor.getString(15);
+            String boarded = cursor.getString(16);
+
+
+            ExerciseEntry entry = new ExerciseEntry(id,input_type, act_name, date_time, duration,
+                    distance,avg_pace, avg_speed, cal, climb,
+                    heartrate, comment, privacy, gps, syn, deleted, boarded);
+
+            entries.add(entry);
+            cursor.moveToNext();
+        }
+
+        db.close();
+        cursor.close();       //close the cursor
+        return entries;
+    }
+
+
+
+
+
 
     // Query the entire table, return all rows
     public ArrayList<ExerciseEntry> fetchEntries() {
@@ -206,11 +255,13 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
             String privacy = cursor.getString(12);
             String gps = cursor.getString(13);
 
-            Log.d(TAG, "get gps " + gps);
+            String syn = cursor.getString(14);
+            String deleted = cursor.getString(15);
+            String boarded = cursor.getString(16);
 
             ExerciseEntry entry = new ExerciseEntry(id,input_type, act_name, date_time, duration,
                     distance,avg_pace, avg_speed, cal, climb,
-                   heartrate, comment, privacy, gps);
+                   heartrate, comment, privacy, gps, syn, deleted, boarded);
 
             entries.add(entry);
             cursor.moveToNext();
@@ -221,5 +272,36 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         return entries;
     }
 
+
+
+    //    public void deleteAll() {
+//        db = getWritableDatabase();
+//
+//        Log.d(TAG, "delete all = ");
+//        db.delete(TABLE_NAME_ENTRIES, null, null);
+//        db.close();
+//        this.close();
+//    }
+
+
+//     Query a specific entry by its index.
+//    public void fetchEntryByIndex(long rowId) {
+//
+//        db = getReadableDatabase();
+////        String sortOrder = FeedEntry.COLUMN_NAME_SUBTITLE + " DESC";
+//        String selection = KEY_ROWID + " LIKE ?";
+//        String[] selectionArgs = { String.valueOf(rowId) };
+//
+//        Cursor cursor = db.query(
+//                TABLE_NAME_ENTRIES,   // The table to query
+//                null,             // The array of columns to return (pass null to get all)
+//                selection,              // The columns for the WHERE clause
+//                selectionArgs,          // The values for the WHERE clause
+//                null,                   // don't group the rows
+//                null,                   // don't filter by row groups
+//                null               // The sort order
+//        );
+//
+//    }
 
 }

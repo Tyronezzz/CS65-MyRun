@@ -26,14 +26,14 @@ public class ExerciseEntry implements Serializable {
     private String climb;
     private String privacy;
     private String gps;
-    private boolean deleted = false;
-    private boolean synced = false;
-    private boolean boarded = false;
+    private String deleted;
+    private String synced;
+    private String boarded;
 
 
     public ExerciseEntry(long id, String input_type, String activity_type, String date_time, String duration,
                          String distance, String avg_page, String avg_speed, String calorie, String climb,
-                         String heart_rate, String comment, String privacy, String gps){
+                         String heart_rate, String comment, String privacy, String gps, String synced, String deleted, String boarded){
         this.id = id;
         this.input_type = input_type;
         this.activity_type = activity_type;
@@ -48,6 +48,9 @@ public class ExerciseEntry implements Serializable {
         this.comment = comment;
         this.privacy = privacy;
         this.gps = gps;
+        this.synced = synced;
+        this.deleted = deleted;
+        this.boarded = boarded;
 
     }
 
@@ -112,27 +115,27 @@ public class ExerciseEntry implements Serializable {
         return privacy;
     }
 
-    public boolean getDeleted() {
+    public String getDeleted() {
         return deleted;
     }
 
     public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
+        this.deleted = String.valueOf(deleted);
     }
 
-    public boolean getSynced() {
+    public String getSynced() {
         return synced;
     }
 
     public void setSynced(boolean synced) {
-        this.synced = synced;
+        this.synced = String.valueOf(synced);
     }
 
-    public boolean getBoarded() {
+    public String getBoarded() {
         return boarded;
     }
 
     public void setBoarded(boolean boarded) {
-        this.boarded = boarded;
+        this.boarded = String.valueOf(boarded);
     }
 }
