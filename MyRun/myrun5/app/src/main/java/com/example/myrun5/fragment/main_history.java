@@ -90,7 +90,11 @@ public class main_history extends Fragment implements LoaderManager.LoaderCallba
             e.printStackTrace();
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+
+
 
 
         sharedPreferences = getContext().getSharedPreferences("profile", Context.MODE_PRIVATE);
@@ -331,6 +335,8 @@ public class main_history extends Fragment implements LoaderManager.LoaderCallba
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         // Do something that differs the Activity's menu here
         super.onCreateOptionsMenu(menu, inflater);
+        menu.findItem(R.id.action_refresh).setVisible(true);
+
     }
 
     @Override
@@ -343,8 +349,6 @@ public class main_history extends Fragment implements LoaderManager.LoaderCallba
 
                 // syn between local and cloud
                 // synced just false ones and flag all local synced to be true
-
-
                 Log.d(TAG, user.getEmail() + " "+ user.getUid());
 
                 MySQLiteHelper mysqlhelper = new MySQLiteHelper(getActivity());

@@ -31,10 +31,10 @@ public class ExerciseEntry implements Serializable {
     private String boarded;
 
 
-    public ExerciseEntry()
-    {
-
-    }
+//    public ExerciseEntry()
+//    {
+//
+//    }
 
     public ExerciseEntry(long id, String input_type, String activity_type, String date_time, String duration,
                          String distance, String avg_page, String avg_speed, String calorie, String climb,
@@ -120,27 +120,27 @@ public class ExerciseEntry implements Serializable {
         return privacy;
     }
 
-    public String getDeleted() {
-        return deleted;
-    }
-
-    public void setDeleted(String deleted) {
-        this.deleted = deleted;
-    }
-
-    public String getSynced() {
-        return synced;
-    }
-
-    public void setSynced(String synced) {
-        this.synced = synced;
-    }
-
-    public String getBoarded() {
-        return boarded;
-    }
-
-    public void setBoarded(String boarded) {
-        this.boarded = boarded;
-    }
+//    public String getDeleted() {
+//        return deleted;
+//    }
+//
+//    public void setDeleted(String deleted) {
+//        this.deleted = deleted;
+//    }
+//
+//    public String getSynced() {
+//        return synced;
+//    }
+//
+//    public void setSynced(String synced) {
+//        this.synced = synced;
+//    }
+//
+//    public String getBoarded() {
+//        return boarded;
+//    }
+//
+//    public void setBoarded(String boarded) {
+//        this.boarded = boarded;
+//    }
 }

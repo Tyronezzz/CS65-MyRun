@@ -41,7 +41,6 @@ public class MainActivity extends AppCompatActivity {
         Toolbar myToolbar = findViewById(R.id.main_toolbar);
         setSupportActionBar(myToolbar);
 
-
         ArrayList<Fragment> fragments = new ArrayList<>();     // add fragments to the mainactivity
         main_start ms = new main_start();
         fragments.add(ms);
@@ -109,21 +108,20 @@ public class MainActivity extends AppCompatActivity {
                     fragment = new main_history();
                     idx=1;
                     viewPager.setCurrentItem(1);
-                    nav_Menu.findItem(R.id.action_refresh).setVisible(true);
+//                    nav_Menu.findItem(R.id.action_refresh).setVisible(true);
                     return true;
 
                 case R.id.navigation_board:           // click "board" and start fragment
                     fragment = new main_history();
                     idx=2;
                     viewPager.setCurrentItem(2);
-                    nav_Menu.findItem(R.id.action_refresh).setVisible(true);
+//                    nav_Menu.findItem(R.id.action_refresh).setVisible(true);
                     return true;
 
             }
             return false;
         }
     };
-
 
 
     @Override
@@ -161,7 +159,7 @@ public class MainActivity extends AppCompatActivity {
 //            default:
 //                return super.onOptionsItemSelected(item);
         }
-        return false;
+        return true;
     }
 
     @Override

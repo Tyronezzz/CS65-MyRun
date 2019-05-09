@@ -13,6 +13,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import com.example.myrun5.fragment.main_board;
 import com.example.myrun5.model.ExerciseEntry;
 
 import java.util.ArrayList;
@@ -95,7 +96,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
 
 
     // Insert a item given each column value
-    public long insertEntry(ExerciseEntry entry) {
+    public void insertEntry(ExerciseEntry entry) {
 
         db = getWritableDatabase();
         ContentValues values = new ContentValues();
@@ -129,9 +130,6 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
 
         db.close();
         this.close();
-
-        return newRowId;
-
     }
 
     public void updateSyn()
@@ -141,6 +139,16 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
 
         values.put("synced", "true");
         db.update(TABLE_NAME_ENTRIES, values, "synced = ?",new String[] { "false" });
+    }
+
+
+    public void updateBoard()
+    {
+        db = getWritableDatabase();
+        ContentValues values = new ContentValues();
+
+        values.put("boarded", "true");
+        db.update(TABLE_NAME_ENTRIES, values, "boarded = ?",new String[] { "false" });
     }
 
 
@@ -300,15 +308,54 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
     }
 
 
+    public ArrayList<main_board.boardEntry> getNotBoardEntry()
+    {
+        ArrayList<main_board.boardEntry> entries = new ArrayList<>();
+        db = getReadableDatabase();
 
-        public void deleteAll() {
-        db = getWritableDatabase();
+        String selection = "boarded LIKE ?";
+        String[] selectionArgs = { String.valueOf(false) };
 
-        Log.d(TAG, "delete all = ");
-        db.delete(TABLE_NAME_ENTRIES, null, null);
+
+        Cursor cursor = db.query(
+                TABLE_NAME_ENTRIES,   // The table to query
+                null,             // The array of columns to return (pass null to get all)
+                selection,              // The columns for the WHERE clause
+                selectionArgs,          // The values for the WHERE clause
+                null,                   // don't group the rows
+                null,                   // don't filter by row groups
+                null               // The sort order
+        );
+
+        cursor.moveToFirst();
+        while (!cursor.isAfterLast()) {     // move cursor to get each column
+            String input_type = cursor.getString(1);
+            String act_name = cursor.getString(2);
+            String date_time = cursor.getString(3);
+            String duration = cursor.getString(4);
+            String distance = cursor.getString(5);
+
+            main_board.boardEntry entry = new main_board.boardEntry(input_type, act_name, date_time, duration, null, distance);
+
+            entries.add(entry);
+            cursor.moveToNext();
+        }
+
         db.close();
-        this.close();
+        cursor.close();       //close the cursor
+        return entries;
     }
+
+
+
+//        public void deleteAll() {
+//        db = getWritableDatabase();
+//
+//        Log.d(TAG, "delete all = ");
+//        db.delete(TABLE_NAME_ENTRIES, null, null);
+//        db.close();
+//        this.close();
+//    }
 
 
 //     Query a specific entry by its index.

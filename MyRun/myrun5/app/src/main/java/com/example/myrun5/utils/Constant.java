@@ -1,13 +1,11 @@
 package com.example.myrun5.utils;
 
-import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 
 public class Constant {
 
-    private String userEmail;
+//    private String userEmail;
     public static String BaseUrl = "http://129.170.214.246:5000";
 
     private static String convertToHex(byte[] data) {
@@ -23,7 +21,7 @@ public class Constant {
         return buf.toString();
     }
 
-    public static String SHA1(String text) throws NoSuchAlgorithmException, UnsupportedEncodingException {
+    public static String SHA1(String text) throws Exception {
         MessageDigest md = MessageDigest.getInstance("SHA-1");
         byte[] textBytes = text.getBytes(StandardCharsets.ISO_8859_1);
         md.update(textBytes, 0, textBytes.length);
@@ -31,12 +29,4 @@ public class Constant {
         return convertToHex(sha1hash);
     }
 
-
-    public String getUserEmail() {
-        return userEmail;
-    }
-
-    public void setUserEmail(String userEmail) {
-        this.userEmail = userEmail;
-    }
 }

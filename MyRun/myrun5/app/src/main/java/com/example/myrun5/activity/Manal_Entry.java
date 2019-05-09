@@ -202,6 +202,8 @@ public class Manal_Entry extends AppCompatActivity{
                 e.printStackTrace();
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
 
