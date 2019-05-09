@@ -30,7 +30,6 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 
@@ -48,7 +47,6 @@ public class LoginActivity extends AppCompatActivity {
     SharedPreferences sharedPreferences;
     private FirebaseAuth mAuth;
     private FirebaseDatabase mDatabase;
-    private DatabaseReference myRef;
 
 
     @Override
@@ -68,11 +66,10 @@ public class LoginActivity extends AppCompatActivity {
         setSupportActionBar(mytoolbar);
 
         mAuth = FirebaseAuth.getInstance();
-
-        // Write a message to the database
         mDatabase = FirebaseDatabase.getInstance();
-        myRef = mDatabase.getReference("message");
 
+        mEmailView.setText("ty@d.com");
+        mPasswordView.setText("111111");
 
 
         // log in
@@ -84,43 +81,9 @@ public class LoginActivity extends AppCompatActivity {
 //                Intent k = new Intent(LoginActivity.this, MainActivity.class);     //jump to mainactivity
 //                startActivity(k);
 
-
-
                     Intent k = new Intent(LoginActivity.this, RegisterActivity.class);
                     k.putExtra("PARENTNAME", "LOGIN");
                     startActivity(k);
-
-
-//                mAuth.createUserWithEmailAndPassword(mEmailView.getText().toString(), mPasswordView.getText().toString())
-//                        .addOnCompleteListener(LoginActivity.this, new OnCompleteListener<AuthResult>() {
-//                            @Override
-//                            public void onComplete(@NonNull Task<AuthResult> task) {
-//                                if (task.isSuccessful()) {
-//                                    // Sign in success, update UI with the signed-in user's information
-//                                    Log.d(TAG, "createUserWithEmail:success");
-//                                    FirebaseUser user = mAuth.getCurrentUser();
-////                                    Log.d(TAG, "createUserWithEmail:failure", task.getException());
-//                                    Toast.makeText(LoginActivity.this, "Authentication worked.",
-//                                            Toast.LENGTH_LONG).show();
-//                                    //updateUI(user);
-//                                    //
-//                                    myRef.setValue("Hello, World!");
-//
-//                                } else {
-//                                    // If sign in fails, display a message to the user.
-//                                    Log.w(TAG, "createUserWithEmail:failure", task.getException());
-//                                    Toast.makeText(LoginActivity.this, "Authentication failed: "
-//                                                    + task.getException().getMessage(),
-//                                            Toast.LENGTH_LONG).show();
-//                                    //updateUI(null);
-//                                }
-//
-//
-//                            }
-//                        });
-
-
-
 
             } catch(Exception e) {
                 e.printStackTrace();
@@ -131,7 +94,6 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        Log.d(TAG, "onSaveInstanceState333");
     }
 
 
@@ -268,7 +230,6 @@ public class LoginActivity extends AppCompatActivity {
                         } catch(Exception e) {
                             e.printStackTrace();
                         }
-                        myRef.setValue("Hello, World!");
 
                     }
 

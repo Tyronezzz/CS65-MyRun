@@ -339,9 +339,6 @@ public class RegisterActivity extends AppCompatActivity {
 
 
 
-
-
-
             sharedPreferences = getSharedPreferences("profile", Context.MODE_PRIVATE);       //store the profile in the sharedpreference
             editor = sharedPreferences.edit();
             editor.clear();

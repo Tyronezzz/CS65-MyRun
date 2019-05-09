@@ -74,6 +74,7 @@ public class ListAdapter extends ArrayAdapter {
 
     public void addall(List<ExerciseEntry> items) {
         exetry = new ArrayList<>(items);
+        Log.d(TAG, "hererere " + items.size());
     }
 
     public void appendEntry(ExerciseEntry items) {
@@ -231,6 +232,8 @@ public class ListAdapter extends ArrayAdapter {
                     tmpdis = String.valueOf(Double.parseDouble(substr[0])*1.609) + " kms";
                 }
 
+
+                Log.d(TAG, "input typr " + exetry.get(position).getInputType());
 
                 if(!exetry.get(position).getInputType().equals("Manual"))       // gps & automatic
                 {

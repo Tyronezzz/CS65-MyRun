@@ -144,6 +144,37 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
     }
 
 
+    public void updateFBtoSql(ExerciseEntry entry, long id)
+    {
+        db = getWritableDatabase();
+        ContentValues values = new ContentValues();
+
+        Log.d(TAG, "input type " + entry.getInputType());
+
+        values.put(MySQLiteHelper.KEY_INPUT_TYPE, entry.getInputType());
+        values.put(MySQLiteHelper.KEY_ACTIVITY_TYPE, entry.getActType());
+        values.put(MySQLiteHelper.KEY_DATE_TIME, entry.getDateTime());
+        values.put(MySQLiteHelper.KEY_DURATION, entry.getDuration());
+        values.put(MySQLiteHelper.KEY_DISTANCE, entry.getDistance());
+        values.put(MySQLiteHelper.KEY_AVG_PACE, entry.getAvgPace());
+        values.put(MySQLiteHelper.KEY_AVG_SPEED, entry.getAvgSpeed());
+        values.put(MySQLiteHelper.KEY_CALORIES, entry.getCalorie());
+        values.put(MySQLiteHelper.KEY_CLIMB, entry.getClimb());
+        values.put(MySQLiteHelper.KEY_HEARTRATE, entry.getHeartrate());
+        values.put(MySQLiteHelper.KEY_COMMENT, entry.getComment());
+        values.put(MySQLiteHelper.KEY_PRIVACY, entry.getPrivacy());
+        values.put(MySQLiteHelper.KEY_GPS_DATA, entry.getGps());
+        values.put("synced", "true");
+        values.put("deleted", "false");
+        values.put("boarded", "false");
+
+        int row = db.update(TABLE_NAME_ENTRIES, values, "_id = ?",new String[] { String.valueOf(id) });
+
+        Log.d(TAG, "commet " + entry.getComment() + "row " + row);
+
+
+    }
+
 
 
     // Remove an entry by giving its index
@@ -214,10 +245,6 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         cursor.close();       //close the cursor
         return entries;
     }
-
-
-
-
 
 
     // Query the entire table, return all rows

@@ -335,7 +335,7 @@ public class Manal_Entry extends AppCompatActivity{
             ExerciseEntry entry = new ExerciseEntry(0, "Manual", mResults[0], mResults[1]+" "+mResults[2],
                     mResults[3], mResults[4],null, null, mResults[5], null, mResults[6], mResults[7], null, null,
                     "false", "false","false");
-            long rowId = mysqlhelper.insertEntry(entry);                    // insert an entry
+            mysqlhelper.insertEntry(entry);                    // insert an entry
 
             return null;
         }
