@@ -31,10 +31,10 @@ public class ExerciseEntry implements Serializable {
     private String boarded;
 
 
-//    public ExerciseEntry()
-//    {
-//
-//    }
+    public ExerciseEntry()
+    {
+
+    }
 
     public ExerciseEntry(long id, String input_type, String activity_type, String date_time, String duration,
                          String distance, String avg_page, String avg_speed, String calorie, String climb,
@@ -72,52 +72,104 @@ public class ExerciseEntry implements Serializable {
         return activity_type;
     }
 
+    public void setActType(String activity_type) {
+        this.activity_type = activity_type;
+    }
+
     public String getDateTime() {
         return date_time;
+    }
+
+    public void setDateTime(String date_time) {
+        this.date_time = date_time;
     }
 
     public String getDuration() {
         return duration;
     }
 
+    public void setDuration(String duration) {
+        this.duration = duration;
+    }
+
     public String getDistance() {
         return distance;
+    }
+
+    public void setDistance(String distance) {
+        this.distance = distance;
     }
 
     public String getCalorie() {
         return calorie;
     }
 
+    public void setCalorie(String calorie) {
+        this.calorie = calorie;
+    }
+
     public String getHeartrate() {
         return heart_rate;
+    }
+
+    public void setHeartrate(String heart_rate) {
+        this.heart_rate = heart_rate;
     }
 
     public String getComment() {
         return comment;
     }
 
+    public void setComment(String comment) {
+        this.comment = comment;
+    }
+
     public String getInputType() {
         return input_type;
+    }
+
+    public void setInputType(String input_type) {
+        this.input_type = input_type;
     }
 
     public String getAvgPace() {
         return avg_pace;
     }
 
+    public void setAvgPace(String avg_pace) {
+        this.avg_pace = avg_pace;
+    }
+
     public String getAvgSpeed() {
         return avg_speed;
+    }
+
+    public void setAvgSpeed(String avg_speed) {
+        this.avg_speed = avg_speed;
     }
 
     public String getClimb() {
         return climb;
     }
 
+    public void setClimb(String climb) {
+        this.climb = climb;
+    }
+
     public String getGps() {
         return gps;
     }
 
+    public void setCGps(String gps) {
+        this.gps = gps;
+    }
+
     public String getPrivacy() {
         return privacy;
+    }
+
+    public void setPrivacy(String privacy) {
+        this.privacy = privacy;
     }
 
 //    public String getDeleted() {

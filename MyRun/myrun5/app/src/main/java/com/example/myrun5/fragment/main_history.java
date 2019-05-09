@@ -42,6 +42,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
@@ -95,37 +96,62 @@ public class main_history extends Fragment implements LoaderManager.LoaderCallba
         }
 
 
-
-
         sharedPreferences = getContext().getSharedPreferences("profile", Context.MODE_PRIVATE);
         editor = sharedPreferences.edit();
-        if(sharedPreferences.getString("usersEmail", "").equals(""))
+
+
+//        if(sharedPreferences.getString("usersEmail", "").equals(""))
         {
-            Log.d(TAG, "new user");
+
             editor.putString("usersEmail", user.getEmail());
             editor.apply();
 
 
-
-            DatabaseReference rootpath = mDatabase.child("user_"+EmailHash).child("exercise_entries");
-
-//            for()
-//            {
-//                rootpath.child()
-//
-//            }
-//
-//            long itemId = (long)dataSnapshot.child("id").getValue();
-//                MySQLiteHelper mysqlhelper = new MySQLiteHelper(getActivity());
-//                ExerciseEntry tmpEntry = new ExerciseEntry((long)dataSnapshot.child("id").getValue(), (String)dataSnapshot.child("inputType").getValue(), (String)dataSnapshot.child("actType").getValue(), (String)dataSnapshot.child("dateTime").getValue(),
-//                        (String)dataSnapshot.child("duration").getValue(), (String)dataSnapshot.child("distance").getValue(), null, (String)dataSnapshot.child("avgSpeed").getValue(), (String)dataSnapshot.child("calorie").getValue(),
-//                        (String)dataSnapshot.child("climb").getValue(), (String)dataSnapshot.child("heartrate").getValue(), (String)dataSnapshot.child("comment").getValue(), (String)dataSnapshot.child("privacy").getValue(),
-//                        (String)dataSnapshot.child("gps").getValue(), (String)dataSnapshot.child("synced").getValue(),(String) dataSnapshot.child("deleted").getValue(), (String)dataSnapshot.child("boarded").getValue());
-//
-//
-
-
             // load from FB to sql
+            Log.d(TAG,"emaillhs "+EmailHash);
+            mDatabase.child("user_" + EmailHash).child("exercise_entries").addListenerForSingleValueEvent(new ValueEventListener() {
+
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+
+                    Log.d(TAG,"fin: ");
+                    MySQLiteHelper mysqlhelper = new MySQLiteHelper(getContext());
+//                    mysqlhelper.deleteAll();
+
+                    for(DataSnapshot oneshot:dataSnapshot.getChildren())
+                    {
+
+                        ExerciseEntry oneentry = oneshot.getValue(ExerciseEntry.class);
+                        mysqlhelper.insertEntry(oneentry);      // update sql
+                    }
+
+                    //updateui
+                    mysqlhelper.updateSyn();
+                    ArrayList<ExerciseEntry> entryList = mysqlhelper.fetchEntries();
+                    mAdapter.addall(entryList);
+                    mAdapter.notifyDataSetChanged();
+                    exetry = entryList;
+
+                    //update board ? syn?
+
+
+
+
+
+
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+
+
+
+
+
+
         }
 
 
@@ -140,6 +166,7 @@ public class main_history extends Fragment implements LoaderManager.LoaderCallba
 
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, String s) {
+                Log.d(TAG, "add?");
 //                long itemId = (long)dataSnapshot.child("id").getValue();
 //                MySQLiteHelper mysqlhelper = new MySQLiteHelper(getActivity());
 //                ExerciseEntry tmpEntry = new ExerciseEntry((long)dataSnapshot.child("id").getValue(), (String)dataSnapshot.child("inputType").getValue(), (String)dataSnapshot.child("actType").getValue(), (String)dataSnapshot.child("dateTime").getValue(),
