@@ -18,6 +18,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Switch;
 import android.widget.TextView;
 
+import com.example.myrun5.fragment.main_board;
 import com.example.myrun5.model.ExerciseEntry;
 
 import java.util.ArrayList;
@@ -30,6 +31,7 @@ import androidx.annotation.NonNull;
 public class ListAdapter extends ArrayAdapter {
 
     private static final String TAG = "ListAdapter";
+    private static final int REQUEST_BOARD = 100;
     private Activity context;
     private String[] Options;
     private String[] Results;
@@ -39,6 +41,7 @@ public class ListAdapter extends ArrayAdapter {
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor editor;
     private List<ExerciseEntry> exetry;
+    private List<main_board.boardEntry> bentry;
     private int REQUEST_SETTING = 0;
 
 
@@ -71,14 +74,26 @@ public class ListAdapter extends ArrayAdapter {
         Log.d(TAG, "size " + exetry.size());
     }
 
+    public ListAdapter(Activity context, List<main_board.boardEntry> exetrys, int rc) {
+        super(context, R.layout.listview_board, exetrys);
+        this.context = context;
+        this.bentry = new ArrayList<>(exetrys);
+        this.request_code = rc;
+        Log.d(TAG, "size " + exetrys.size());
+    }
 
     public void addall(List<ExerciseEntry> items) {
         exetry = new ArrayList<>(items);
         Log.d(TAG, "hererere " + items.size());
     }
 
-    public void appendEntry(ExerciseEntry items) {
-        exetry.add(items);
+//    public void appendEntry(ExerciseEntry items) {
+//        exetry.add(items);
+//    }
+
+    public void setResults(String[] Result)
+    {
+        Results = Result;
     }
 
 
@@ -88,11 +103,10 @@ public class ListAdapter extends ArrayAdapter {
 
         int REQUEST_HISTORY = 3;
         if(request_code == REQUEST_HISTORY)
-        {
-
             return exetry.size();
-        }
 
+        else if(request_code == REQUEST_BOARD)
+            return bentry.size();
 
         else if(request_code == REQUEST_SETTING)
             return setting_option.length;
@@ -206,6 +220,25 @@ public class ListAdapter extends ArrayAdapter {
                 return rowView;
             }
 
+            else if(request_code == REQUEST_BOARD)           // board view
+            {
+                LayoutInflater inflater=context.getLayoutInflater();
+                @SuppressLint("InflateParams") View rowView = inflater.inflate(R.layout.listview_board, null,true);
+
+                TextView mTitleView = rowView.findViewById(R.id.board_title);
+                TextView mDateView = rowView.findViewById(R.id.board_datetime);
+                TextView mDuration = rowView.findViewById(R.id.board_des);
+                TextView mUsr =  rowView.findViewById(R.id.board_usr);
+
+
+                mTitleView.setText(bentry.get(position).getInputType() +": "+ bentry.get(position).getActType());     //this code sets the values of the objects to values from the arrays
+                mDateView.setText(bentry.get(position).getDateTime());
+                mDuration.setText(bentry.get(position).getDistance() + " kms, " + bentry.get(position).getDuration() + " mins");
+                mUsr.setText(bentry.get(position).getEmail());
+
+                return rowView;
+            }
+
             else
             {
 //                Log.d(TAG, "update history");
@@ -253,8 +286,6 @@ public class ListAdapter extends ArrayAdapter {
 
                     else if(km_mile_idx == 1 && substr[1].equals("kms"))  // km mile
                         tmpdis = String.format("%.2f", Double.parseDouble(substr[0])*0.62 < 0.01? 0: Double.parseDouble(substr[0])*0.62) + " kms";
-
-//                    Log.d(TAG, substr[0] + " here " + tmpdis);
                 }
 
                 

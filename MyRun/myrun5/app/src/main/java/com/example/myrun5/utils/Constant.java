@@ -8,6 +8,7 @@ import java.security.NoSuchAlgorithmException;
 public class Constant {
 
     private String userEmail;
+    public static String BaseUrl = "http://129.170.214.246:5000";
 
     private static String convertToHex(byte[] data) {
         StringBuilder buf = new StringBuilder();

@@ -7,6 +7,7 @@
 
 package com.example.myrun5.fragment;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -62,7 +63,8 @@ public class main_history extends Fragment implements LoaderManager.LoaderCallba
     private FirebaseAuth mAuth;
     private FirebaseUser user;
     private String EmailHash;
-
+    private SharedPreferences sharedPreferences;
+    private SharedPreferences.Editor editor;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
@@ -72,6 +74,7 @@ public class main_history extends Fragment implements LoaderManager.LoaderCallba
     }
 
 
+    @SuppressLint("CommitPrefEdits")
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -90,6 +93,42 @@ public class main_history extends Fragment implements LoaderManager.LoaderCallba
         }
 
 
+        sharedPreferences = getContext().getSharedPreferences("profile", Context.MODE_PRIVATE);
+        editor = sharedPreferences.edit();
+        if(sharedPreferences.getString("usersEmail", "").equals(""))
+        {
+            Log.d(TAG, "new user");
+            editor.putString("usersEmail", user.getEmail());
+            editor.apply();
+
+
+
+            DatabaseReference rootpath = mDatabase.child("user_"+EmailHash).child("exercise_entries");
+
+//            for()
+//            {
+//                rootpath.child()
+//
+//            }
+//
+//            long itemId = (long)dataSnapshot.child("id").getValue();
+//                MySQLiteHelper mysqlhelper = new MySQLiteHelper(getActivity());
+//                ExerciseEntry tmpEntry = new ExerciseEntry((long)dataSnapshot.child("id").getValue(), (String)dataSnapshot.child("inputType").getValue(), (String)dataSnapshot.child("actType").getValue(), (String)dataSnapshot.child("dateTime").getValue(),
+//                        (String)dataSnapshot.child("duration").getValue(), (String)dataSnapshot.child("distance").getValue(), null, (String)dataSnapshot.child("avgSpeed").getValue(), (String)dataSnapshot.child("calorie").getValue(),
+//                        (String)dataSnapshot.child("climb").getValue(), (String)dataSnapshot.child("heartrate").getValue(), (String)dataSnapshot.child("comment").getValue(), (String)dataSnapshot.child("privacy").getValue(),
+//                        (String)dataSnapshot.child("gps").getValue(), (String)dataSnapshot.child("synced").getValue(),(String) dataSnapshot.child("deleted").getValue(), (String)dataSnapshot.child("boarded").getValue());
+//
+//
+
+
+            // load from FB to sql
+        }
+
+
+
+
+
+
         mDatabase.child("user_"+EmailHash).child("exercise_entries").addChildEventListener(new ChildEventListener() {
             // When the app starts this callback will add all items to the listview
             // or if a new item is added the "add new item" button or if an item
@@ -97,17 +136,17 @@ public class main_history extends Fragment implements LoaderManager.LoaderCallba
 
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, String s) {
-                long itemId = (long)dataSnapshot.child("id").getValue();
-                MySQLiteHelper mysqlhelper = new MySQLiteHelper(getActivity());
-                ExerciseEntry tmpEntry = new ExerciseEntry((long)dataSnapshot.child("id").getValue(), (String)dataSnapshot.child("inputType").getValue(), (String)dataSnapshot.child("actType").getValue(), (String)dataSnapshot.child("dateTime").getValue(),
-                        (String)dataSnapshot.child("duration").getValue(), (String)dataSnapshot.child("distance").getValue(), null, (String)dataSnapshot.child("avgSpeed").getValue(), (String)dataSnapshot.child("calorie").getValue(),
-                        (String)dataSnapshot.child("climb").getValue(), (String)dataSnapshot.child("heartrate").getValue(), (String)dataSnapshot.child("comment").getValue(), (String)dataSnapshot.child("privacy").getValue(),
-                        (String)dataSnapshot.child("gps").getValue(), (String)dataSnapshot.child("synced").getValue(),(String) dataSnapshot.child("deleted").getValue(), (String)dataSnapshot.child("boarded").getValue());
-
-                mysqlhelper.insertEntry(tmpEntry);
-
-                mAdapter.addall(mysqlhelper.fetchEntries());
-                mAdapter.notifyDataSetChanged();
+//                long itemId = (long)dataSnapshot.child("id").getValue();
+//                MySQLiteHelper mysqlhelper = new MySQLiteHelper(getActivity());
+//                ExerciseEntry tmpEntry = new ExerciseEntry((long)dataSnapshot.child("id").getValue(), (String)dataSnapshot.child("inputType").getValue(), (String)dataSnapshot.child("actType").getValue(), (String)dataSnapshot.child("dateTime").getValue(),
+//                        (String)dataSnapshot.child("duration").getValue(), (String)dataSnapshot.child("distance").getValue(), null, (String)dataSnapshot.child("avgSpeed").getValue(), (String)dataSnapshot.child("calorie").getValue(),
+//                        (String)dataSnapshot.child("climb").getValue(), (String)dataSnapshot.child("heartrate").getValue(), (String)dataSnapshot.child("comment").getValue(), (String)dataSnapshot.child("privacy").getValue(),
+//                        (String)dataSnapshot.child("gps").getValue(), (String)dataSnapshot.child("synced").getValue(),(String) dataSnapshot.child("deleted").getValue(), (String)dataSnapshot.child("boarded").getValue());
+//
+//                mysqlhelper.insertEntry(tmpEntry);
+//
+//                mAdapter.addall(mysqlhelper.fetchEntries());
+//                mAdapter.notifyDataSetChanged();
             }
 
             @Override
@@ -205,6 +244,7 @@ public class main_history extends Fragment implements LoaderManager.LoaderCallba
         mLoader = getLoaderManager();       //  getSupportLoaderManager
         mLoader.initLoader(ALL_EXERCISE_LOADER_ID, null, this).forceLoad();
         lc = this;
+
     }
 
 
@@ -277,9 +317,6 @@ public class main_history extends Fragment implements LoaderManager.LoaderCallba
             MySQLiteHelper mysqlhelper = new MySQLiteHelper(getContext());
             mysqlhelper.removeEntry(index);
 
-
-            SharedPreferences sharedPreferences = getContext().getSharedPreferences("profile", Context.MODE_PRIVATE);
-            SharedPreferences.Editor editor = sharedPreferences.edit();
             String arrlist = sharedPreferences.getString("deleteIndexList", "");
 
             arrlist = arrlist + ";" + String.valueOf(index);

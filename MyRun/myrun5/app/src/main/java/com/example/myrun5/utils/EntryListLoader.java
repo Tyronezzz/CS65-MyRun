@@ -34,6 +34,7 @@ public class EntryListLoader extends AsyncTaskLoader<List<ExerciseEntry>> {
     public ArrayList<ExerciseEntry> loadInBackground() {
 
         Log.d("loader ", "loader here");
+//        dataSource.deleteAll();
         return dataSource.fetchEntries();       // fetch all entries
 
     }

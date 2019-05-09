@@ -14,6 +14,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.LoaderManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -32,11 +34,17 @@ import com.example.myrun5.MySQLiteHelper;
 import com.example.myrun5.R;
 import com.example.myrun5.fragment.main_history;
 import com.example.myrun5.model.ExerciseEntry;
+import com.example.myrun5.utils.Constant;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.io.UnsupportedEncodingException;
+import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -59,7 +67,7 @@ public class Manal_Entry extends AppCompatActivity{
     private FirebaseUser mFirebaseUser;
     private DatabaseReference mDatabase;
     private String mUserId;
-//    private ListAdapter mAdapter;
+    private ListAdapter la_history;
 
     ListView mhisView;
     SharedPreferences sharedPreferences;
@@ -85,8 +93,6 @@ public class Manal_Entry extends AppCompatActivity{
         mFirebaseAuth = FirebaseAuth.getInstance();
         mFirebaseUser = mFirebaseAuth.getCurrentUser();
         mDatabase = FirebaseDatabase.getInstance().getReference();
-//        mDatabase = FirebaseDatabase.getInstance().getReference();
-
 
 
 
@@ -130,10 +136,73 @@ public class Manal_Entry extends AppCompatActivity{
 
             mResults[4] = tmpdis;
 
-            final ListAdapter la_history = new ListAdapter(this, mOptions, mResults, 9);        // set up the listadapter
+            la_history = new ListAdapter(this, mOptions, mResults, 9);        // set up the listadapter
             ListView mlistView = findViewById(R.id.manual_listview);
             mlistView.setAdapter(la_history);
             mlistView.setEnabled(false);
+
+
+            try {
+                mDatabase.child("user_"+ Constant.SHA1(mFirebaseUser.getEmail())).child("exercise_entries").addChildEventListener(new ChildEventListener() {
+                    // When the app starts this callback will add all items to the listview
+                    // or if a new item is added the "add new item" button or if an item
+                    // has been added to via the console
+
+                    @Override
+                    public void onChildAdded(@NonNull DataSnapshot dataSnapshot, String s) {
+
+                    }
+
+                    @Override
+                    public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                        long itemId = (long)dataSnapshot.child("id").getValue();
+
+                        MySQLiteHelper mysqlhelper = new MySQLiteHelper(getApplicationContext());
+
+                        ExerciseEntry tmpEntry = new ExerciseEntry((long)dataSnapshot.child("id").getValue(), (String)dataSnapshot.child("inputType").getValue(), (String)dataSnapshot.child("actType").getValue(), (String)dataSnapshot.child("dateTime").getValue(),
+                                        (String)dataSnapshot.child("duration").getValue(), (String)dataSnapshot.child("distance").getValue(), null, (String)dataSnapshot.child("avgSpeed").getValue(), (String)dataSnapshot.child("calorie").getValue(),
+                                        (String)dataSnapshot.child("climb").getValue(), (String)dataSnapshot.child("heartrate").getValue(), (String)dataSnapshot.child("comment").getValue(), (String)dataSnapshot.child("privacy").getValue(),
+                                        (String)dataSnapshot.child("gps").getValue(), (String)dataSnapshot.child("synced").getValue(),(String) dataSnapshot.child("deleted").getValue(), (String)dataSnapshot.child("boarded").getValue());
+
+                        String[] tmparr = tmpEntry.getDateTime().split("\\s+");
+                        mResults[0] = tmpEntry.getActType();
+                        mResults[1] = tmparr[0];
+                        mResults[2] = tmparr[1];
+                        mResults[3] = tmpEntry.getDuration();
+                        mResults[4] = tmpEntry.getDistance();
+                        mResults[5] = tmpEntry.getCalorie();
+                        mResults[6] = tmpEntry.getHeartrate();
+                        mResults[7] = tmpEntry.getComment();
+
+                        la_history.setResults(mResults);
+                        la_history.notifyDataSetChanged();
+
+                        // update local sql
+                        mysqlhelper.updateFBtoSql(tmpEntry, itemId);
+                    }
+
+                    @Override
+                    public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+
+                    }
+
+                    @Override
+                    public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+
+
+                });
+            } catch (NoSuchAlgorithmException e) {
+                e.printStackTrace();
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
         }
 
         else
@@ -157,9 +226,9 @@ public class Manal_Entry extends AppCompatActivity{
                 mResults[4] = substr[0] + " kms";
 
 
-            final ListAdapter la = new ListAdapter(this, mOptions, mResults, 9);        // set up the listadapter
+            la_history = new ListAdapter(this, mOptions, mResults, 9);        // set up the listadapter
             ListView mlistView = findViewById(R.id.manual_listview);
-            mlistView.setAdapter(la);
+            mlistView.setAdapter(la_history);
 
 
             final LayoutInflater factory = getLayoutInflater();
@@ -172,11 +241,11 @@ public class Manal_Entry extends AppCompatActivity{
 
                 switch (position){
                     case 1:
-                        onDateClick(la);          // set the date
+                        onDateClick(la_history);          // set the date
                         break;
 
                     case 2:
-                        onTimeClick(la);        // set the time
+                        onTimeClick(la_history);        // set the time
                         break;
 
                     case 3:
@@ -356,11 +425,4 @@ public class Manal_Entry extends AppCompatActivity{
         }
 
     }
-
-
-
-
-
-
-
 }
