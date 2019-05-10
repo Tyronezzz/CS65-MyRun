@@ -63,10 +63,6 @@ public class Manal_Entry extends AppCompatActivity{
     private Calendar mDateTime = Calendar.getInstance();
     private String parentName;
     private long index;
-    private FirebaseAuth mFirebaseAuth;
-    private FirebaseUser mFirebaseUser;
-    private DatabaseReference mDatabase;
-    private String mUserId;
     private ListAdapter la_history;
 
     ListView mhisView;
@@ -90,9 +86,9 @@ public class Manal_Entry extends AppCompatActivity{
 
 
         // Initialize Firebase Auth and Database Reference
-        mFirebaseAuth = FirebaseAuth.getInstance();
-        mFirebaseUser = mFirebaseAuth.getCurrentUser();
-        mDatabase = FirebaseDatabase.getInstance().getReference();
+        FirebaseAuth mFirebaseAuth = FirebaseAuth.getInstance();
+        FirebaseUser mFirebaseUser = mFirebaseAuth.getCurrentUser();
+        DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
 
 
 
@@ -154,15 +150,18 @@ public class Manal_Entry extends AppCompatActivity{
                     }
 
                     @Override
-                    public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                    public void onChildChanged(@NonNull DataSnapshot dataSnapshot, String s) {        // change the local data when data at the console changed
                         long itemId = (long)dataSnapshot.child("id").getValue();
 
                         MySQLiteHelper mysqlhelper = new MySQLiteHelper(getApplicationContext());
 
-                        ExerciseEntry tmpEntry = new ExerciseEntry((long)dataSnapshot.child("id").getValue(), (String)dataSnapshot.child("inputType").getValue(), (String)dataSnapshot.child("actType").getValue(), (String)dataSnapshot.child("dateTime").getValue(),
-                                        (String)dataSnapshot.child("duration").getValue(), (String)dataSnapshot.child("distance").getValue(), null, (String)dataSnapshot.child("avgSpeed").getValue(), (String)dataSnapshot.child("calorie").getValue(),
-                                        (String)dataSnapshot.child("climb").getValue(), (String)dataSnapshot.child("heartrate").getValue(), (String)dataSnapshot.child("comment").getValue(), (String)dataSnapshot.child("privacy").getValue(),
-                                        (String)dataSnapshot.child("gps").getValue(), (String)dataSnapshot.child("synced").getValue(),(String) dataSnapshot.child("deleted").getValue(), (String)dataSnapshot.child("boarded").getValue());
+//                        ExerciseEntry tmpEntry = new ExerciseEntry((long)dataSnapshot.child("id").getValue(), (String)dataSnapshot.child("inputType").getValue(), (String)dataSnapshot.child("actType").getValue(), (String)dataSnapshot.child("dateTime").getValue(),
+//                                        (String)dataSnapshot.child("duration").getValue(), (String)dataSnapshot.child("distance").getValue(), null, (String)dataSnapshot.child("avgSpeed").getValue(), (String)dataSnapshot.child("calorie").getValue(),
+//                                        (String)dataSnapshot.child("climb").getValue(), (String)dataSnapshot.child("heartrate").getValue(), (String)dataSnapshot.child("comment").getValue(), (String)dataSnapshot.child("privacy").getValue(),
+//                                        (String)dataSnapshot.child("gps").getValue(), (String)dataSnapshot.child("synced").getValue(),(String) dataSnapshot.child("deleted").getValue(), (String)dataSnapshot.child("boarded").getValue());
+
+                        ExerciseEntry tmpEntry = dataSnapshot.getValue(ExerciseEntry.class);       // convert json to ExerciseEntry
+
 
                         String[] tmparr = tmpEntry.getDateTime().split("\\s+");
                         mResults[0] = tmpEntry.getActType();
@@ -179,6 +178,7 @@ public class Manal_Entry extends AppCompatActivity{
 
                         // update local sql
                         mysqlhelper.updateFBtoSql(tmpEntry, itemId);
+                        Log.d("update where", "uodate manual");
                     }
 
                     @Override

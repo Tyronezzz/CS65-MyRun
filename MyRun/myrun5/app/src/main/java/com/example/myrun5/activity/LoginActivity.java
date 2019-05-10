@@ -10,10 +10,8 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.SuppressLint;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
@@ -25,12 +23,8 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.myrun5.R;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.FirebaseDatabase;
 
 
 public class LoginActivity extends AppCompatActivity {
@@ -44,9 +38,9 @@ public class LoginActivity extends AppCompatActivity {
 
     Button mregister_button;
     Button mEmailSignInButton;
-    SharedPreferences sharedPreferences;
+//    SharedPreferences sharedPreferences;
     private FirebaseAuth mAuth;
-    private FirebaseDatabase mDatabase;
+//    private FirebaseDatabase mDatabase;
 
 
     @Override
@@ -66,7 +60,7 @@ public class LoginActivity extends AppCompatActivity {
         setSupportActionBar(mytoolbar);
 
         mAuth = FirebaseAuth.getInstance();
-        mDatabase = FirebaseDatabase.getInstance();
+//        mDatabase = FirebaseDatabase.getInstance();
 
         mEmailView.setText("ty@d.com");
         mPasswordView.setText("111111");
@@ -214,30 +208,25 @@ public class LoginActivity extends AppCompatActivity {
             mshowProgress(false);
 
             Log.d(TAG, "before check");
-            mAuth.signInWithEmailAndPassword(mEmail, mPassword).addOnCompleteListener(LoginActivity.this, new OnCompleteListener<AuthResult>()
-            {
-                @Override
-                public void onComplete(@NonNull Task<AuthResult> task)
+            mAuth.signInWithEmailAndPassword(mEmail, mPassword).addOnCompleteListener(LoginActivity.this, task -> {
+                if (task.isSuccessful())
                 {
-                    if (task.isSuccessful())
-                    {
-                        FirebaseUser user = mAuth.getCurrentUser();
-                        Log.d(TAG, user.getEmail() + " "+ user.getUid());
-                        finish();
-                        try {
-                            Intent k = new Intent(LoginActivity.this, MainActivity.class);     //jump to mainactivity
-                            startActivity(k);
-                        } catch(Exception e) {
-                            e.printStackTrace();
-                        }
-
+                    FirebaseUser user = mAuth.getCurrentUser();
+                    Log.d(TAG, user.getEmail() + " "+ user.getUid());
+                    finish();
+                    try {
+                        Intent k = new Intent(LoginActivity.this, MainActivity.class);     //jump to mainactivity
+                        startActivity(k);
+                    } catch(Exception e) {
+                        e.printStackTrace();
                     }
 
-                    else
-                    {
-                        Log.d(TAG, "signInWithEmail:failure", task.getException());
-                        Toast.makeText(LoginActivity.this, "Authentication failed:Email or password is incorrect!", Toast.LENGTH_LONG).show();
-                    }
+                }
+
+                else
+                {
+                    Log.d(TAG, "signInWithEmail:failure", task.getException());
+                    Toast.makeText(LoginActivity.this, "Authentication failed:Email or password is incorrect!", Toast.LENGTH_LONG).show();
                 }
             });
 

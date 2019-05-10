@@ -172,27 +172,27 @@ public class ExerciseEntry implements Serializable {
         this.privacy = privacy;
     }
 
-//    public String getDeleted() {
-//        return deleted;
-//    }
-//
-//    public void setDeleted(String deleted) {
-//        this.deleted = deleted;
-//    }
-//
-//    public String getSynced() {
-//        return synced;
-//    }
-//
-//    public void setSynced(String synced) {
-//        this.synced = synced;
-//    }
-//
-//    public String getBoarded() {
-//        return boarded;
-//    }
-//
-//    public void setBoarded(String boarded) {
-//        this.boarded = boarded;
-//    }
+    public String getDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(String deleted) {
+        this.deleted = deleted;
+    }
+
+    public String getSynced() {
+        return synced;
+    }
+
+    public void setSynced(String synced) {
+        this.synced = synced;
+    }
+
+    public String getBoarded() {
+        return boarded;
+    }
+
+    public void setBoarded(String boarded) {
+        this.boarded = boarded;
+    }
 }

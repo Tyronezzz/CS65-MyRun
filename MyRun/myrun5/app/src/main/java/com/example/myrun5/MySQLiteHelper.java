@@ -96,7 +96,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
 
 
     // Insert a item given each column value
-    public void insertEntry(ExerciseEntry entry) {
+    public long insertEntry(ExerciseEntry entry) {
 
         db = getWritableDatabase();
         ContentValues values = new ContentValues();
@@ -126,10 +126,12 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
             Log.d(TAG, "Error in inserting!");
 
         else
-            Log.d(TAG, "Successs in insert!");
+            Log.d(TAG, "Successs in insert!" + newRowId);
 
         db.close();
         this.close();
+
+        return newRowId;
     }
 
     public void updateSyn()
@@ -141,6 +143,15 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         db.update(TABLE_NAME_ENTRIES, values, "synced = ?",new String[] { "false" });
     }
 
+
+    public void updateId(long oldid, long id)
+    {
+        db = getWritableDatabase();
+        ContentValues values = new ContentValues();
+
+        values.put("_id", String.valueOf(id));
+        db.update(TABLE_NAME_ENTRIES, values, "_id = ?",new String[] { String.valueOf(oldid) });
+    }
 
     public void updateBoard()
     {
@@ -348,14 +359,14 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
 
 
 
-        public void deleteAll() {
-        db = getWritableDatabase();
-
-        Log.d(TAG, "delete all = ");
-        db.delete(TABLE_NAME_ENTRIES, null, null);
-        db.close();
-        this.close();
-    }
+//        public void deleteAll() {
+//        db = getWritableDatabase();
+//
+//        Log.d(TAG, "delete all = ");
+//        db.delete(TABLE_NAME_ENTRIES, null, null);
+//        db.close();
+//        this.close();
+//    }
 
 
 //     Query a specific entry by its index.

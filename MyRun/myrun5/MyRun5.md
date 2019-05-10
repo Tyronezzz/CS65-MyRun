@@ -1,24 +1,24 @@
-# CS 65 MyRun4
+# CS 65 MyRun5
 
-This is a readme file for MyRun4.
+This is a readme file for MyRun5.
 
 ### Configuration 
 This project is developed under Android Studio 3.3.2 with Android API level 23 and compileSdkVersion is 28.
 
 
 ### Overview
-In this project, it continues the work from MyRun3 and Google Map service. I use FusedLocationProvider instead of LocationManager for location updates since I found that the latter has some problems on update the current location for the function getLastLocation. 
+In this project, it continues the work from MyRun4. In MR5, it is mainly about Firebase and HTTP GET/POST method. For sign up/in, it uses authentication for multi-users.In history fragment, it can syn between the local SQL and Firebase reatime database. For board fragment, it can upload the user data to the server and view the data on the server. 
 
 
 
 ### Some warnings?
-In ListAdapter.java, there are 3 warnings on super(), as I described in Myrun2. 
+(1) In ListAdapter.java, there are 3 warnings on super(), as I described in Myrun2. 
+(2) Some warnings at ExerciseEntry.java. It seems that there are some getter/setter not used. But they are useful for the line 
+ExerciseEntry entry = snapshot.getValue(ExerciseEntry.class); 
+
+getter/setter functions are used for convert the json data to ExerciseEntry here. So it is inevitable to have these warnings. 
 
 
-
-<!-- ### Question?
-For the current version, if a new user registers, then he can see the entry activities of an old user. To solve this problem, we can create the table and name it with username+table_name, but it needs to make sure that there are not two same username, so in register, it needs to query for the username. This bug can be fixed in the next version. 
- -->
 
 ### Reference
 [https://www.cs.dartmouth.edu/~campbell/cs65/lecture14/lecture14.html](https://www.cs.dartmouth.edu/~campbell/cs65/lecture14/lecture14.html)
