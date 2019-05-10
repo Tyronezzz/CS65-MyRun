@@ -72,7 +72,7 @@ public class LoginActivity extends AppCompatActivity {
         mregister_button.setOnClickListener(v -> {
             try {
 //
-//                Intent k = new Intent(LoginActivity.this, MainActivity.class);     //jump to mainactivity
+//                Intent k = new Intent(LoginActivity.this, MainActivity.class);     //jump to mainactivity for test
 //                startActivity(k);
 
                     Intent k = new Intent(LoginActivity.this, RegisterActivity.class);
