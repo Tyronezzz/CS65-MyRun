@@ -80,6 +80,8 @@ public class main_history extends Fragment implements LoaderManager.LoaderCallba
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
 
+        Log.d(TAG, "hereere");
+
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
         user = mAuth.getCurrentUser();
         mDatabase = FirebaseDatabase.getInstance().getReference();

@@ -38,9 +38,7 @@ public class LoginActivity extends AppCompatActivity {
 
     Button mregister_button;
     Button mEmailSignInButton;
-//    SharedPreferences sharedPreferences;
     private FirebaseAuth mAuth;
-//    private FirebaseDatabase mDatabase;
 
 
     @Override
@@ -183,23 +181,12 @@ public class LoginActivity extends AppCompatActivity {
         protected Boolean doInBackground(Void... params) {
             try {
                 // Simulate network access.
-                Thread.sleep(2000);
+                Thread.sleep(1000);
             } catch (InterruptedException e) {
                 return false;
             }
 
             return true;
-
-            // check whether email and password is match
-//            sharedPreferences = getSharedPreferences("profile", Context.MODE_PRIVATE);
-//            String old_email= sharedPreferences.getString("key_email", "");
-//            String old_pwd = sharedPreferences.getString("key_password", "");
-//
-//
-//            // not match
-//            if(old_email == null || old_pwd == null)
-//                return false;
-//            return old_email.equals(mEmail) && old_pwd.equals(mPassword);
         }
 
         @Override
@@ -229,25 +216,6 @@ public class LoginActivity extends AppCompatActivity {
                     Toast.makeText(LoginActivity.this, "Authentication failed:Email or password is incorrect!", Toast.LENGTH_LONG).show();
                 }
             });
-
-
-
-//            if (success) {
-//                Log.d(TAG, "SUCCESS");
-//                finish();
-//                try {
-//                    Intent k = new Intent(LoginActivity.this, MainActivity.class);     //jump to mainactivity
-//                    startActivity(k);
-//                } catch(Exception e) {
-//                    e.printStackTrace();
-//                }
-//
-//            } else {
-//                Log.d(TAG, "FAILED");          // failed, try again
-//                Toast.makeText(getApplicationContext(), "Email or password is incorrect!", Toast.LENGTH_LONG).show();
-//                mEmailView.requestFocus();
-//                //mEmailView.setError("");
-//            }
         }
     }
 }
